@@ -1,0 +1,63 @@
+<!-- This is the documentation for TextInput component -->
+
+# Password Input
+
+To import, use
+
+```javascript
+import PasswordInput from '$components/InputPlaceholder/PasswordInput';
+```
+
+**The input fills the whole container space.**
+
+## Props
+
+| Name         | Required | Type       | Description               |
+| ------------ | -------- | ---------- | ------------------------- |
+| id           | ✅       | String     | The ID of the input       |
+| placeholder  | ✅       | String     | Placeholder               |
+| className    | ❌       | String     | Regular/Tailwind class    |
+| value        | ✅       | String     | State value to store text |
+| onChange     | ✅       | () => void | onChange handler          |
+| error        | ❌       | Boolean    | Bool to indicate error    |
+| errorMessage | ❌       | String     | Error message             |
+
+## Examples
+
+```javascript
+import TextInput from '$components/InputPlaceholder/TextInput';
+import { useState } from 'react';
+
+export const Example = () => {
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [password, setPassword] = useState('');
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        console.log(password);
+        if (password !== 'at2a4aak') {
+          setError(true);
+          setErrorMessage('Wrong password!');
+        } else {
+          setError(false);
+        }
+      }}
+    >
+      <TextInput
+        placeholder="Password"
+        error={error}
+        errorMessage={errorMessage}
+        value={password}
+        onChange={(e) => {
+          setPassword(e.target.value);
+          setError(false);
+        }}
+      />
+      <input type="submit" />
+    </form>
+  );
+};
+```

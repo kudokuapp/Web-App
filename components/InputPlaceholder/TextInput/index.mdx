@@ -1,0 +1,63 @@
+<!-- This is the documentation for TextInput component -->
+
+# Text Input
+
+To import, use
+
+```javascript
+import TextInput from '$components/InputPlaceholder/TextInput';
+```
+
+**The input fills the whole container space.**
+
+## Props
+
+| Name         | Required | Type       | Description               |
+| ------------ | -------- | ---------- | ------------------------- |
+| id           | ✅       | String     | The ID of the input       |
+| placeholder  | ✅       | String     | Placeholder               |
+| className    | ❌       | String     | Regular/Tailwind class    |
+| value        | ✅       | String     | State value to store text |
+| onChange     | ✅       | () => void | onChange handler          |
+| error        | ❌       | Boolean    | Bool to indicate error    |
+| errorMessage | ❌       | String     | Error message             |
+
+## Examples
+
+```javascript
+import TextInput from '$components/InputPlaceholder/TextInput';
+import { useState } from 'react';
+
+export const Example = () => {
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [username, setUsername] = useState('');
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        console.log(username);
+        if (username !== 'fdwilogo') {
+          setError(true);
+          setErrorMessage('Only fdwilogo allowed');
+        } else {
+          setError(false);
+        }
+      }}
+    >
+      <TextInput
+        placeholder="Username"
+        error={error}
+        errorMessage={errorMessage}
+        value={username}
+        onChange={(e) => {
+          setUsername(e.target.value);
+          setError(false);
+        }}
+      />
+      <input type="submit" />
+    </form>
+  );
+};
+```

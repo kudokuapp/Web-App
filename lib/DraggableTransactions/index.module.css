@@ -1,0 +1,19 @@
+.container {
+  @apply bg-gradient-to-br from-blue-800 to-blue-900 px-5 py-2.5 rounded-2xl min-w-fit min-h-fit flex gap-4 items-center justify-center select-none cursor-grab shadow-xl origin-center;
+}
+
+.imageContainer {
+  @apply w-fit h-fit bg-onPrimary rounded-xl shadow-md p-2 border-2 border-secondaryContainer select-none;
+}
+
+.containerText {
+  @apply min-w-fit;
+}
+
+.label {
+  @apply font-bold text-xl text-onPrimary m-0 truncate;
+}
+
+.text {
+  @apply font-normal text-base text-secondaryContainer m-0;
+}
