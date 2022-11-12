@@ -5994,6 +5994,14 @@ babel-plugin-react-docgen@^4.2.1:
     lodash "^4.17.15"
     react-docgen "^5.0.0"
 
+babel-runtime@6.x.x:
+  version "6.26.0"
+  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
+  integrity sha512-ITKNuq2wKlW1fJg9sSW52eepoYgZBggvOAHC0u/CYu/qxQ9EVzThCgR69BnSXLHjy2f7SY5zaQ4yt7H9ZVxY2g==
+  dependencies:
+    core-js "^2.4.0"
+    regenerator-runtime "^0.11.0"
+
 bail@^1.0.0:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/bail/-/bail-1.0.5.tgz#b6fa133404a392cbc1f8c4bf63f5953351e7a776"
@@ -6757,6 +6765,11 @@ core-js-pure@^3.23.3:
   version "3.26.0"
   resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.26.0.tgz#7ad8a5dd7d910756f3124374b50026e23265ca9a"
   integrity sha512-LiN6fylpVBVwT8twhhluD9TzXmZQQsr2I2eIKtWNbZI1XMfBT7CV18itaN6RA7EtQd/SDdRx/wzvAShX2HvhQA==
+
+core-js@^2.4.0:
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
+  integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
 
 core-js@^3.0.4, core-js@^3.6.5, core-js@^3.8.2:
   version "3.21.1"
@@ -11667,13 +11680,6 @@ raw-loader@^4.0.2:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
-react-device-detect@^2.2.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/react-device-detect/-/react-device-detect-2.2.2.tgz#dbabbce798ec359c83f574c3edb24cf1cca641a5"
-  integrity sha512-zSN1gIAztUekp5qUT/ybHwQ9fmOqVT1psxpSlTn1pe0CO+fnJHKRLOWWac5nKxOxvOpD/w84hk1I+EydrJp7SA==
-  dependencies:
-    ua-parser-js "^1.0.2"
-
 react-docgen-typescript@^2.1.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/react-docgen-typescript/-/react-docgen-typescript-2.2.2.tgz#4611055e569edc071204aadb20e1c93e1ab1659c"
@@ -11889,6 +11895,11 @@ regenerate@^1.4.2:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
+
+regenerator-runtime@^0.11.0:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
+  integrity sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==
 
 regenerator-runtime@^0.13.10, regenerator-runtime@^0.13.2:
   version "0.13.10"
@@ -13363,11 +13374,6 @@ typescript@4.6.3, typescript@^4.4.3:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.3.tgz#eefeafa6afdd31d725584c67a0eaba80f6fc6c6c"
   integrity sha512-yNIatDa5iaofVozS/uQJEl3JRWLKKGJKh6Yaiv0GLGSuhpFJe7P3SbHZ8/yjAHRQwKRoA6YZqlfjXWmVzoVSMw==
 
-ua-parser-js@^1.0.2:
-  version "1.0.32"
-  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-1.0.32.tgz#786bf17df97de159d5b1c9d5e8e9e89806f8a030"
-  integrity sha512-dXVsz3M4j+5tTiovFVyVqssXBu5HM47//YSOeZ9fQkdDKkfzv2v3PP1jmH6FUyPW+yCSn7aBVK1fGGKNhowdDA==
-
 uglify-js@^3.1.4:
   version "3.15.3"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.15.3.tgz#9aa82ca22419ba4c0137642ba0df800cb06e0471"
@@ -14096,6 +14102,13 @@ workbox-window@6.5.4, workbox-window@^6.5.4:
   dependencies:
     "@types/trusted-types" "^2.0.2"
     workbox-core "6.5.4"
+
+workbox@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/workbox/-/workbox-0.0.0.tgz#26f5e7834abf83178c7c454edc91bc61fef8d6c3"
+  integrity sha512-/I5JIWHK18DDGGoXOZgOkOFLsiMQZlHLnwEzw328ZMU4TA21yFCw11YEnZ1CsOnSazl0DMbFmLJ6q5hpQhP/aQ==
+  dependencies:
+    babel-runtime "6.x.x"
 
 worker-rpc@^0.1.0:
   version "0.1.1"

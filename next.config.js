@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 
-const withPWA = require('next-pwa')({
-  dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
-  register: true,
-  scope: '/',
-  sw: '/sw.js',
-});
+// const withPWA = require('next-pwa')({
+//   dest: 'public',
+//   disable: process.env.NODE_ENV === 'development',
+//   register: true,
+//   scope: '/',
+//   sw: '/sw.js',
+// });
 
-const nextConfig = withPWA({
+const nextConfig = {
   reactStrictMode: true,
   experimental: { appDir: true },
   swcMinify: true,
@@ -20,6 +20,7 @@ const nextConfig = withPWA({
   //   defaultLocale: 'en',
   //   // localeDetection: false,
   // },
-});
+};
 
+// module.exports = withPWA(nextConfig);
 module.exports = nextConfig;

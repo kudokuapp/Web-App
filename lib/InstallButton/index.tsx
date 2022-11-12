@@ -36,6 +36,19 @@ const InstallButton = () => {
 
   useEffect(() => {
     if ('BeforeInstallPromptEvent' in window) {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js').then(
+          function (registration) {
+            console.log(
+              'Service Worker registration successful with scope: ',
+              registration.scope
+            );
+          },
+          function (err) {
+            console.log('Service Worker registration failed: ', err);
+          }
+        );
+      }
       setSupported(true);
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
@@ -68,7 +81,6 @@ const InstallButton = () => {
     const { outcome } = await deferredPrompt!.userChoice;
     setDeferredPrompt(null);
     if (outcome === 'accepted') {
-      deferredPrompt?.preventDefault();
       console.log('😀 User accepted the install prompt.');
     } else if (outcome === 'dismissed') {
       console.log('😟 User dismissed the install prompt');
