@@ -567,7 +567,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     });
 
     setInterval(loop, 25);
-  });
+  }, []);
 
   return (
     <main className="w-[100vw] h-[100vh] relative inset-0 overflow-hidden flex items-center justify-center">
