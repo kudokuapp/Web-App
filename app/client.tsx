@@ -1,7 +1,18 @@
 'use client';
+import DarkModeToggle from '$components/Switch/DarkModeToggle';
+import ThemeContext from '$context/ThemeContext';
+import DraggableTransactions from '$lib/DraggableTransactions';
+import data from '$lib/DraggableTransactions/data/data';
+import mobileinstall from '$lib/DraggableTransactions/data/mobileinstall';
+import InstallButton from '$lib/InstallButton';
+import Logo from '$public/logo/secondary.svg';
+import LogoDark from '$public/logo/secondaryDark.svg';
+import '$styles/page.css';
 import client from '$utils/graphql';
 import { ApolloProvider } from '@apollo/client';
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 export function ApolloNextClient({ children }: { children: React.ReactNode }) {
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
@@ -17,7 +28,7 @@ export function InstallDiv({
 
   Change to false on prod!!
   */
-  const [hasInstall, setHasInstall] = useState(true);
+  const [hasInstall, setHasInstall] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -28,10 +39,111 @@ export function InstallDiv({
   return <body>{hasInstall ? <>{children}</> : <RenderedComp />}</body>;
 }
 
-function RenderedComp() {
+const RenderedComp = () => {
+  const [arrData, setArrData] = useState(data);
+
+  const [deviceType, setDeviceType] = useState('');
+
+  const windowRef = useRef(null);
+  const { isDarkTheme } = useContext(ThemeContext);
+
+  useEffect(() => {
+    if (window.innerWidth <= 640) {
+      setArrData(mobileinstall);
+    }
+
+    let hasTouchScreen = false;
+    if ('maxTouchPoints' in navigator) {
+      hasTouchScreen = navigator.maxTouchPoints > 0;
+    } else if ('msMaxTouchPoints' in navigator) {
+      // @ts-ignore
+      hasTouchScreen = navigator.msMaxTouchPoints > 0;
+    } else {
+      // @ts-ignore
+      const mQ = window.matchMedia && matchMedia('(pointer:coarse)');
+      if (mQ && mQ.media === '(pointer:coarse)') {
+        hasTouchScreen = !!mQ.matches;
+      } else if ('orientation' in window) {
+        hasTouchScreen = true; // deprecated, but good fallback
+      } else {
+        // Only as a last resort, fall back to user agent sniffing
+        const UA = navigator.userAgent;
+        hasTouchScreen =
+          /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+          /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
+      }
+    }
+    if (hasTouchScreen) {
+      setDeviceType('Smartphone atau Tab');
+    } else {
+      setDeviceType('Desktop');
+    }
+  }, []);
+
   return (
-    <>
-      <h1>Kontoooool</h1>
-    </>
+    <main className="w-[100vw] h_ios overflow-hidden relative inset-0 flex justify-center items-center">
+      <section className="z-10 py-8 sm:px-12 px-10 rounded-2xl bg-background dark:bg-onBackground max-w-[500px] sm:mx-0 mx-2 sm:max-h-full max-h-[530px] overflow-auto ">
+        <nav className="flex justify-between items-center mb-10 select-none relative">
+          <Toaster
+            position="top-right"
+            containerStyle={{
+              position: 'absolute',
+              right: 0,
+              top: 0,
+            }}
+          />
+          {isDarkTheme ? (
+            <Image
+              height={30}
+              src={LogoDark}
+              quality={100}
+              alt="Kudoku Logo"
+              draggable={false}
+            />
+          ) : (
+            <Image
+              height={30}
+              src={Logo}
+              quality={100}
+              alt="Kudoku Logo"
+              draggable={false}
+            />
+          )}
+
+          <DarkModeToggle />
+        </nav>
+        <div className="flex flex-col gap-6">
+          <h1 className="text-onPrimaryContainer/50 dark:text-surfaceVariant/50 sm:text-3xl text-2xl font-medium">
+            Kudoku lebih keren kalo lo{' '}
+            <span className="text-onPrimaryContainer dark:text-surfaceVariant">
+              install di {deviceType}
+            </span>{' '}
+            lo.
+          </h1>
+          <InstallButton />
+          <p className="text-xs text-onPrimaryContainer/50 dark:text-surfaceVariant/50 text-justify">
+            Dengan nge-klik button diatas, lo dan kita sepakat kalo kita udah
+            benci banget boncos mulu.
+          </p>
+        </div>
+      </section>
+      <div
+        className="w-[100vw] h_ios__draggable absolute inset-0 z-0"
+        ref={windowRef}
+      >
+        {arrData.map((value) => {
+          return (
+            <DraggableTransactions
+              amount={value.amount}
+              merchant={value.merchant}
+              imageSrc={value.imageSrc}
+              spawn={value.spawn}
+              key={value.id}
+              customRef={windowRef}
+            />
+          );
+        })}
+      </div>
+    </main>
   );
-}
+};
