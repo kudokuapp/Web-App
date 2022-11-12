@@ -16,11 +16,15 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
+        <meta name="application-name" content="Kudoku" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta
           name="apple-mobile-web-app-status-bar"
           content="black-translucent"
         />
         <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="Kudoku" />
 
         {/* OG Meta Attributes
 		<meta property="og:type" content="website">
