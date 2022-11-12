@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-head-element */
 import { ThemeContextProvider } from '$context/ThemeContext';
 import '$styles/globals.css';
-import Client from './client';
+import { ApolloNextClient, InstallDiv } from './client';
 
 export default function RootLayout({
   children,
@@ -174,11 +174,11 @@ export default function RootLayout({
 
         <title>Kudoku</title>
       </head>
-      <Client>
+      <ApolloNextClient>
         <ThemeContextProvider>
-          <body>{children}</body>
+          <InstallDiv>{children}</InstallDiv>
         </ThemeContextProvider>
-      </Client>
+      </ApolloNextClient>
     </html>
   );
 }

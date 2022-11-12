@@ -78,6 +78,7 @@ export default function Page() {
       })
       .then(
         (data: any) => {
+          toast.loading('Redirecting...', { duration: 2000 });
           router.push(`/register/${data.userId}`);
         },
         (e) => {
