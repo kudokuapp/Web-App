@@ -22,7 +22,7 @@ export default async function handler(
         channel: type,
         locale: 'id',
       });
-    res.status(200).json({ ...response });
+    res.status(200).json(response);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error, check console' });

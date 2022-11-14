@@ -4,13 +4,13 @@ import PasswordInput from '$components/InputPlaceholder/PasswordInput';
 import TextInput from '$components/InputPlaceholder/TextInput';
 import LottieFC from '$components/Lottie';
 import Checked from '$components/Lottie/Checked';
-import unavailableusername from '$utils/data/unavailableusername';
+import { censorEmail, censorNumber } from '$utils/helper/censor';
 import { gql, useLazyQuery, useMutation } from '@apollo/client';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { ObjectId } from 'mongodb';
+import type { ObjectId } from 'mongodb';
 import { useRouter } from 'next/navigation';
 import { FormEventHandler, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -18,82 +18,94 @@ import OtpInput from 'react-otp-input';
 
 interface IUser {
   _id: ObjectId;
-  username?: string | undefined;
-  password?: string | undefined;
-  name: string;
+  username: string;
   email: string;
   whatsapp: string;
-  kudos: number;
 }
 
-export default function Client({ user }: { user: IUser }) {
+export default function Page() {
   const router = useRouter();
 
   const [progress, setProgress] = useState(1);
+
   const [otpWa, setOtpWa] = useState('');
   const [otpEmail, setOtpEmail] = useState('');
+  const [token, setToken] = useState('');
+
   const [username, setUsername] = useState('');
+
+  const [user, setUser] = useState({} as IUser);
+
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
-  const [usernameMinFiveChar, setUsernameMinFiveChar] = useState(false);
-  const [usernameTakenError, setUsernameTakenError] = useState(false);
 
   const [passwordUppercase, setPasswordUppercase] = useState(false);
   const [passwordLowercase, setPasswordLowercase] = useState(false);
   const [passwordSymbol, setPasswordSymbol] = useState(false);
   const [passwordNumber, setPasswordNumber] = useState(false);
   const [passwordMinEightChar, setPasswordMinEightChar] = useState(false);
-
   const [passwordAndConfirmPassword, setPasswordAndConfirmPassword] =
     useState(false);
-
   const [allConditions, setAllConditions] = useState(false);
 
-  const querySignup = gql`
-    mutation Mutation($signupId: ID!, $username: String!, $password: String!) {
-      signup(id: $signupId, username: $username, password: $password) {
-        token
-      }
-    }
-  `;
-
-  const [
-    userSignup,
-    {
-      // loading: userSignupLoading,
-      // eslint-disable-next-line no-unused-vars
-      error: userSignupError,
-      // data: userSignupData,
-    },
-  ] = useMutation(querySignup, {
-    variables: {
-      signupId: user._id,
-      username: username,
-      password: password,
-    },
-  });
-
-  const queryGetUsername = gql`
-    query Getalluser {
-      getalluser {
-        username
+  const queryGetUser = gql`
+    query Getuserbyusername($username: String!) {
+      getuserbyusername(username: $username) {
+        id
+        email
+        whatsapp
       }
     }
   `;
 
   // eslint-disable-next-line no-unused-vars
-  const [getUsername, { data: allUsername }] = useLazyQuery(queryGetUsername);
+  const [getUser, { data: userData }] = useLazyQuery(queryGetUser, {
+    variables: {
+      username,
+    },
+  });
 
-  const { name, email, whatsapp, kudos } = user;
+  const queryGetTokenFromOtp = gql`
+    mutation GetTokenFromOtp($otp: String!, $email: String) {
+      getTokenFromOtp(otp: $otp, email: $email) {
+        token
+      }
+    }
+  `;
+
+  // eslint-disable-next-line no-unused-vars
+  const [getTokenFromOtp, { data: getTokenFromOtpData }] = useMutation(
+    queryGetTokenFromOtp,
+    {
+      variables: {
+        otp: otpEmail,
+        email: user.email,
+      },
+    }
+  );
+
+  const queryChangePassword = gql`
+    mutation ChangePassword($password: String!) {
+      changePassword(password: $password) {
+        token
+      }
+    }
+  `;
+
+  // eslint-disable-next-line no-unused-vars
+  const [changePassword, { data: changePasswordData }] = useMutation(
+    queryChangePassword,
+    {
+      variables: { password },
+      context: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    }
+  );
 
   useEffect(() => {
-    if (username === '') {
-      setUsernameMinFiveChar(false);
-    }
-    if (username.length > 4) setUsernameMinFiveChar(true);
-    else if (!(username.length > 4)) setUsernameMinFiveChar(false);
-
     if (password === '') {
       setPasswordMinEightChar(false);
       setPasswordLowercase(false);
@@ -125,10 +137,8 @@ export default function Client({ user }: { user: IUser }) {
     else if (password !== confirmPassword) setPasswordAndConfirmPassword(false);
 
     if (
-      username &&
       password &&
       confirmPassword &&
-      usernameMinFiveChar &&
       passwordMinEightChar &&
       passwordLowercase &&
       passwordUppercase &&
@@ -139,10 +149,8 @@ export default function Client({ user }: { user: IUser }) {
       setAllConditions(true);
     else setAllConditions(false);
   }, [
-    username,
     confirmPassword,
     password,
-    usernameMinFiveChar,
     passwordMinEightChar,
     passwordLowercase,
     passwordUppercase,
@@ -157,7 +165,7 @@ export default function Client({ user }: { user: IUser }) {
         (async () => {
           try {
             const { data } = await axios.post('/api/verify/confirmcode', {
-              receiver: `+${whatsapp}`,
+              receiver: user.whatsapp,
               code: otpWa,
             });
             if (!data.valid || Object.keys(data).length === 0)
@@ -175,7 +183,7 @@ export default function Client({ user }: { user: IUser }) {
         (async () => {
           try {
             const { data } = await axios.post('/api/verify/getcode', {
-              receiver: email,
+              receiver: user.email,
               type: 'email',
             });
             if (!data || Object.keys(data).length === 0) throw new Error();
@@ -210,10 +218,9 @@ export default function Client({ user }: { user: IUser }) {
       return new Promise((resolve, reject) => {
         (async () => {
           try {
-            const { data } = await axios.post('/api/verify/confirmcode', {
-              receiver: email,
-              code: otpEmail,
-            });
+            const {
+              data: { getTokenFromOtp: data },
+            } = await getTokenFromOtp();
             if (!data || Object.keys(data).length === 0) throw new Error();
             resolve(data);
           } catch (e) {
@@ -229,44 +236,25 @@ export default function Client({ user }: { user: IUser }) {
         success: 'Sukses verifikasi OTP',
         error: 'Kode OTP salah',
       })
-      .then(() => setProgress(4));
+      .then((data: any) => {
+        setProgress(4);
+        setToken(data.token);
+      });
   };
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
-    const getUsernamePromise = () => {
-      return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            // iterate through all username from graphql
-            const {
-              data: { getalluser },
-            } = await getUsername();
-            for (const element of getalluser) {
-              if (element.username === username) {
-                reject('Username not available');
-              }
-            }
-            // iterate through all username from unavailable username
-            for (const element of unavailableusername) {
-              if (element === username) {
-                reject('Username not available');
-              }
-            }
-            resolve('Username available');
-          } catch (e) {
-            reject(e);
-          }
-        })();
-      });
-    };
 
-    const signupPromise = () => {
+    const myPromise = () => {
       return new Promise((resolve, reject) => {
         (async () => {
           try {
-            const { data } = await userSignup();
-            if (Object.keys(data).length === 0) reject();
+            const {
+              data: { changePassword: data },
+            } = await changePassword();
+
+            if (!data || Object.keys(data).length === 0) throw new Error();
+
             resolve(data);
           } catch (e) {
             reject(e);
@@ -274,85 +262,118 @@ export default function Client({ user }: { user: IUser }) {
         })();
       });
     };
+
     toast
-      .promise(getUsernamePromise(), {
-        loading: 'Check apakah username tersedia...',
-        success: 'Username tersedia!',
-        error: 'Username tidak tersedia!',
+      .promise(myPromise(), {
+        loading: 'Loading...',
+        success: 'Sukses ganti password',
+        error: 'Token invalid',
       })
-      .then(
-        () => {
-          setUsernameTakenError(false);
-          toast
-            .promise(signupPromise(), {
-              loading: 'Registering...',
-              success: 'Sukses registrasi!',
-              error: 'Servernya error',
-            })
-            .then(() => {
-              setProgress(5);
-            });
-        },
-        () => {
-          setUsernameTakenError(true);
-        }
-      );
-    console.log('submit');
+      .then(() => setProgress(5));
   };
 
   const renderProgress = () => {
     if (progress === 1) {
       return (
         <>
-          <div className="flex flex-col gap-4">
-            <h1 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
-              Selamat,{' '}
-              <span className="text-primary dark:text-primaryDark">{name}</span>
-              ,{' '}
-              <span className="text-secondary dark:text-secondaryDark">
-                Kudos No.{kudos}
-              </span>{' '}
-              kamu udah bisa cobain Kudoku!
-            </h1>
-            <p className="text-onPrimaryContainer dark:text-surfaceVariant">
-              Sebelum nyobain aplikasi Kudoku, kamu harus buat username dan
-              password dulu yaa! 😍
-            </p>
-          </div>
-          <div className="w-full h-fit flex items-center justify-end">
-            <LoginButton
-              onClick={() => {
-                const myPromise = () => {
-                  return new Promise((resolve, reject) => {
-                    (async () => {
-                      try {
-                        const { data } = await axios.post(
-                          '/api/verify/getcode',
-                          {
-                            receiver: `+${whatsapp}`,
-                            type: 'sms',
-                          }
-                        );
-                        resolve(data);
-                      } catch (e) {
-                        reject();
-                      }
-                    })();
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={async (e) => {
+              e.preventDefault();
+
+              const myPromise = () => {
+                return new Promise((resolve, reject) => {
+                  (async () => {
+                    try {
+                      const {
+                        data: { getuserbyusername: data },
+                      } = await getUser();
+
+                      if (!data || Object.keys(data).length === 0)
+                        throw new Error('Wrong username');
+
+                      resolve(data);
+                    } catch (e) {
+                      console.error(e);
+                      reject();
+                    }
+                  })();
+                });
+              };
+
+              const secondPromise = (receiver: string) => {
+                return new Promise((resolve, reject) => {
+                  (async () => {
+                    try {
+                      const { data } = await axios.post('/api/verify/getcode', {
+                        receiver,
+                        type: 'sms',
+                      });
+                      resolve(data);
+                    } catch (e) {
+                      reject();
+                    }
+                  })();
+                });
+              };
+
+              toast
+                .promise(myPromise(), {
+                  loading: 'Lagi cek username...',
+                  success: 'Username ditemukan',
+                  error: 'Username tidak ditemukan',
+                })
+                .then((data: any) => {
+                  setUser({
+                    _id: data.id,
+                    username,
+                    email: data.email,
+                    whatsapp: data.whatsapp,
                   });
-                };
-                toast.promise(
-                  myPromise().then(() => setProgress(2)),
-                  {
-                    loading: 'Loading...',
-                    success: 'Sukses kirim otp',
-                    error: 'Servernya error',
-                  }
-                );
+
+                  toast
+                    .promise(secondPromise(data.whatsapp), {
+                      loading: 'Kirim OTP...',
+                      success: 'Kirim OTP Sukses',
+                      error: 'Kirim OTP Gagal',
+                    })
+                    .then(() => {
+                      setProgress(2);
+                    });
+                });
+            }}
+          >
+            <h1 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
+              <span className="text-primary dark:text-primaryDark">Lupa</span>{' '}
+              <span className="text-secondary dark:text-secondaryDark">
+                Password
+              </span>
+              ? Reset Password Kamu!
+            </h1>
+
+            <TextInput
+              placeholder="Username"
+              id="username"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
               }}
-            >
-              Mulai
-            </LoginButton>
-          </div>
+              onKeyPress={(e) => {
+                if (!/^[a-zA-Z0-9]*$/g.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              minLength={5}
+              required={true}
+            />
+
+            <div className="w-full h-fit flex items-center justify-end mt-4">
+              <LoginButton type="submit" disabled={!username}>
+                Mulai
+              </LoginButton>
+            </div>
+          </form>
+
           <motion.div
             className="mt-8 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
             animate={{ width: '20%' }}
@@ -376,7 +397,7 @@ export default function Client({ user }: { user: IUser }) {
             <h4 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
               Kudoku udah kirim sms ke{' '}
               <span className="text-primary dark:text-primaryDark">
-                {whatsapp}
+                {censorNumber(user.whatsapp)}
               </span>
               .
             </h4>
@@ -430,7 +451,7 @@ export default function Client({ user }: { user: IUser }) {
             <h4 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
               Kudoku udah kirim <b>email</b> ke{' '}
               <span className="text-primary dark:text-primaryDark">
-                {email}
+                {censorEmail(user.email)}
               </span>
               .
             </h4>
@@ -482,51 +503,13 @@ export default function Client({ user }: { user: IUser }) {
         >
           <div className="flex flex-col gap-4">
             <h4 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
-              <b>Terakhir,</b> buat{' '}
-              <span className="text-primary dark:text-primaryDark">
-                username
-              </span>{' '}
-              dan{' '}
-              <span className="text-secondary dark:text-secondaryDark">
-                password
-              </span>{' '}
-              kamu yuk.
+              Sekarang,{' '}
+              <strong className="text-primary dark:text-primaryDark">
+                buat password baru
+              </strong>{' '}
+              kamu!
             </h4>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div>
-                <TextInput
-                  placeholder="Username"
-                  id="username"
-                  value={username}
-                  onChange={(e) => {
-                    setUsername(e.target.value);
-                    setUsernameTakenError(false);
-                  }}
-                  onKeyPress={(e) => {
-                    if (!/^[a-zA-Z0-9]*$/g.test(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
-                  required={true}
-                  error={usernameTakenError}
-                  errorMessage={`Username '${username}' tidak tersedia.`}
-                />
-                <div
-                  className={`flex gap-2 items-center mt-2 text-sm ${
-                    usernameMinFiveChar
-                      ? 'text-green-600 dark:text-green-400'
-                      : 'text-red-600 dark:text-red-400'
-                  }`}
-                >
-                  {usernameMinFiveChar ? (
-                    <FontAwesomeIcon icon={faCheck} />
-                  ) : (
-                    <FontAwesomeIcon icon={faXmark} />
-                  )}
-
-                  <p>Username min. 5 karakter</p>
-                </div>
-              </div>
               <div>
                 <PasswordInput
                   placeholder="Password"
@@ -669,7 +652,7 @@ export default function Client({ user }: { user: IUser }) {
               />
             </div>
             <h6 className="text-onPrimaryContainer dark:text-surfaceVariant text-center text-xl">
-              Sukses registrasinya! Silahkan masuk lewat login page Kudoku!
+              Reset password sukses! Silahkan masuk lewat login page Kudoku!
             </h6>
             <div className="w-full h-fit flex justify-end mt-10">
               <LoginButton onClick={() => router.push('/login')}>
