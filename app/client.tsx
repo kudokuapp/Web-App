@@ -12,7 +12,7 @@ import client from '$utils/graphql';
 import { ApolloProvider } from '@apollo/client';
 import Image from 'next/image';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 
 export function ApolloNextClient({ children }: { children: React.ReactNode }) {
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
@@ -34,9 +34,38 @@ export function InstallDiv({
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setHasInstall(true);
     }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(
+        (registration) => {
+          console.log(
+            'Service Worker registration successful with scope: ',
+            registration.scope
+          );
+        },
+        (err) => {
+          console.log('Service Worker registration failed: ', err);
+        }
+      );
+    }
+
+    window.addEventListener('offline', () => {
+      toast.error('Kamu offline. Abis data apa gimana bos?');
+    });
   }, []);
 
-  return <body>{hasInstall ? <>{children}</> : <RenderedComp />}</body>;
+  return (
+    <body>
+      {hasInstall ? (
+        <>
+          <Toaster position="top-right" />
+          {children}
+        </>
+      ) : (
+        <RenderedComp />
+      )}
+    </body>
+  );
 }
 
 const RenderedComp = () => {

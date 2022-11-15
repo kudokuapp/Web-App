@@ -1,20 +1,31 @@
-/* 
-Custom service worker (not using next-pwa)
-*/
+const VERSION = '0.0.1';
 
-const CACHE_NAME = 'simple-cache-v1';
-const urlsToCache = ['/'];
+const CACHE_NAME = `pwa-cache-${VERSION}`;
 
+const INITIAL_CACHED_RESOURCES = [
+  '/',
+  '/login/',
+  '/login/queue/',
+  '/register/',
+  '/kudoku/',
+  '/kudoku/home/',
+  '/kudoku/monthly/',
+  '/kudoku/transactions/',
+  '/kudoku/assets/',
+  '/kudoku/more/',
+];
+
+// install event handler (note async operation)
+// opens named cache, pre-caches identified resources above
 self.addEventListener('install', (event) => {
-  const preLoaded = caches
-    .open(CACHE_NAME)
-    .then((cache) => cache.addAll(urlsToCache));
-  event.waitUntil(preLoaded);
+  event.waitUntil(
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      cache.addAll(INITIAL_CACHED_RESOURCES);
+    })()
+  );
 });
 
-self.addEventListener('fetch', (event) => {
-  const response = caches
-    .match(event.request)
-    .then((match) => match || fetch(event.request));
-  event.respondWith(response);
+self.addEventListener('fetch', () => {
+  return;
 });
