@@ -16,6 +16,7 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
+
         <meta name="theme-color" content="#345995" />
         <meta name="application-name" content="Kudoku" />
         <meta name="format-detection" content="telephone=no" />
