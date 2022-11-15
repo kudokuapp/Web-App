@@ -88,7 +88,11 @@ const InstallButton = () => {
 
   useEffect(() => {
     if (supported) {
-      if (deferredPrompt !== null) {
+      if (
+        deferredPrompt !== null &&
+        deferredPrompt !== undefined &&
+        Object.keys(deferredPrompt).length !== 0
+      ) {
         setReady(true);
       } else {
         setReady(false);
@@ -97,15 +101,19 @@ const InstallButton = () => {
   }, [supported, deferredPrompt]);
 
   const installApp = async () => {
-    if (deferredPrompt !== null) {
+    if (
+      deferredPrompt !== null &&
+      deferredPrompt !== undefined &&
+      Object.keys(deferredPrompt).length !== 0
+    ) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      setDeferredPrompt(null);
       if (outcome === 'accepted') {
         console.log('😀 User accepted the install prompt.');
       } else if (outcome === 'dismissed') {
         console.log('😟 User dismissed the install prompt');
       }
+      setDeferredPrompt(null);
     }
   };
 
