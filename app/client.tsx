@@ -54,18 +54,7 @@ export function InstallDiv({
     });
   }, []);
 
-  return (
-    <body>
-      {hasInstall ? (
-        <>
-          <Toaster position="top-right" />
-          {children}
-        </>
-      ) : (
-        <RenderedComp />
-      )}
-    </body>
-  );
+  return <body>{hasInstall ? <>{children}</> : <RenderedComp />}</body>;
 }
 
 const RenderedComp = () => {
