@@ -512,7 +512,7 @@ export default function Client({ user }: { user: IUser }) {
                   errorMessage={`Username '${username}' tidak tersedia.`}
                 />
                 <div
-                  className={`flex gap-2 items-center mt-2 text-sm ${
+                  className={`flex flex-nowrap gap-2 items-center mt-2 text-sm ${
                     usernameMinFiveChar
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-red-600 dark:text-red-400'
@@ -539,7 +539,7 @@ export default function Client({ user }: { user: IUser }) {
                 />
                 <div className="flex flex-wrap gap-4 mt-2">
                   <div
-                    className={`flex gap-2 items-center text-sm ${
+                    className={`flex flex-nowrap gap-2 items-center text-sm ${
                       passwordMinEightChar
                         ? 'text-green-600 dark:text-green-400'
                         : 'text-red-600 dark:text-red-400'
@@ -554,7 +554,7 @@ export default function Client({ user }: { user: IUser }) {
                     <p>Password min. 8 karakter</p>
                   </div>
                   <div
-                    className={`flex gap-2 items-center text-sm ${
+                    className={`flex flex-nowrap gap-2 items-center text-sm ${
                       passwordLowercase
                         ? 'text-green-600 dark:text-green-400'
                         : 'text-red-600 dark:text-red-400'
@@ -569,7 +569,7 @@ export default function Client({ user }: { user: IUser }) {
                     <p>Min. 1 lowercase</p>
                   </div>
                   <div
-                    className={`flex gap-2 items-center text-sm ${
+                    className={`flex flex-nowrap gap-2 items-center text-sm ${
                       passwordUppercase
                         ? 'text-green-600 dark:text-green-400'
                         : 'text-red-600 dark:text-red-400'
@@ -584,7 +584,7 @@ export default function Client({ user }: { user: IUser }) {
                     <p>Min. 1 uppercase</p>
                   </div>
                   <div
-                    className={`flex gap-2 items-center text-sm ${
+                    className={`flex flex-nowrap gap-2 items-center text-sm ${
                       passwordNumber
                         ? 'text-green-600 dark:text-green-400'
                         : 'text-red-600 dark:text-red-400'
@@ -599,7 +599,7 @@ export default function Client({ user }: { user: IUser }) {
                     <p>Min. 1 angka</p>
                   </div>
                   <div
-                    className={`flex gap-2 items-center text-sm ${
+                    className={`flex flex-nowrap gap-2 items-center text-sm ${
                       passwordSymbol
                         ? 'text-green-600 dark:text-green-400'
                         : 'text-red-600 dark:text-red-400'
@@ -626,7 +626,7 @@ export default function Client({ user }: { user: IUser }) {
                   required={true}
                 />
                 <div
-                  className={`flex gap-2 items-center mt-2 text-sm ${
+                  className={`flex flex-nowrap gap-2 items-center mt-2 text-sm ${
                     passwordAndConfirmPassword
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-red-600 dark:text-red-400'

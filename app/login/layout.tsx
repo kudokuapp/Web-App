@@ -25,7 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <main className="w-[100vw] h-[100vh] overflow-hidden relative inset-0 flex justify-center items-center">
-      <section className="z-10 py-8 sm:px-12 px-10 rounded-2xl shadow-xl bg-onPrimary dark:bg-onSurfaceVariant max-w-[500px] sm:mx-0 mx-2 sm:max-h-full max-h-[530px] overflow-auto">
+      <section className="z-10 py-8 sm:px-12 px-10 rounded-2xl shadow-xl bg-onPrimary dark:bg-onSurfaceVariant max-w-[500px] sm:mx-0 mx-2 sm:max-h-full max-h-[90vh] overflow-auto">
         <nav className="flex justify-between items-center mb-10 select-none relative">
           <Toaster
             position="top-right"
