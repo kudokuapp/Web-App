@@ -76,7 +76,6 @@
     "eslint-config-next": "12.1.4",
     "eslint-plugin-storybook": "^0.6.7",
     "husky": "^7.0.4",
-    "next-auth": "^4.3.1",
     "postcss": "^8.4.12",
     "prettier": "^2.6.2",
     "storybook-addon-css-user-preferences": "^0.0.3",
