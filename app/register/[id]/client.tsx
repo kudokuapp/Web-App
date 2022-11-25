@@ -20,7 +20,8 @@ interface IUser {
   _id: ObjectId;
   username?: string | undefined;
   password?: string | undefined;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   whatsapp: string;
   kudos: number;
@@ -85,7 +86,7 @@ export default function Client({ user }: { user: IUser }) {
   // eslint-disable-next-line no-unused-vars
   const [getUsername, { data: allUsername }] = useLazyQuery(queryGetUsername);
 
-  const { name, email, whatsapp, kudos } = user;
+  const { firstName, lastName, email, whatsapp, kudos } = user;
 
   useEffect(() => {
     if (username === '') {
@@ -307,7 +308,7 @@ export default function Client({ user }: { user: IUser }) {
           <div className="flex flex-col gap-4">
             <h1 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
               Selamat,{' '}
-              <span className="text-primary dark:text-primaryDark">{name}</span>
+              <span className="text-primary dark:text-primaryDark">{`${firstName} ${lastName}`}</span>
               ,{' '}
               <span className="text-secondary dark:text-secondaryDark">
                 Kudos No.{kudos}
