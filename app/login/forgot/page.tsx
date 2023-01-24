@@ -5,7 +5,7 @@ import TextInput from '$components/InputPlaceholder/TextInput';
 import LottieFC from '$components/Lottie';
 import Checked from '$components/Lottie/Checked';
 import { censorEmail, censorNumber } from '$utils/helper/censor';
-import { gql, useLazyQuery, useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
@@ -15,6 +15,11 @@ import { useRouter } from 'next/navigation';
 import { FormEventHandler, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import OtpInput from 'react-otp-input';
+import {
+  queryGetUser,
+  queryGetTokenFromOtp,
+  queryChangePassword,
+} from './query';
 
 interface IUser {
   _id: ObjectId;
@@ -48,30 +53,12 @@ export default function Page() {
     useState(false);
   const [allConditions, setAllConditions] = useState(false);
 
-  const queryGetUser = gql`
-    query Getuserbyusername($username: String!) {
-      getuserbyusername(username: $username) {
-        id
-        email
-        whatsapp
-      }
-    }
-  `;
-
   // eslint-disable-next-line no-unused-vars
   const [getUser, { data: userData }] = useLazyQuery(queryGetUser, {
     variables: {
       username,
     },
   });
-
-  const queryGetTokenFromOtp = gql`
-    mutation GetTokenFromOtp($otp: String!, $email: String) {
-      getTokenFromOtp(otp: $otp, email: $email) {
-        token
-      }
-    }
-  `;
 
   // eslint-disable-next-line no-unused-vars
   const [getTokenFromOtp, { data: getTokenFromOtpData }] = useMutation(
@@ -83,14 +70,6 @@ export default function Page() {
       },
     }
   );
-
-  const queryChangePassword = gql`
-    mutation ChangePassword($password: String!) {
-      changePassword(password: $password) {
-        token
-      }
-    }
-  `;
 
   // eslint-disable-next-line no-unused-vars
   const [changePassword, { data: changePasswordData }] = useMutation(

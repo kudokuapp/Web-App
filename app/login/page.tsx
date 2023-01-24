@@ -2,12 +2,13 @@
 import LoginButton from '$components/Button/LoginButton';
 import PasswordInput from '$components/InputPlaceholder/PasswordInput';
 import TextInput from '$components/InputPlaceholder/TextInput';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { getCookie, setCookie } from 'cookies-next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEventHandler, useState } from 'react';
 import toast from 'react-hot-toast';
+import { querySignin } from './query';
 
 export default function Page() {
   const router = useRouter();
@@ -17,17 +18,6 @@ export default function Page() {
   const token = getCookie('token');
 
   if (token) router.push('/kudoku/home');
-
-  const querySignin = gql`
-    mutation Login($username: String!, $password: String!) {
-      login(username: $username, password: $password) {
-        token
-        user {
-          id
-        }
-      }
-    }
-  `;
 
   const [
     userSignin,
