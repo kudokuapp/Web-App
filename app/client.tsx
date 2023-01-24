@@ -13,6 +13,7 @@ import { ApolloProvider } from '@apollo/client';
 import Image from 'next/image';
 import { useContext, useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 export function ApolloNextClient({ children }: { children: React.ReactNode }) {
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
@@ -54,7 +55,28 @@ export function InstallDiv({
     });
   }, []);
 
-  return <body>{hasInstall ? <>{children}</> : <RenderedComp />}</body>;
+  return (
+    <body>
+      {hasInstall ? (
+        <>{children}</>
+      ) : (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <RenderedComp />
+          <p className="text-xs text-onPrimaryContainer/50 dark:text-surfaceVariant/50 text-justify">
+            Mager install?{' '}
+            <button
+              className="text-primary dark:text-primaryDark"
+              onClick={() => {
+                setHasInstall(true);
+              }}
+            >
+              Lanjut via website!
+            </button>
+          </p>
+        </motion.div>
+      )}
+    </body>
+  );
 }
 
 const RenderedComp = () => {
