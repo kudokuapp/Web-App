@@ -2,7 +2,7 @@
 import LoginButton from '$components/Button/LoginButton';
 import PasswordInput from '$components/InputPlaceholder/PasswordInput';
 import TextInput from '$components/InputPlaceholder/TextInput';
-import { useMutation } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { getCookie, setCookie } from 'cookies-next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -25,7 +25,7 @@ export default function Page() {
       // eslint-disable-next-line no-unused-vars
       data: userSignupData,
     },
-  ] = useMutation(querySignin, {
+  ] = useLazyQuery(querySignin, {
     variables: {
       username: username,
       password: password,

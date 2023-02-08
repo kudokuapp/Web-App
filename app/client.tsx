@@ -10,10 +10,10 @@ import LogoDark from '$public/logo/secondaryDark.svg';
 import '$styles/page.css';
 import client from '$utils/graphql';
 import { ApolloProvider } from '@apollo/client';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useContext, useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 
 export function ApolloNextClient({ children }: { children: React.ReactNode }) {
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
@@ -29,7 +29,7 @@ export function InstallDiv({
 
   Change to false on prod!!
   */
-  const [hasInstall, setHasInstall] = useState(false);
+  const [hasInstall, setHasInstall] = useState(true);
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {

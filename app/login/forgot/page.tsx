@@ -16,9 +16,9 @@ import { FormEventHandler, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import OtpInput from 'react-otp-input';
 import {
-  queryGetUser,
-  queryGetTokenFromOtp,
   queryChangePassword,
+  queryGetTokenFromOtp,
+  queryGetUser,
 } from './query';
 
 interface IUser {
