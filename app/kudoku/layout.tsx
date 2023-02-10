@@ -1,6 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-head-element */
 import Logo from '$public/logo/secondary.svg';
+import EmptyData from '$public/splash_screens/emptyData.svg';
 import '$styles/globals.css';
 import { authLinkToken, httpLink } from '$utils/graphql';
 import { useLazyQuery } from '@apollo/client';
@@ -11,7 +12,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { queryAllCashAccount } from './query';
+import { queryAllCashAccount, queryProfile } from './query';
 
 export default function RootLayout({
   children,
@@ -20,27 +21,22 @@ export default function RootLayout({
 }) {
   const router = useRouter();
   const [isHidden, setIsHidden] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [username, setUserame] = useState({ username: '', kudosNo: '' });
+  const [accountItems, setAccountItems] = useState([{ href: '', title: '' }]);
   const boxRef = useRef(null);
 
   const token = getCookie('token') as string;
+  const userId = getCookie('user_id') as string;
 
   if (!token) router.push('/login');
 
   const [cashAccount, { client }] = useLazyQuery(queryAllCashAccount);
   client.setLink(authLinkToken(token).concat(httpLink));
 
-  const getAllCashAccount = () => {
-    return new Promise((resolve, reject) => {
-      cashAccount()
-        .then((res: any) => {
-          console.log(res);
-          resolve(res);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  };
+  const [profile] = useLazyQuery(queryProfile, {
+    variables: { userId: userId },
+  });
 
   const menuItems = [
     {
@@ -49,16 +45,43 @@ export default function RootLayout({
     },
   ];
 
-  const accountItems = [
-    {
-      href: '#',
-      title: 'Cash',
-    },
-    {
-      href: '#',
-      title: 'Klik BCA',
-    },
-  ];
+  const getAllCashAccount = () => {
+    return new Promise((resolve, reject) => {
+      cashAccount()
+        .then((res: any) => {
+          let length = res.data.getAllCashAccount.length;
+          let data = res.data.getAllCashAccount;
+          if (length > 0) {
+            for (let i = 0; i < length; i++) {
+              setAccountItems([{ href: '#', title: data[i].accountName }]);
+            }
+          } else if (length <= 0) {
+            setIsEmpty(true);
+          }
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
+  const getProfile = () => {
+    return new Promise((resolve, reject) => {
+      profile()
+        .then((res: any) => {
+          console.log(res);
+          setUserame({
+            username: res.data.getProfile.user.username,
+            kudosNo: res.data.getProfile.user.kudosNo,
+          });
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
 
   function logout() {
     removeCookies('token');
@@ -67,6 +90,7 @@ export default function RootLayout({
 
   useEffect(() => {
     getAllCashAccount();
+    getProfile();
     if (window.innerWidth <= 640) {
       setIsHidden(false);
     }
@@ -103,9 +127,13 @@ export default function RootLayout({
         >
           <div className="h-full px-3 py-4 overflow-y-auto bg-onPrimary flex flex-col justify-between">
             <div>
+              <div className="mb-4">
+                <h4>{username.username}</h4>
+                <h4>Kudos No.{username.kudosNo}</h4>
+              </div>
               <ul>
                 {menuItems.map(({ href, title }) => (
-                  <li className="m-2" key={title}>
+                  <li key={title}>
                     <Link href={href}>
                       <div
                         className={`flex p-2 bg-primary rounded text-white cursor-pointer`}
@@ -126,19 +154,25 @@ export default function RootLayout({
 
               <ul className="mt-8">
                 <h4 className="p-2">My Account</h4>
-                {accountItems.map(({ href, title }) => (
-                  <li className="m-2 hover:bg-background rounded" key={title}>
-                    <Link
-                      href={href}
-                      className="flex p-2 flex-row align-middle items-center gap-1"
-                    >
-                      <FontAwesomeIcon icon={faMoneyBill1Wave} size="sm" />
-                      <div className={`flex rounded text-black cursor-pointer`}>
-                        {title}
-                      </div>
-                    </Link>
-                  </li>
-                ))}
+                {accountItems.length > 0 ? (
+                  accountItems.map(({ href, title }) => (
+                    <li className="m-2 hover:bg-background rounded" key={title}>
+                      <Link
+                        href={href}
+                        className="flex p-2 flex-row align-middle items-center gap-1"
+                      >
+                        <FontAwesomeIcon icon={faMoneyBill1Wave} size="sm" />
+                        <div
+                          className={`flex rounded text-black cursor-pointer`}
+                        >
+                          {title}
+                        </div>
+                      </Link>
+                    </li>
+                  ))
+                ) : (
+                  <></>
+                )}
               </ul>
             </div>
             <div className="flex flex-col gap-4 items-start">
@@ -185,7 +219,31 @@ export default function RootLayout({
           </svg>
         </button>
       )}
-      <div className="sm:ml-64">{children}</div>
+      <div className="sm:ml-64">
+        {isEmpty ? (
+          <>
+            <div className="flex flex-col items-center align-middle justify-center h-screen">
+              <Image
+                height={400}
+                src={EmptyData}
+                quality={100}
+                alt="Kudoku Logo"
+                draggable={false}
+              />
+              <h4>
+                No tracked transactions available. It seems like you haven’t
+                connect or create financial account.
+              </h4>
+              <h4 className="my-4">
+                {' '}
+                Click <strong>+ add financial account</strong> to get started!
+              </h4>
+            </div>
+          </>
+        ) : (
+          <>{children}</>
+        )}
+      </div>
     </>
   );
 }

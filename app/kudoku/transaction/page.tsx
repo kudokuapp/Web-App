@@ -187,7 +187,7 @@ export default function Page() {
         <div className="flex flex-col w-5/12 gap-4">
           <header className="bg-onPrimary p-4 border-b-2 border-outline flex justify-between align-middle items-center">
             <h2 className="text-primary font-bold text-xl">
-              Transaction Detais
+              Transaction Details
             </h2>
             <button className="border-2 text-error py-1 border-error px-2 rounded-md">
               <FontAwesomeIcon icon={faTrash} size="sm" />

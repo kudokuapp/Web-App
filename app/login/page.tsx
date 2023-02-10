@@ -44,7 +44,7 @@ export default function Page() {
               resolve(res);
             } else {
               if (res.error.message === 'Invalid password') {
-                toast.error(res.error.message);
+                toast.error('Password salah bos!');
               }
               if (res.error.message === 'No such user found') {
                 toast.error('User gak nemu!');

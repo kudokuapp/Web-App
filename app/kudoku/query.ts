@@ -30,4 +30,26 @@ const queryAllCashAccount = gql`
   }
 `;
 
-export { queryGetUser, queryAllCashAccount };
+const queryProfile = gql`
+  query GetProfile($userId: String) {
+    getProfile(userId: $userId) {
+      id
+      user {
+        id
+        username
+        firstName
+        lastName
+        email
+        whatsapp
+        kudosNo
+        createdAt
+      }
+      userId
+      bio
+      profilePicture
+      birthday
+    }
+  }
+`;
+
+export { queryGetUser, queryAllCashAccount, queryProfile };
