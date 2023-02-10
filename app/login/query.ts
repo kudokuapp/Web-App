@@ -7,3 +7,18 @@ export const querySignin = gql`
     }
   }
 `;
+
+export const queryDataUser = gql`
+  query GetUser($username: String!) {
+    getUser(username: $username) {
+      id
+      username
+      firstName
+      lastName
+      email
+      whatsapp
+      kudosNo
+      createdAt
+    }
+  }
+`;

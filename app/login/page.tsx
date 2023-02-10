@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEventHandler, useState } from 'react';
 import toast from 'react-hot-toast';
-import { querySignin } from './query';
+import { queryDataUser, querySignin } from './query';
 
 export default function Page() {
   const router = useRouter();
@@ -17,18 +17,18 @@ export default function Page() {
 
   const token = getCookie('token');
 
-  if (token) router.push('/kudoku/home');
+  if (token) router.push('/kudoku/transaction');
 
-  const [
-    userSignin,
-    {
-      // eslint-disable-next-line no-unused-vars
-      data: userSignupData,
-    },
-  ] = useLazyQuery(querySignin, {
+  const [userSignin] = useLazyQuery(querySignin, {
     variables: {
       username: username,
       password: password,
+    },
+  });
+
+  const [dataUser] = useLazyQuery(queryDataUser, {
+    variables: {
+      username: username,
     },
   });
 
@@ -38,17 +38,24 @@ export default function Page() {
 
     const signInPromise = () => {
       return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            const {
-              data: { login },
-            } = await userSignin();
-            resolve(login);
-          } catch (e) {
-            console.error(e);
-            reject(e);
-          }
-        })();
+        userSignin()
+          .then((res: any) => {
+            if (res.data) {
+              resolve(res);
+            } else {
+              if (res.error.message === 'Invalid password') {
+                toast.error(res.error.message);
+              }
+              if (res.error.message === 'No such user found') {
+                toast.error('User gak nemu!');
+              }
+              reject(res);
+            }
+          })
+          .catch((error) => {
+            // console.log(error);
+            reject(error);
+          });
       });
     };
 
@@ -56,10 +63,10 @@ export default function Page() {
       .promise(signInPromise(), {
         loading: 'Loading...',
         success: 'Sukses login!',
-        error: 'Gak nemuin user',
+        error: 'Login gagal!',
       })
       .then((data: any) => {
-        setCookie('token', data.token, {
+        setCookie('token', data.data.login.token, {
           path: '/',
           sameSite: 'strict',
           secure: process.env.NODE_ENV === 'production',
@@ -67,14 +74,19 @@ export default function Page() {
           maxAge: 60 * 60 * 24 * 30,
         });
 
-        setCookie('user_id', data.user.id, {
-          path: '/',
-          sameSite: 'strict',
-          secure: process.env.NODE_ENV === 'production',
-          maxAge: 60 * 60 * 24 * 30,
-        });
-
-        router.push('/kudoku/home');
+        dataUser()
+          .then((res: any) => {
+            setCookie('user_id', res.data.getUser.id, {
+              path: '/',
+              sameSite: 'strict',
+              secure: process.env.NODE_ENV === 'production',
+              maxAge: 60 * 60 * 24 * 30,
+            });
+            router.push('/kudoku/transaction');
+          })
+          .catch((error) => {
+            toast.error('User gak nemu!');
+          });
       });
   };
 

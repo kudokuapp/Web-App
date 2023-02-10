@@ -1,24 +1,33 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
-const httpLink = createHttpLink({
+export const httpLink = createHttpLink({
   uri:
     process.env.NODE_ENV === 'production'
       ? 'https://api.kudoku.id'
       : 'http://localhost:8080/graphql',
 });
 
-const authLink = setContext((_, { headers }) => {
+const authLinkAuth = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      // authorization: `Bearer ${'12312312312312'}`,
     },
   };
 });
 
+export const authLinkToken = (token: string) =>
+  setContext((_, { headers }) => {
+    return {
+      headers: {
+        ...headers,
+        authorization: `Bearer ${token}`,
+      },
+    };
+  });
+
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: authLinkAuth.concat(httpLink),
   cache: new InMemoryCache(),
 });
 

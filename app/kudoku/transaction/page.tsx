@@ -34,7 +34,7 @@ export default function Page() {
         </header>
         <div className="overflow-auto gap-4 flex flex-col">
           <div className="flex flex-col py-4">
-            <div className="flex flex-row justify-between p-4 bg-primary text-white align-middle items-center">
+            <div className="flex flex-row justify-between p-4 bg-onPrimary text-black border-y-2 border-black align-middle items-center">
               <h2>YESTERDAY</h2>
               <div className="flex flex-row gap-4 items-center align-middle">
                 <h4>-Rp. 75.000</h4>
@@ -74,11 +74,17 @@ export default function Page() {
             )}
           </div>
           <div className="flex flex-col py-4">
-            <div className="flex justify-between p-4 bg-primary text-white">
-              <select name="" id="" className="bg-primary">
-                <option value="">THURSDAY, 1 APRIL</option>
-              </select>
-              <h4>-Rp. 75.000</h4>
+            <div className="flex flex-row justify-between p-4 bg-onPrimary text-black border-y-2 border-black align-middle items-center">
+              <h2>THURSDAY, 1 APRIL</h2>
+              <div className="flex flex-row gap-4 items-center align-middle">
+                <h4>-Rp. 75.000</h4>
+                <button
+                  className="text-sm h-5 w-4"
+                  onClick={() => setIsHidden((c) => !c)}
+                >
+                  <FontAwesomeIcon icon={faSquareCaretDown} size="lg" />
+                </button>
+              </div>
             </div>
             <table className="table-auto mt-4">
               <tbody>
@@ -122,11 +128,17 @@ export default function Page() {
             </div>
           </div>
           <div className="flex flex-col py-4">
-            <div className="flex justify-between p-4 bg-primary text-white">
-              <select name="" id="" className="bg-primary">
-                <option value="">THURSDAY, 1 APRIL</option>
-              </select>
-              <h4>-Rp. 75.000</h4>
+            <div className="flex flex-row justify-between p-4 bg-onPrimary text-black border-y-2 border-black align-middle items-center">
+              <h2>THURSDAY, 1 APRIL</h2>
+              <div className="flex flex-row gap-4 items-center align-middle">
+                <h4>-Rp. 75.000</h4>
+                <button
+                  className="text-sm h-5 w-4"
+                  onClick={() => setIsHidden((c) => !c)}
+                >
+                  <FontAwesomeIcon icon={faSquareCaretDown} size="lg" />
+                </button>
+              </div>
             </div>
             <table className="table-auto mt-4">
               <tbody>

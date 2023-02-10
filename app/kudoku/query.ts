@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const queryGetUser = gql`
+const queryGetUser = gql`
   query GetUser($username: String!) {
     getUser(username: $username) {
       id
@@ -14,3 +14,20 @@ export const queryGetUser = gql`
     }
   }
 `;
+
+const queryAllCashAccount = gql`
+  query GetAllCashAccount {
+    getAllCashAccount {
+      id
+      userId
+      createdAt
+      lastUpdate
+      accountName
+      displayPicture
+      balance
+      currency
+    }
+  }
+`;
+
+export { queryGetUser, queryAllCashAccount };

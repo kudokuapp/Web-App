@@ -1,11 +1,17 @@
 'use client';
 /* eslint-disable @next/next/no-head-element */
+import Logo from '$public/logo/secondary.svg';
 import '$styles/globals.css';
-import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
+import { authLinkToken, httpLink } from '$utils/graphql';
+import { useLazyQuery } from '@apollo/client';
+import { faMoneyBill1Wave, faSignOut } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getCookie, removeCookies } from 'cookies-next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { queryAllCashAccount } from './query';
 
 export default function RootLayout({
   children,
@@ -16,18 +22,51 @@ export default function RootLayout({
   const [isHidden, setIsHidden] = useState(true);
   const boxRef = useRef(null);
 
+  const token = getCookie('token') as string;
+
+  if (!token) router.push('/login');
+
+  const [cashAccount, { client }] = useLazyQuery(queryAllCashAccount);
+  client.setLink(authLinkToken(token).concat(httpLink));
+
+  const getAllCashAccount = () => {
+    return new Promise((resolve, reject) => {
+      cashAccount()
+        .then((res: any) => {
+          console.log(res);
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+
   const menuItems = [
     {
       href: '/',
       title: '+ Add financial account',
     },
+  ];
+
+  const accountItems = [
     {
-      href: '/about',
-      title: 'Refresh transaction',
+      href: '#',
+      title: 'Cash',
+    },
+    {
+      href: '#',
+      title: 'Klik BCA',
     },
   ];
 
+  function logout() {
+    removeCookies('token');
+    router.push('/login');
+  }
+
   useEffect(() => {
+    getAllCashAccount();
     if (window.innerWidth <= 640) {
       setIsHidden(false);
     }
@@ -62,26 +101,62 @@ export default function RootLayout({
           id="default-sidebar"
           className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform border-r-2 border-outline"
         >
-          <div className="h-full px-3 py-4 overflow-y-auto bg-onPrimary">
-            <ul>
-              {menuItems.map(({ href, title }) => (
-                <li className="m-2" key={title}>
-                  <Link href={href}>
-                    <div
-                      className={`flex p-2 bg-primary rounded text-white cursor-pointer`}
+          <div className="h-full px-3 py-4 overflow-y-auto bg-onPrimary flex flex-col justify-between">
+            <div>
+              <ul>
+                {menuItems.map(({ href, title }) => (
+                  <li className="m-2" key={title}>
+                    <Link href={href}>
+                      <div
+                        className={`flex p-2 bg-primary rounded text-white cursor-pointer`}
+                      >
+                        {title}
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              {/* <div className="bg-neutralBackground rounded-sm flex flex-row align-middle m-2 p-2 gap-2 items-center justify-between">
+                <FontAwesomeIcon icon={faLightbulb} size="sm" />
+                <p className="text-sm">
+                  Refresh transaction to update transactions from your connected
+                  accounts.
+                </p>
+              </div> */}
+
+              <ul className="mt-8">
+                <h4 className="p-2">My Account</h4>
+                {accountItems.map(({ href, title }) => (
+                  <li className="m-2 hover:bg-background rounded" key={title}>
+                    <Link
+                      href={href}
+                      className="flex p-2 flex-row align-middle items-center gap-1"
                     >
-                      {title}
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <div className="bg-neutralBackground rounded-sm flex flex-row align-middle m-2 p-2 gap-2 items-center justify-between">
-              <FontAwesomeIcon icon={faLightbulb} size="sm" />
-              <p className="text-sm">
-                Refresh transaction to update transactions from your connected
-                accounts.
-              </p>
+                      <FontAwesomeIcon icon={faMoneyBill1Wave} size="sm" />
+                      <div className={`flex rounded text-black cursor-pointer`}>
+                        {title}
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-col gap-4 items-start">
+              <button
+                onClick={() => logout()}
+                className="text-error bg-errorContainer p-2 w-full gap-x-2 flex items-center text-start"
+              >
+                <FontAwesomeIcon icon={faSignOut} size="sm" />
+                Log out
+              </button>
+              <Image
+                height={30}
+                src={Logo}
+                quality={100}
+                alt="Kudoku Logo"
+                draggable={false}
+              />
+              <p>Version 0.0.1</p>
             </div>
           </div>
         </aside>
