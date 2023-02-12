@@ -30,6 +30,40 @@ const queryAllCashAccount = gql`
   }
 `;
 
+const queryAllCashTransaction = gql`
+  query GetAllCashTransaction($cashAccountId: String!) {
+    getAllCashTransaction(cashAccountId: $cashAccountId) {
+      id
+      cashAccountId
+      dateTimestamp
+      currency
+      amount
+      merchantId
+      category {
+        name
+        amount
+      }
+      transactionType
+      internalTransferAccountId
+      direction
+      notes
+      location {
+        latitude
+        longitude
+      }
+      tags
+      isHideFromBudget
+      isHideFromInsight
+      merchant {
+        id
+        name
+        picture
+        url
+      }
+    }
+  }
+`;
+
 const queryProfile = gql`
   query GetProfile($userId: String) {
     getProfile(userId: $userId) {
@@ -52,4 +86,33 @@ const queryProfile = gql`
   }
 `;
 
-export { queryGetUser, queryAllCashAccount, queryProfile };
+const mutationAddCashAccount = gql`
+  mutation AddCashAccount(
+    $accountName: String!
+    $startingBalance: String!
+    $currency: String!
+  ) {
+    addCashAccount(
+      accountName: $accountName
+      startingBalance: $startingBalance
+      currency: $currency
+    ) {
+      id
+      userId
+      createdAt
+      lastUpdate
+      accountName
+      displayPicture
+      balance
+      currency
+    }
+  }
+`;
+
+export {
+  queryGetUser,
+  queryAllCashAccount,
+  queryProfile,
+  mutationAddCashAccount,
+  queryAllCashTransaction,
+};

@@ -1,5 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-head-element */
+import { ModalAddFinancialAccount } from '$components/ModalAddFinancialAccount/index';
+import DarkModeToggle from '$components/Switch/DarkModeToggle';
 import Logo from '$public/logo/secondary.svg';
 import EmptyData from '$public/splash_screens/emptyData.svg';
 import '$styles/globals.css';
@@ -10,8 +12,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getCookie, removeCookies } from 'cookies-next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { queryAllCashAccount, queryProfile } from './query';
 
 export default function RootLayout({
@@ -22,9 +24,12 @@ export default function RootLayout({
   const router = useRouter();
   const [isHidden, setIsHidden] = useState(true);
   const [isEmpty, setIsEmpty] = useState(false);
+  const [addAcount, setIsAddAccount] = useState(false);
   const [username, setUserame] = useState({ username: '', kudosNo: '' });
-  const [accountItems, setAccountItems] = useState([{ href: '', title: '' }]);
-  const boxRef = useRef(null);
+  const [accountItems, setAccountItems] = useState([
+    { href: '', title: '', id: '' },
+  ]);
+  const searchParamsCash = useSearchParams().get('cashAccount');
 
   const token = getCookie('token') as string;
   const userId = getCookie('user_id') as string;
@@ -40,7 +45,6 @@ export default function RootLayout({
 
   const menuItems = [
     {
-      href: '/',
       title: '+ Add financial account',
     },
   ];
@@ -50,10 +54,18 @@ export default function RootLayout({
       cashAccount()
         .then((res: any) => {
           let length = res.data.getAllCashAccount.length;
+          // console.log(length);
           let data = res.data.getAllCashAccount;
           if (length > 0) {
             for (let i = 0; i < length; i++) {
-              setAccountItems([{ href: '#', title: data[i].accountName }]);
+              setAccountItems((oldValue) => [
+                ...oldValue,
+                {
+                  href: `/kudoku/transaction`,
+                  title: data[i].accountName,
+                  id: data[i].id,
+                },
+              ]);
             }
           } else if (length <= 0) {
             setIsEmpty(true);
@@ -89,7 +101,7 @@ export default function RootLayout({
   }
 
   useEffect(() => {
-    getAllCashAccount();
+    console.log('i fire once');
     getProfile();
     if (window.innerWidth <= 640) {
       setIsHidden(false);
@@ -98,26 +110,11 @@ export default function RootLayout({
       setIsHidden(true);
     }
   }, []);
-  const boxOutsideClick = OutsideClick(boxRef);
-  function OutsideClick(ref: any) {
-    useEffect(() => {
-      function handleClickOutside(event: any) {
-        if (window.innerWidth <= 640) {
-          if (ref.current && !ref.current.contains(event.target)) {
-            setIsHidden(true);
-          } else {
-            setIsHidden(false);
-          }
-        }
-      }
 
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [ref]);
-    return isHidden;
-  }
+  useLayoutEffect(() => {
+    getAllCashAccount();
+  }, []);
+
   return (
     <>
       {isHidden ? (
@@ -125,25 +122,24 @@ export default function RootLayout({
           id="default-sidebar"
           className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform border-r-2 border-outline"
         >
-          <div className="h-full px-3 py-4 overflow-y-auto bg-onPrimary flex flex-col justify-between">
+          <div className="h-full px-3 py-4 overflow-y-auto bg-onPrimary dark:bg-onBackground dark:text-surfaceVariant flex flex-col justify-between">
             <div>
-              <div className="mb-4">
-                <h4>{username.username}</h4>
-                <h4>Kudos No.{username.kudosNo}</h4>
+              <div className="mb-4 flex flex-row justify-between items-center">
+                <div>
+                  <h4>{username.username}</h4>
+                  <h4>Kudos No.{username.kudosNo}</h4>
+                </div>
+
+                <DarkModeToggle />
               </div>
-              <ul>
-                {menuItems.map(({ href, title }) => (
-                  <li key={title}>
-                    <Link href={href}>
-                      <div
-                        className={`flex p-2 bg-primary rounded text-white cursor-pointer`}
-                      >
-                        {title}
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              {menuItems.map(({ title }) => (
+                <button
+                  onClick={() => setIsAddAccount((c) => !c)}
+                  className={`flex p-2 w-full bg-primary dark:bg-primaryDark rounded text-onPrimary dark:text-onPrimaryDark cursor-pointer`}
+                >
+                  {title}
+                </button>
+              ))}
               {/* <div className="bg-neutralBackground rounded-sm flex flex-row align-middle m-2 p-2 gap-2 items-center justify-between">
                 <FontAwesomeIcon icon={faLightbulb} size="sm" />
                 <p className="text-sm">
@@ -153,32 +149,49 @@ export default function RootLayout({
               </div> */}
 
               <ul className="mt-8">
-                <h4 className="p-2">My Account</h4>
-                {accountItems.length > 0 ? (
-                  accountItems.map(({ href, title }) => (
-                    <li className="m-2 hover:bg-background rounded" key={title}>
-                      <Link
-                        href={href}
-                        className="flex p-2 flex-row align-middle items-center gap-1"
+                <h4>My Account</h4>
+                {accountItems
+                  .slice(0, (accountItems.length + 1) / 2)
+                  .map(({ href, title, id }) =>
+                    title !== '' ? (
+                      <li
+                        className={
+                          searchParamsCash ===
+                          title.replace(/\s+/g, '-').toLowerCase()
+                            ? 'active my-2 bg-background dark:text-black rounded'
+                            : 'my-2 hover:bg-background rounded text-black dark:text-surfaceVariant hover:dark:text-black'
+                        }
+                        key={title}
                       >
-                        <FontAwesomeIcon icon={faMoneyBill1Wave} size="sm" />
-                        <div
-                          className={`flex rounded text-black cursor-pointer`}
+                        <Link
+                          shallow={true}
+                          href={{
+                            pathname: href,
+                            query: {
+                              cashAccount: title
+                                .replace(/\s+/g, '-')
+                                .toLowerCase(),
+                              id: id,
+                            },
+                          }}
+                          className="flex p-2 flex-row align-middle items-center gap-1"
                         >
-                          {title}
-                        </div>
-                      </Link>
-                    </li>
-                  ))
-                ) : (
-                  <></>
-                )}
+                          <FontAwesomeIcon icon={faMoneyBill1Wave} size="sm" />
+                          <div className={`flex rounded cursor-pointer`}>
+                            {title}
+                          </div>
+                        </Link>
+                      </li>
+                    ) : (
+                      <></>
+                    )
+                  )}
               </ul>
             </div>
             <div className="flex flex-col gap-4 items-start">
               <button
                 onClick={() => logout()}
-                className="text-error bg-errorContainer p-2 w-full gap-x-2 flex items-center text-start"
+                className="text-error dark:text-errorDark bg-errorContainer dark:bg-errorContainerDark p-2 w-full gap-x-2 flex items-center text-start"
               >
                 <FontAwesomeIcon icon={faSignOut} size="sm" />
                 Log out
@@ -222,7 +235,7 @@ export default function RootLayout({
       <div className="sm:ml-64">
         {isEmpty ? (
           <>
-            <div className="flex flex-col items-center align-middle justify-center h-screen">
+            <div className="flex flex-col items-center bg-onPrimary text-onSurfaceVariant dark:text-surfaceVariant dark:bg-onSurfaceVariant align-middle justify-center h-screen">
               <Image
                 height={400}
                 src={EmptyData}
@@ -244,6 +257,11 @@ export default function RootLayout({
           <>{children}</>
         )}
       </div>
+      {addAcount ? (
+        <ModalAddFinancialAccount setIsAddAccount={setIsAddAccount} />
+      ) : (
+        <></>
+      )}
     </>
   );
 }
