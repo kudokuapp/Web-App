@@ -1,19 +1,21 @@
 'use client';
 import { authLinkToken, httpLink } from '$utils/graphql';
 import { useLazyQuery } from '@apollo/client';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getCookie } from 'cookies-next';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { queryAllCashTransaction } from '../query';
-import TransactionDetails from './transaction-detail';
+import { queryAllDebitTransaction } from '../../query';
+import TransactionDetailsDebit from './transaction-detail';
 
 type MyObject = {
   id: string;
-  cashAccountId: string;
+  debitAccountId: string;
   dateTimestamp: string;
   currency: string;
   amount: string;
-  merchantId: string;
+  description: string;
   category: [{ name: string; amount: string }];
   transactionType: string;
   internalTransferAccountId: any;
@@ -26,29 +28,26 @@ type MyObject = {
   merchant: { id: string; name: string; picture: string; url: string };
 };
 
-export default function TransactionList({
-  setIsAddTransaction,
-  setIsTransactionEmpty,
-  balanceCash,
+export default function TransactionListDebit({
+  accountDebitItems,
 }: {
-  setIsAddTransaction: any;
-  setIsTransactionEmpty: any;
-  balanceCash: string;
+  accountDebitItems: any;
 }) {
   const token = getCookie('token') as string;
   const userId = getCookie('user_id') as string;
   const searchParamsName = useSearchParams().get('cashAccount');
   const searchParamsID = useSearchParams().get('id');
   const [isSingleData, setIsSingleData] = useState(false);
+  const [isTransactionEmpty, setIsTransactionEmpty] = useState(false);
   const [transaction, setTransaction] = useState<any[]>([]);
   const [transactionGroup, setTransactionGroup] = useState<any[]>([]);
   const [transactionDetail, setTransactionDetail] = useState<MyObject>({
     id: '',
-    cashAccountId: '',
+    debitAccountId: '',
     dateTimestamp: '',
     currency: '',
     amount: '',
-    merchantId: '',
+    description: '',
     category: [{ name: '', amount: '' }],
     transactionType: '',
     internalTransferAccountId: null,
@@ -61,6 +60,7 @@ export default function TransactionList({
     merchant: { id: '', name: '', picture: '', url: '' },
   });
   const [isHidden, setIsHidden] = useState(true);
+  const [hideBalance, setIsHiddeBalance] = useState(true);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -77,19 +77,19 @@ export default function TransactionList({
       currency: 'IDR',
     }).format(number);
   };
-  const [allCashTransaction, { client }] = useLazyQuery(
-    queryAllCashTransaction,
-    { variables: { cashAccountId: searchParamsID } }
+  const [allDebitTransaction, { client }] = useLazyQuery(
+    queryAllDebitTransaction,
+    { variables: { debitAccountId: searchParamsID } }
   );
   client.setLink(authLinkToken(token).concat(httpLink));
-  const getAllCashTransaction = () => {
+  const getAllDebitTransaction = () => {
     setTransaction([]);
     setTransactionGroup([]);
     return new Promise((resolve, reject) => {
-      allCashTransaction()
+      allDebitTransaction()
         .then((res: any) => {
-          let length = res.data.getAllCashTransaction.length;
-          let data = res.data.getAllCashTransaction;
+          let length = res.data.getAllDebitTransaction.length;
+          let data = res.data.getAllDebitTransaction;
           console.log(data);
           let result = [];
           if (length < 2 && length > 0) {
@@ -99,18 +99,15 @@ export default function TransactionList({
             setTransactionDetail({
               ...transactionDetail,
               id: data[0].id,
-              cashAccountId: data[0].cashAccountId,
+              debitAccountId: data[0].debitAccountId,
               dateTimestamp: data[0].dateTimestamp,
               currency: data[0].currency,
               amount: data[0].amount,
-              merchantId: data[0].merchantId,
+              description: data[0].description,
               category: [
                 {
-                  name:
-                    data[0].category !== null
-                      ? data[0].category[0].name
-                      : data[0].transactionType,
-                  amount: data[0].amount,
+                  name: data[0].description,
+                  amount: data[0].category[0].amount,
                 },
               ],
               transactionType: data[0].transactionType,
@@ -156,18 +153,15 @@ export default function TransactionList({
             setTransactionDetail({
               ...transactionDetail,
               id: data[0].id,
-              cashAccountId: data[0].cashAccountId,
+              debitAccountId: data[0].debitAccountId,
               dateTimestamp: data[0].dateTimestamp,
               currency: data[0].currency,
               amount: data[0].amount,
-              merchantId: data[0].merchantId,
+              description: data[0].description,
               category: [
                 {
-                  name:
-                    data[0].category !== null
-                      ? data[0].category[0].name
-                      : data[0].transactionType,
-                  amount: data[0].amount,
+                  name: data[0].description,
+                  amount: data[0].category[0].amount,
                 },
               ],
               transactionType: data[0].transactionType,
@@ -203,14 +197,14 @@ export default function TransactionList({
     'flex flex-col w-7/12 gap-4 border-r-2 border-outline'
   );
   useEffect(() => {
-    getAllCashTransaction();
+    getAllDebitTransaction();
     if (window.innerWidth <= 640) {
       setIsClassName('flex flex-col w-screen gap-4 border-r-2 border-outline');
     }
     if (window.innerWidth > 640) {
       setIsClassName('flex flex-col w-7/12 gap-4 border-r-2 border-outline');
     }
-  }, [searchParamsName]);
+  }, [searchParamsID]);
   return (
     <>
       {isSingleData ? (
@@ -229,18 +223,38 @@ export default function TransactionList({
                   .join(' ')}{' '}
                 Transactions
               </h2>
-              <button
-                onClick={() => setIsAddTransaction((c: any) => !c)}
-                className="border-2 border-outline py-1 px-2 rounded-md"
-              >
-                + Add Transaction
-              </button>
             </header>
             <div className="overflow-auto gap-4 flex flex-col">
               <h4 className="text-center">Current Balance :</h4>
-              <h3 className="text-xl text-center text-secondary dark:text-secondaryDark">
-                {rupiah(balanceCash)}
-              </h3>
+              {hideBalance ? (
+                <>
+                  <div className="flex flex-row items-center gap-4 w-full self-center justify-center">
+                    <h3 className="text-xl font-bold text-center text-secondary dark:text-secondaryDark">
+                      Rp *********
+                    </h3>
+                    <FontAwesomeIcon
+                      icon={faEyeSlash}
+                      className="cursor-pointer"
+                      size="sm"
+                      onClick={() => setIsHiddeBalance(false)}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex flex-row items-center gap-4 w-full self-center justify-center">
+                    <h3 className="text-xl font-bold text-center text-secondary dark:text-secondaryDark">
+                      {rupiah(accountDebitItems)}
+                    </h3>
+                    <FontAwesomeIcon
+                      icon={faEye}
+                      className="cursor-pointer"
+                      size="sm"
+                      onClick={() => setIsHiddeBalance(true)}
+                    />
+                  </div>
+                </>
+              )}
               {transactionGroup.map((item: any) => (
                 <div className="flex flex-col py-4">
                   <div className="flex flex-row justify-between p-4 bg-onPrimary dark:bg-onBackground text-black dark:text-surfaceVariant border-y-2 border-black dark:border-surfaceVariant align-middle items-center">
@@ -249,26 +263,25 @@ export default function TransactionList({
                         new Date(item.dateTimestamp).toISOString().split('T')[0]
                       )}
                     </h2>
-                    <div className="flex flex-row gap-4 items-center align-middle">
-                      {/* <h4>-{rupiah(item.amount)}</h4> */}
-                      {/* <button
+                    {/* <div className="flex flex-row gap-4 items-center align-middle">
+                      <button
                         className="text-sm h-5 w-4"
                         onClick={() => setIsHidden((c) => !c)}
                       >
                         <FontAwesomeIcon icon={faSquareCaretDown} size="lg" />
-                      </button> */}
-                    </div>
+                      </button>
+                    </div> */}
                   </div>
                   <table className="table-auto mt-4">
                     <tbody>
                       {item.category.map((categories: any) => (
                         <tr
-                          className="flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-background cursor-pointer hover:text-onSurfaceVariant"
+                          className="flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-background text-sm cursor-pointer hover:text-onSurfaceVariant"
                           onClick={() => setTransactionDetail(item)}
                         >
-                          <td>{categories.name}</td>
+                          <td className="w-1/2">{item.description}</td>
                           <td>{searchParamsName}</td>
-                          <td>{categories.name}</td>
+                          <td>{item.transactionType}</td>
                           <td
                             className={
                               item.direction === 'IN'
@@ -282,37 +295,11 @@ export default function TransactionList({
                       ))}
                     </tbody>
                   </table>
-                  {/* <div className="flex flex-col w-2/3 items-center self-center border-2 rounded-md border-primary mt-4 p-4">
-                    <h4>Overview</h4>
-                    <h4 className="text-black dark:text-surfaceVariant font-bold">
-                      Maret 2022
-                    </h4>
-                    <div className="flex justify-between flex-row w-full p-4">
-                      <div className="flex flex-col items-center">
-                        <h3 className="text-secondary dark:text-secondaryDark font-bold text-xl">
-                          Rp.20.000.000
-                        </h3>
-                        <h3 className="text-outline font-bold">Total Income</h3>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <h3 className="text-black dark:text-surfaceVariant font-bold text-xl">
-                          Rp.
-                          {transaction
-                            .filter((item: any) => item.direction === 'OUT')
-                            .reduce(
-                              (acc: any, o: any) => acc + parseInt(o.amount),
-                              0
-                            )}
-                        </h3>
-                        <h3 className="text-outline font-bold">Total Spend</h3>
-                      </div>
-                    </div>
-                  </div> */}
                 </div>
               ))}
             </div>
           </div>
-          <TransactionDetails transactionDetail={transactionDetail} />
+          <TransactionDetailsDebit transactionDetail={transactionDetail} />
         </>
       ) : (
         <>
@@ -330,39 +317,50 @@ export default function TransactionList({
                   .join(' ')}{' '}
                 Transactions
               </h2>
-              <button
-                onClick={() => setIsAddTransaction((c: any) => !c)}
-                className="border-2 border-outline py-1 px-2 rounded-md"
-              >
-                + Add Transaction
-              </button>
             </header>
             <div className="overflow-auto gap-4 flex flex-col">
               <h4 className="text-center">Current Balance :</h4>
-              <h3 className="text-xl text-center text-secondary dark:text-secondaryDark">
-                {rupiah(balanceCash)}
-              </h3>
+              {hideBalance ? (
+                <>
+                  <div className="flex flex-row items-center gap-4 w-full self-center justify-center">
+                    <h3 className="text-xl font-bold text-center text-secondary dark:text-secondaryDark">
+                      Rp *********
+                    </h3>
+                    <FontAwesomeIcon
+                      icon={faEyeSlash}
+                      className="cursor-pointer"
+                      size="sm"
+                      onClick={() => setIsHiddeBalance(false)}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex flex-row items-center gap-4 w-full self-center justify-center">
+                    <h3 className="text-xl font-bold text-center text-secondary dark:text-secondaryDark">
+                      {rupiah(accountDebitItems)}
+                    </h3>
+                    <FontAwesomeIcon
+                      icon={faEye}
+                      className="cursor-pointer"
+                      size="sm"
+                      onClick={() => setIsHiddeBalance(true)}
+                    />
+                  </div>
+                </>
+              )}
               {transactionGroup.map((item: any) => (
                 <div className="flex flex-col py-4">
                   <div className="flex flex-row justify-between p-4 bg-onPrimary dark:bg-onBackground text-black dark:text-surfaceVariant border-y-2 border-black dark:border-surfaceVariant align-middle items-center">
                     <h2>{item.date}</h2>
-                    <div className="flex flex-row gap-4 items-center align-middle">
-                      {/* <h4>
-                        -
-                        {transaction
-                          .filter((item: any) => item.direction === 'OUT')
-                          .reduce(
-                            (acc: any, o: any) => acc + parseInt(o.amount),
-                            0
-                          )}
-                      </h4> */}
-                      {/* <button
+                    {/* <div className="flex flex-row gap-4 items-center align-middle">
+                      <button
                         className="text-sm h-5 w-4"
                         onClick={() => setIsHidden((c) => !c)}
                       >
                         <FontAwesomeIcon icon={faSquareCaretDown} size="lg" />
-                      </button> */}
-                    </div>
+                      </button>
+                    </div> */}
                   </div>
                   <table className="table-auto mt-4">
                     <tbody>
@@ -377,16 +375,16 @@ export default function TransactionList({
                         )
                         .map((value: any) => (
                           <tr
-                            className="flex justify-between w-full gap-x-4 px-4 py-1 cursor-pointer hover:bg-background hover:text-onSurfaceVariant"
+                            className="flex justify-between w-full gap-x-4 px-4 py-1 cursor-pointer hover:bg-background text-sm hover:text-onSurfaceVariant"
                             key={value}
                             onClick={() => setTransactionDetail(value)}
                           >
                             {value.category !== null ? (
                               value.category.map((categories: any) => (
                                 <>
-                                  <td>{categories.name}</td>
+                                  <td className="w-1/2">{value.description}</td>
                                   <td>{searchParamsName}</td>
-                                  <td>{categories.name}</td>
+                                  <td>{value.transactionType}</td>
                                   <td
                                     className={
                                       value.direction === 'IN'
@@ -401,7 +399,7 @@ export default function TransactionList({
                             ) : (
                               <>
                                 <>
-                                  <td>{value.transactionType}</td>
+                                  <td className="w-1/2">{value.description}</td>
                                   <td>{searchParamsName}</td>
                                   <td>{value.transactionType}</td>
                                   <td
@@ -420,37 +418,11 @@ export default function TransactionList({
                         ))}
                     </tbody>
                   </table>
-                  {/* <div className="flex flex-col w-2/3 items-center self-center border-2 rounded-md border-primary mt-4 p-4">
-                    <h4>Overview</h4>
-                    <h4 className="text-black dark:text-surfaceVariant font-bold">
-                      Maret 2022
-                    </h4>
-                    <div className="flex justify-between flex-row w-full p-4">
-                      <div className="flex flex-col items-center">
-                        <h3 className="text-secondary dark:text-secondaryDark font-bold text-xl">
-                          Rp.20.000.000
-                        </h3>
-                        <h3 className="text-outline font-bold">Total Income</h3>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <h3 className="text-black dark:text-surfaceVariant font-bold text-xl">
-                          Rp.
-                          {transaction
-                            .filter((item: any) => item.direction === 'OUT')
-                            .reduce(
-                              (acc: any, o: any) => acc + parseInt(o.amount),
-                              0
-                            )}
-                        </h3>
-                        <h3 className="text-outline font-bold">Total Spend</h3>
-                      </div>
-                    </div>
-                  </div> */}
                 </div>
               ))}
             </div>
           </div>
-          <TransactionDetails transactionDetail={transactionDetail} />
+          <TransactionDetailsDebit transactionDetail={transactionDetail} />
         </>
       )}
     </>

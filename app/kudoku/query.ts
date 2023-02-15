@@ -86,9 +86,67 @@ const queryProfile = gql`
   }
 `;
 
+const queryAllDebitAccount = gql`
+  query GetAllDebitAccount {
+    getAllDebitAccount {
+      id
+      userId
+      institutionId
+      accountNumber
+      createdAt
+      lastUpdate
+      balance
+      currency
+    }
+  }
+`;
+
+const queryAllDebitTransaction = gql`
+  query GetAllDebitTransaction($debitAccountId: String!) {
+    getAllDebitTransaction(debitAccountId: $debitAccountId) {
+      id
+      debitAccountId
+      dateTimestamp
+      referenceId
+      institutionId
+      currency
+      amount
+      onlineTransaction
+      isReviewed
+      merchant {
+        id
+        name
+        picture
+        url
+      }
+      merchantId
+      category {
+        name
+        amount
+      }
+      transactionType
+      description
+      internalTransferAccountId
+      direction
+      isSubscription
+      notes
+      location {
+        latitude
+        longitude
+      }
+      tags
+      isHideFromBudget
+      isHideFromInsight
+      transactionMethod
+    }
+  }
+`;
+
 export {
   queryGetUser,
   queryAllCashAccount,
   queryProfile,
   queryAllCashTransaction,
+  queryAllDebitAccount,
+  queryAllDebitTransaction,
 };

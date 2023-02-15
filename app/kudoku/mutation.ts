@@ -82,9 +82,61 @@ const mutationDeleteCashAccount = gql`
   }
 `;
 
+const mutationReconcile = gql`
+  mutation ReconcileCashBalance($newBalance: String!, $cashAccountId: String!) {
+    reconcileCashBalance(
+      newBalance: $newBalance
+      cashAccountId: $cashAccountId
+    ) {
+      id
+      userId
+      createdAt
+      lastUpdate
+      accountName
+      displayPicture
+      balance
+      currency
+    }
+  }
+`;
+
+const mutationConnectBCA = gql`
+  mutation ConnectBcaViaBrick(
+    $brickInstitutionId: Int!
+    $username: String!
+    $password: String!
+  ) {
+    connectBcaViaBrick(
+      brickInstitutionId: $brickInstitutionId
+      username: $username
+      password: $password
+    ) {
+      id
+      userId
+      institutionId
+      accountNumber
+      createdAt
+      lastUpdate
+      balance
+      currency
+    }
+  }
+`;
+
+const mutationDisconnectDebit = gql`
+  mutation DeleteDebitAccount($debitAccountId: String!) {
+    deleteDebitAccount(debitAccountId: $debitAccountId) {
+      response
+    }
+  }
+`;
+
 export {
   mutationAddCashAccount,
   mutationAddCashTransaction,
   mutationDeleteCashTransaction,
   mutationDeleteCashAccount,
+  mutationReconcile,
+  mutationConnectBCA,
+  mutationDisconnectDebit,
 };

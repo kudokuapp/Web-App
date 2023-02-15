@@ -1,19 +1,17 @@
 'use client';
-import { useMutation } from '@apollo/client';
-import { faCalendar, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-import { mutationDeleteCashTransaction } from '../mutation';
+import { Toaster } from 'react-hot-toast';
 
 type MyObject = {
   id: string;
-  cashAccountId: string;
+  debitAccountId: string;
   dateTimestamp: string;
   currency: string;
   amount: string;
-  merchantId: string;
+  description: string;
   category: [{ name: string; amount: string }];
   transactionType: string;
   internalTransferAccountId: any;
@@ -26,16 +24,16 @@ type MyObject = {
   merchant: { id: string; name: string; picture: string; url: string };
 };
 
-export default function TransactionDetails({
+export default function TransactionDetailsDebit({
   transactionDetail,
 }: {
   transactionDetail: {
     id: string;
-    cashAccountId: string;
+    debitAccountId: string;
     dateTimestamp: string;
     currency: string;
     amount: string;
-    merchantId: string;
+    description: string;
     category: [{ name: string; amount: string }];
     transactionType: string;
     internalTransferAccountId: any;
@@ -50,7 +48,7 @@ export default function TransactionDetails({
 }) {
   const [isHiddenTransaction, setIsHiddenTransaction] = useState(true);
   const [isDeleteTransaction, setIsDeleteTransaction] = useState(false);
-  const searchParamsName = useSearchParams().get('cashAccount');
+  const searchParamsName = useSearchParams().get('debitAccount');
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -67,11 +65,6 @@ export default function TransactionDetails({
       currency: 'IDR',
     }).format(number);
   };
-  const [deleteCashTransaction] = useMutation(mutationDeleteCashTransaction, {
-    variables: {
-      transactionId: transactionDetail.id,
-    },
-  });
   useEffect(() => {
     if (window.innerWidth <= 640) {
       setIsHiddenTransaction(false);
@@ -100,34 +93,6 @@ export default function TransactionDetails({
             <h2 className="text-primary dark:text-primaryDark font-bold text-xl">
               Transaction Details
             </h2>
-            <button
-              onClick={() => {
-                setIsDeleteTransaction(true);
-                const deleteTransactionCash = () => {
-                  return new Promise((resolve, reject) => {
-                    deleteCashTransaction()
-                      .then((res: any) => {
-                        resolve(res);
-                      })
-                      .catch((error) => {
-                        reject(error);
-                      });
-                  });
-                };
-                toast
-                  .promise(deleteCashTransaction(), {
-                    loading: 'Loading...',
-                    success: 'Transaksi berhasil dihapus!',
-                    error: 'Transaksi gagal dihapus!',
-                  })
-                  .then(() => {
-                    window.location.reload();
-                  });
-              }}
-              className="border-2 text-error py-1 border-error px-2 rounded-md"
-            >
-              <FontAwesomeIcon icon={faTrash} size="sm" />
-            </button>
           </header>
           <div className="flex flex-row justify-start gap-8 p-4 mt-2">
             <div className="flex flex-col justify-start">
@@ -146,21 +111,13 @@ export default function TransactionDetails({
             </h4>
 
             <div className="flex flex-row justify-between">
-              <h4>
-                {transactionDetail.category
-                  ? transactionDetail.category[0].name
-                  : transactionDetail.transactionType}
-              </h4>
-              <h4>{rupiah(transactionDetail.amount)}</h4>
+              <h4 className="text-xs w-3/4">{transactionDetail.description}</h4>
+              <h4 className="text-xs">{rupiah(transactionDetail.amount)}</h4>
             </div>
           </div>
           <div className="flex flex-col justify-between gap-2 p-4 mt-2">
-            <h4 className="text-outline text-sm">Category</h4>
-            <p>
-              {transactionDetail.category
-                ? transactionDetail.category[0].name
-                : transactionDetail.transactionType}
-            </p>
+            <h4 className="text-outline text-sm">Direction</h4>
+            <p>{transactionDetail.direction}</p>
           </div>
           <hr className="p-2 mx-4 text-outline" />
           <div className="flex flex-col justify-between gap-2 p-4 mt-2">
@@ -171,7 +128,7 @@ export default function TransactionDetails({
               cols={30}
               rows={10}
               disabled
-              value={transactionDetail.tags}
+              value={transactionDetail.notes}
               className="bg-neutralBackground dark:bg-neutral rounded-sm p-2"
             />
           </div>

@@ -117,12 +117,12 @@ export default function Page() {
             }}
             minLength={8}
           />
-          <Link
+          {/* <Link
             href="/login/forgot"
             className="text-primary dark:text-primaryDark w-fit"
           >
             Lupa password?
-          </Link>
+          </Link> */}
         </div>
         <div className="w-full h-fit flex items-center justify-end mt-3">
           <LoginButton disabled={!username || !password}>Login</LoginButton>

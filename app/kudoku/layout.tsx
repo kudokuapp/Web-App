@@ -1,6 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-head-element */
 import { ModalAddFinancialAccount } from '$components/ModalAddFinancialAccount/index';
+import { ModalReconcile } from '$components/ModalReconcile';
 import DarkModeToggle from '$components/Switch/DarkModeToggle';
 import Logo from '$public/logo/secondary.svg';
 import EmptyData from '$public/splash_screens/emptyData.svg';
@@ -23,6 +24,7 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { mutationDeleteCashAccount } from './mutation';
 import { queryAllCashAccount, queryProfile } from './query';
+import GetAllDebitAccount from './transaction/debit/page';
 
 export default function RootLayout({
   children,
@@ -31,13 +33,18 @@ export default function RootLayout({
 }) {
   const router = useRouter();
   const [isHidden, setIsHidden] = useState(true);
+  const [isHideBtn, setIsHideBtn] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
   const [addAcount, setIsAddAccount] = useState(false);
+  const [reconcile, setIsReconcile] = useState(false);
   const [isMoreActive, setIsMoreActive] = useState(false);
   const [isDeleteAccount, setIsDeleteAccount] = useState(false);
   const [accountId, setAccountId] = useState('');
   const [username, setUserame] = useState({ username: '', kudosNo: '' });
   const [accountItems, setAccountItems] = useState([
+    { href: '', title: '', id: '' },
+  ]);
+  const [accountDebitItems, setAccountDebitItems] = useState([
     { href: '', title: '', id: '' },
   ]);
   const searchParamsCash = useSearchParams().get('cashAccount');
@@ -116,13 +123,14 @@ export default function RootLayout({
   }
 
   useEffect(() => {
-    console.log('i fire once');
     getProfile();
     if (window.innerWidth <= 640) {
       setIsHidden(false);
+      setIsHideBtn(false);
     }
     if (window.innerWidth > 640) {
       setIsHidden(true);
+      setIsHideBtn(false);
     }
   }, []);
 
@@ -139,6 +147,16 @@ export default function RootLayout({
         >
           <div className="h-full px-3 py-4 overflow-y-auto bg-onPrimary dark:bg-onBackground dark:text-surfaceVariant flex flex-col justify-between">
             <div>
+              {isHideBtn ? (
+                <div
+                  className="self-end flex w-full justify-end"
+                  onClick={() => setIsHidden((c) => !c)}
+                >
+                  <button>X</button>
+                </div>
+              ) : (
+                <></>
+              )}
               <div className="mb-4 flex flex-row justify-between items-center">
                 <div>
                   <h4>{username.username}</h4>
@@ -226,7 +244,10 @@ export default function RootLayout({
                               </button>
                               {isMoreActive ? (
                                 <div className="absolute bg-onPrimary p-4 flex flex-col h-fit right-0 top-full items-end rounded z-10 gap-2">
-                                  <button className="text-sm gap-2 flex items-center">
+                                  <button
+                                    onClick={() => setIsReconcile((c) => !c)}
+                                    className="text-sm gap-2 flex items-center"
+                                  >
                                     <FontAwesomeIcon
                                       className=""
                                       icon={faExclamation}
@@ -235,8 +256,8 @@ export default function RootLayout({
                                     Reconcile balance
                                   </button>
                                   <button
-                                    onClick={() => {
-                                      setAccountId(id);
+                                    onClick={async () => {
+                                      await setAccountId(id);
                                       setIsDeleteAccount(true);
                                       const deleteTransactionCash = () => {
                                         return new Promise(
@@ -284,6 +305,7 @@ export default function RootLayout({
                       <></>
                     )
                   )}
+                <GetAllDebitAccount />
               </ul>
             </div>
             <div className="flex flex-col gap-4 items-start">
@@ -360,6 +382,7 @@ export default function RootLayout({
       ) : (
         <></>
       )}
+      {reconcile ? <ModalReconcile setIsReconcile={setIsReconcile} /> : <></>}
     </>
   );
 }

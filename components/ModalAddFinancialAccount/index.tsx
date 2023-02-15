@@ -1,3 +1,4 @@
+import PasswordInput from '$components/InputPlaceholder/PasswordInput';
 import TextInput from '$components/InputPlaceholder/TextInput';
 import Logo from '$public/logo/primary.svg';
 import { useMutation } from '@apollo/client';
@@ -7,7 +8,10 @@ import {
   faMoneyBill1Wave,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { mutationAddCashAccount } from 'app/kudoku/mutation';
+import {
+  mutationAddCashAccount,
+  mutationConnectBCA,
+} from 'app/kudoku/mutation';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FormEventHandler, useState } from 'react';
@@ -21,6 +25,8 @@ export const ModalAddFinancialAccount = ({
 }) => {
   const [id, setId] = useState(0);
   const [accountName, setAccountName] = useState('');
+  const [username, setUserame] = useState('');
+  const [password, setPassword] = useState('');
   const [balance, setBalance] = useState('');
   const router = useRouter();
   const menuItems = [
@@ -39,7 +45,7 @@ export const ModalAddFinancialAccount = ({
     {
       title: 'GOPAY',
       description: 'PT. Gojek Indonesia',
-      action: 'Connect',
+      action: 'Soon',
       id: 3,
     },
   ];
@@ -49,6 +55,14 @@ export const ModalAddFinancialAccount = ({
       accountName: accountName,
       startingBalance: balance,
       currency: 'IDR',
+    },
+  });
+
+  const [connectBCA] = useMutation(mutationConnectBCA, {
+    variables: {
+      brickInstitutionId: 2,
+      username: username,
+      password: password,
     },
   });
 
@@ -75,6 +89,29 @@ export const ModalAddFinancialAccount = ({
       })
       .then(() => {
         window.location.reload();
+      });
+  };
+  const handleSubmitBCA: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    const connectBCaccount = () => {
+      return new Promise((resolve, reject) => {
+        connectBCA()
+          .then((res: any) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    };
+    toast
+      .promise(connectBCaccount(), {
+        loading: 'Loading...',
+        success: 'Akun BCA berhasil terhubung!',
+        error: 'Akun BCA gagal terhubung!',
+      })
+      .then(() => {
+        // window.location.reload();
       });
   };
 
@@ -120,7 +157,12 @@ export const ModalAddFinancialAccount = ({
                       </div>
                       <button
                         onClick={() => setId((c) => (c = id))}
-                        className={`${styles.buttonAction} dark:bg-primaryDark dark:hover:bg-secondaryDark dark:text-primaryContainerDark`}
+                        className={
+                          title === 'GOPAY'
+                            ? `bg-outline px-8 rounded py-1 dark:hover:bg-outline cursor-not-allowed`
+                            : `${styles.buttonAction} dark:bg-primaryDark dark:hover:bg-secondaryDark dark:text-primaryContainerDark`
+                        }
+                        disabled={title === 'GOPAY' ? true : false}
                       >
                         {action}
                       </button>
@@ -197,7 +239,72 @@ export const ModalAddFinancialAccount = ({
               </div>
             </>
           ) : id === 2 ? (
-            <>b</>
+            <>
+              <div className="flex px-4 gap-4 relative flex-row items-center">
+                <Toaster
+                  position="top-right"
+                  containerStyle={{
+                    position: 'absolute',
+                    right: 0,
+                    top: 0,
+                  }}
+                />
+                <button onClick={() => setId((c) => (c = 0))}>
+                  <FontAwesomeIcon icon={faArrowLeft} size="sm" />
+                </button>
+                <div>
+                  <h4 className="text-xl">Connect Klik BCA</h4>
+                  <p className="text-sm my-2">PT. Bank Central Asia, Tbk</p>
+                </div>
+              </div>
+              <hr className="border-b-2" />
+              <div className={styles.modalContent}>
+                <h3 className="font-bold self-center text-xl">Klik BCA</h3>
+                <h4 className="font-bold self-center text-md">
+                  Klik BCA Internet Banking
+                </h4>
+                <p className="text-sm self-center">
+                  Masukan User ID & PIN kamu
+                </p>
+                <form
+                  onSubmit={handleSubmitBCA}
+                  className="flex flex-col gap-2 w-full"
+                >
+                  <TextInput
+                    placeholder="User ID"
+                    id="username"
+                    value={username}
+                    onChange={(e) => {
+                      setUserame(e.target.value);
+                    }}
+                  />
+                  <PasswordInput
+                    placeholder="PIN"
+                    id="password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                  />
+                  <button
+                    disabled={!username || !password}
+                    className="w-full bg-primary hover:bg-secondary dark:bg-primaryDark dark:hover:bg-secondaryDark dark:text-primaryContainerDark text-white py-2 rounded-md my-2"
+                  >
+                    Connect
+                  </button>
+                  <div className="bg-neutralBackground px-4 flex flex-row items-center text-onSurfaceVariant gap-4 rounded-md mb-10">
+                    <FontAwesomeIcon
+                      icon={faLightbulb}
+                      className="self-center my-4"
+                      size="xs"
+                    />
+                    <p className="text-xs">
+                      You can create manual account as many as you want.
+                    </p>
+                  </div>
+                </form>
+              </div>
+            </>
           ) : id === 3 ? (
             <>x</>
           ) : (
