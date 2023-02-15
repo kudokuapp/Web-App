@@ -243,7 +243,7 @@ export default function RootLayout({
                                 />
                               </button>
                               {isMoreActive ? (
-                                <div className="absolute bg-onPrimary p-4 flex flex-col h-fit right-0 top-full items-end rounded z-10 gap-2">
+                                <div className="absolute bg-onPrimary shadow-md dark:bg-onPrimary p-4 flex flex-col h-fit right-0 top-full items-end rounded z-10 gap-2">
                                   <button
                                     onClick={() => setIsReconcile((c) => !c)}
                                     className="text-sm gap-2 flex items-center"

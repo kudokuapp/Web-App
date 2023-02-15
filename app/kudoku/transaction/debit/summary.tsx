@@ -6,7 +6,11 @@ import { queryAllDebitAccount } from 'app/kudoku/query';
 import { getCookie } from 'cookies-next';
 import { useEffect, useState } from 'react';
 
-export default function SummaryDebit() {
+export default function SummaryDebit({
+  setIsTransactionDebitEmpty,
+}: {
+  setIsTransactionDebitEmpty: any;
+}) {
   const token = getCookie('token') as string;
   const [hideBalance, setIsHiddeBalance] = useState(true);
   const [isEmpty, setIsEmpty] = useState(false);
@@ -45,6 +49,7 @@ export default function SummaryDebit() {
             setAccountDebitItems(tempArray);
           } else if (length <= 0) {
             setIsEmpty(true);
+            setIsTransactionDebitEmpty(true);
           }
 
           resolve(res);

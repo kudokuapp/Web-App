@@ -134,10 +134,18 @@ export default function Client() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <SummaryCash />
               </div>
-              <h4 className="text-xl font-bold">Debit Account</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <SummaryDebit />
-              </div>
+              {isTransactionDebitEmpty ? (
+                <></>
+              ) : (
+                <>
+                  <h4 className="text-xl font-bold">Debit Account</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <SummaryDebit
+                      setIsTransactionDebitEmpty={setIsTransactionDebitEmpty}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </>

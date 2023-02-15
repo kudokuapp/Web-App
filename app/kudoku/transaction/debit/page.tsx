@@ -110,7 +110,7 @@ export default function Page() {
                     <FontAwesomeIcon className="" icon={faListDots} size="sm" />
                   </button>
                   {isMoreActive ? (
-                    <div className="absolute bg-onPrimary p-4 flex flex-col h-fit right-0 top-full items-end rounded z-10 gap-2">
+                    <div className="absolute bg-onPrimary shadow-md p-4 flex flex-col h-fit right-0 top-full items-end rounded z-10 gap-2">
                       <button
                         onClick={async () => {
                           await setDebitAccountId(id);
