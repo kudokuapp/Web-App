@@ -7,7 +7,7 @@ import {
   faMoneyBill1Wave,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { mutationAddCashAccount } from 'app/kudoku/query';
+import { mutationAddCashAccount } from 'app/kudoku/mutation';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FormEventHandler, useState } from 'react';

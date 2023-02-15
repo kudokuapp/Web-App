@@ -86,33 +86,9 @@ const queryProfile = gql`
   }
 `;
 
-const mutationAddCashAccount = gql`
-  mutation AddCashAccount(
-    $accountName: String!
-    $startingBalance: String!
-    $currency: String!
-  ) {
-    addCashAccount(
-      accountName: $accountName
-      startingBalance: $startingBalance
-      currency: $currency
-    ) {
-      id
-      userId
-      createdAt
-      lastUpdate
-      accountName
-      displayPicture
-      balance
-      currency
-    }
-  }
-`;
-
 export {
   queryGetUser,
   queryAllCashAccount,
   queryProfile,
-  mutationAddCashAccount,
   queryAllCashTransaction,
 };

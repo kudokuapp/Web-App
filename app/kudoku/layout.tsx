@@ -6,14 +6,22 @@ import Logo from '$public/logo/secondary.svg';
 import EmptyData from '$public/splash_screens/emptyData.svg';
 import '$styles/globals.css';
 import { authLinkToken, httpLink } from '$utils/graphql';
-import { useLazyQuery } from '@apollo/client';
-import { faMoneyBill1Wave, faSignOut } from '@fortawesome/free-solid-svg-icons';
+import { useLazyQuery, useMutation } from '@apollo/client';
+import {
+  faExclamation,
+  faListDots,
+  faMoneyBill1Wave,
+  faSignOut,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getCookie, removeCookies } from 'cookies-next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useLayoutEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+import { mutationDeleteCashAccount } from './mutation';
 import { queryAllCashAccount, queryProfile } from './query';
 
 export default function RootLayout({
@@ -25,6 +33,9 @@ export default function RootLayout({
   const [isHidden, setIsHidden] = useState(true);
   const [isEmpty, setIsEmpty] = useState(false);
   const [addAcount, setIsAddAccount] = useState(false);
+  const [isMoreActive, setIsMoreActive] = useState(false);
+  const [isDeleteAccount, setIsDeleteAccount] = useState(false);
+  const [accountId, setAccountId] = useState('');
   const [username, setUserame] = useState({ username: '', kudosNo: '' });
   const [accountItems, setAccountItems] = useState([
     { href: '', title: '', id: '' },
@@ -48,6 +59,10 @@ export default function RootLayout({
       title: '+ Add financial account',
     },
   ];
+
+  const [deleteCashAccount] = useMutation(mutationDeleteCashAccount, {
+    variables: { cashAccountId: accountId },
+  });
 
   const getAllCashAccount = () => {
     return new Promise((resolve, reject) => {
@@ -148,8 +163,20 @@ export default function RootLayout({
                 </p>
               </div> */}
 
-              <ul className="mt-8">
+              <ul className="mt-8 relative">
                 <h4>My Account</h4>
+                {isDeleteAccount ? (
+                  <Toaster
+                    position="bottom-right"
+                    containerStyle={{
+                      position: 'absolute',
+                      right: 0,
+                      top: 100,
+                    }}
+                  />
+                ) : (
+                  <></>
+                )}
                 {accountItems
                   .slice(0, (accountItems.length + 1) / 2)
                   .map(({ href, title, id }) =>
@@ -174,12 +201,83 @@ export default function RootLayout({
                               id: id,
                             },
                           }}
-                          className="flex p-2 flex-row align-middle items-center gap-1"
+                          className="flex p-2 flex-row relative align-middle justify-between items-center"
                         >
-                          <FontAwesomeIcon icon={faMoneyBill1Wave} size="sm" />
-                          <div className={`flex rounded cursor-pointer`}>
-                            {title}
+                          <div className="flex gap-1 align-middle items-center">
+                            <FontAwesomeIcon
+                              icon={faMoneyBill1Wave}
+                              size="sm"
+                            />
+                            <div className={`flex rounded cursor-pointer`}>
+                              {title}
+                            </div>
                           </div>
+                          {searchParamsCash ===
+                          title.replace(/\s+/g, '-').toLowerCase() ? (
+                            <>
+                              <button
+                                onClick={() => setIsMoreActive((c) => !c)}
+                              >
+                                <FontAwesomeIcon
+                                  className=""
+                                  icon={faListDots}
+                                  size="sm"
+                                />
+                              </button>
+                              {isMoreActive ? (
+                                <div className="absolute bg-onPrimary p-4 flex flex-col h-fit right-0 top-full items-end rounded z-10 gap-2">
+                                  <button className="text-sm gap-2 flex items-center">
+                                    <FontAwesomeIcon
+                                      className=""
+                                      icon={faExclamation}
+                                      size="sm"
+                                    />
+                                    Reconcile balance
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setAccountId(id);
+                                      setIsDeleteAccount(true);
+                                      const deleteTransactionCash = () => {
+                                        return new Promise(
+                                          (resolve, reject) => {
+                                            deleteCashAccount()
+                                              .then((res: any) => {
+                                                resolve(res);
+                                              })
+                                              .catch((error) => {
+                                                reject(error);
+                                              });
+                                          }
+                                        );
+                                      };
+                                      toast
+                                        .promise(deleteCashAccount(), {
+                                          loading: 'Loading...',
+                                          success: 'Akun berhasil dihapus!',
+                                          error: 'Akun gagal dihapus!',
+                                        })
+                                        .then(() => {
+                                          router.push('/kudoku/transaction');
+                                        });
+                                    }}
+                                    className="text-sm gap-2 flex items-center text-error"
+                                  >
+                                    <FontAwesomeIcon
+                                      className=""
+                                      icon={faTrash}
+                                      size="sm"
+                                    />
+                                    Delete account
+                                  </button>
+                                </div>
+                              ) : (
+                                <></>
+                              )}
+                            </>
+                          ) : (
+                            <></>
+                          )}
                         </Link>
                       </li>
                     ) : (
