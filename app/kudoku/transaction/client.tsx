@@ -29,7 +29,6 @@ export default function Client() {
       cashAccount()
         .then((res: any) => {
           let length = res.data.getAllCashAccount.length;
-          // console.log(length);
           let data = res.data.getAllCashAccount;
           let tmpBalanceCash = '';
           if (length > 0) {

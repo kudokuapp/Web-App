@@ -298,7 +298,6 @@ export default function Client({ user }: { user: IUser }) {
           setUsernameTakenError(true);
         }
       );
-    console.log('submit');
   };
 
   const renderProgress = () => {

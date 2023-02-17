@@ -118,7 +118,6 @@ export const ModalAddTransaction = ({
                   </h4>
                   <select
                     onChange={(e) => {
-                      console.log(e.target.value);
                       setType(e.target.value);
                       if (e.target.value === 'EXPENSE') {
                         setDirection('OUT');
@@ -169,7 +168,7 @@ export const ModalAddTransaction = ({
                     </h4>
                     <select className="bg-background dark:bg-outline px-2 py-1 text-sm rounded">
                       {dataCategory.map((item) => (
-                        <option className="px-2 py-1" value={item}>
+                        <option className="px-2 py-1" value={item} key={item}>
                           {item}
                         </option>
                       ))}

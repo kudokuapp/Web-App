@@ -76,7 +76,6 @@ export default function RootLayout({
       cashAccount()
         .then((res: any) => {
           let length = res.data.getAllCashAccount.length;
-          // console.log(length);
           let data = res.data.getAllCashAccount;
           if (length > 0) {
             for (let i = 0; i < length; i++) {
@@ -104,7 +103,6 @@ export default function RootLayout({
     return new Promise((resolve, reject) => {
       profile()
         .then((res: any) => {
-          console.log(res);
           setUserame({
             username: res.data.getProfile.user.username,
             kudosNo: res.data.getProfile.user.kudosNo,

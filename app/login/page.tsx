@@ -53,7 +53,6 @@ export default function Page() {
             }
           })
           .catch((error) => {
-            // console.log(error);
             reject(error);
           });
       });

@@ -90,7 +90,6 @@ export default function TransactionList({
         .then((res: any) => {
           let length = res.data.getAllCashTransaction.length;
           let data = res.data.getAllCashTransaction;
-          console.log(data);
           let result = [];
           if (length < 2 && length > 0) {
             setIsTransactionEmpty(false);

@@ -90,7 +90,6 @@ export default function TransactionListDebit({
         .then((res: any) => {
           let length = res.data.getAllDebitTransaction.length;
           let data = res.data.getAllDebitTransaction;
-          console.log(data);
           let result = [];
           if (length < 2 && length > 0) {
             setIsTransactionEmpty(false);

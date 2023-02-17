@@ -30,7 +30,6 @@ export default function SummaryCash() {
       cashAccount()
         .then((res: any) => {
           let length = res.data.getAllCashAccount.length;
-          // console.log(length);
           let data = res.data.getAllCashAccount;
           let tempArray: any[] = [];
           if (length > 0) {

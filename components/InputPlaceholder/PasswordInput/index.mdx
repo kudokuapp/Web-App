@@ -37,7 +37,6 @@ export const Example = () => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        console.log(password);
         if (password !== 'at2a4aak') {
           setError(true);
           setErrorMessage('Wrong password!');

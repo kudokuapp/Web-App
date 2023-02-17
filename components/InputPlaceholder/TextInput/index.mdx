@@ -37,7 +37,6 @@ export const Example = () => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        console.log(username);
         if (username !== 'fdwilogo') {
           setError(true);
           setErrorMessage('Only fdwilogo allowed');
