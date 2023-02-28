@@ -1,7 +1,6 @@
 'use client';
 import LoginButton from '$components/Button/LoginButton';
-import WaInput from '$components/InputPlaceholder/WaInput';
-import { ifNumIsSixtyTwo, ifNumIsZero } from '$utils/helper/cleanNum';
+import TextInput from '$components/InputPlaceholder/TextInput';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -13,12 +12,7 @@ export default function Page() {
   const [input, setInput] = useState('');
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = async (e) => {
-    let whatsapp: string;
     e.preventDefault();
-
-    if (input.charAt(0) === '0') whatsapp = ifNumIsZero(input);
-    else if (input.charAt(0) === '6') whatsapp = ifNumIsSixtyTwo(input);
-    else whatsapp = input;
 
     const firstPromise = () => {
       return new Promise((resolve, reject) => {
@@ -26,8 +20,7 @@ export default function Page() {
           try {
             const { data } = await axios.get('/api/mongodb/checkuserexist', {
               params: {
-                //Add '62' to whatsapp number here
-                wa: `62${whatsapp}`,
+                email: input,
               },
             });
 
@@ -41,7 +34,7 @@ export default function Page() {
             }
             resolve(data);
           } catch (e) {
-            router.push(`/login/queue/62${whatsapp}`);
+            router.push(`/login/queue/${input}`);
             console.error(e);
             reject();
           }
@@ -55,12 +48,11 @@ export default function Page() {
           try {
             const { data } = await axios.get('/api/postgres/checkkudos', {
               params: {
-                //Add '62' to whatsapp number here
-                wa: `62${whatsapp}`,
+                email: input,
               },
             });
             if (Object.keys(data).length === 0) throw new Error();
-            router.push(`/login/queue/62${whatsapp}`);
+            router.push(`/login/queue/${input}`);
             resolve(data);
           } catch (e) {
             console.error(e);
@@ -100,17 +92,19 @@ export default function Page() {
           Hi, Kudos! Check antrian kamu disini.
         </h1>
         <div className="flex flex-col gap-3">
-          <WaInput
-            placeholder="WhatsApp kamu"
-            id="whatsapp"
+          <TextInput
+            placeholder="Email"
+            id="email"
             value={input}
             onChange={(e) => {
               setInput(e.target.value);
             }}
+            required={true}
           />
+
           <p className="text-justify text-xs text-onPrimaryContainer dark:text-surfaceVariant">
-            Dengan mengisi nomor WhatsApp dan meng-klik ikon, kamu menyadari
-            bahwa kamu telah membaca, mengerti, dan setuju dengan{' '}
+            Dengan mengisi email dan meng-klik ikon, kamu menyadari bahwa kamu
+            telah membaca, mengerti, dan setuju dengan{' '}
             <Link
               href="https://kudoku.id/terms"
               target="_blank"
@@ -129,7 +123,14 @@ export default function Page() {
             Kudoku.
           </p>
           <div className="w-full h-fit flex items-center justify-end mt-3">
-            <LoginButton disabled={!input} onClick={handleClick}>
+            <LoginButton
+              disabled={
+                !input ||
+                !(input.length > 3) ||
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input)
+              }
+              onClick={handleClick}
+            >
               Check
             </LoginButton>
           </div>

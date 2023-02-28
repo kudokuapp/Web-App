@@ -26,14 +26,14 @@ interface IDataPayload {
 export default function Client({
   kudos,
   user,
-  whatsapp,
+  email,
 }: {
   kudos: boolean;
   user: IDataPayload;
-  whatsapp: string;
+  email: string;
 }) {
   const [progress, setProgress] = useState(1);
-  const [otpWa, setOtpWa] = useState('');
+  const [otp, setOtp] = useState('');
   const [lastKudos, setLastKudos] = useState(1);
   const [loadingLastKudos, setLoadingLastKudos] = useState(true);
 
@@ -157,9 +157,9 @@ export default function Client({
               <span className="text-primary dark:text-primaryDark">
                 siapapun kamu
               </span>{' '}
-              yang bernomor WhatsApp{' '}
+              yang punya email{' '}
               <span className="text-secondary dark:text-secondaryDark">
-                +{whatsapp}
+                {email}
               </span>
             </h4>
             <p className="text-onPrimaryContainer dark:text-surfaceVariant">
@@ -184,8 +184,8 @@ export default function Client({
                           const { data } = await axios.post(
                             '/api/verify/getcode',
                             {
-                              receiver: `+${whatsapp}`,
-                              type: 'sms',
+                              receiver: email,
+                              type: 'email',
                             }
                           );
                           resolve(data);
@@ -195,14 +195,15 @@ export default function Client({
                       })();
                     });
                   };
-                  toast.promise(
-                    myPromise().then(() => setProgress(2)),
-                    {
+                  toast
+                    .promise(myPromise(), {
                       loading: 'Loading...',
                       success: 'Sukses kirim otp',
                       error: 'Servernya error',
-                    }
-                  );
+                    })
+                    .then(() => {
+                      setProgress(2);
+                    });
                 }}
               >
                 Daftar
@@ -233,9 +234,9 @@ export default function Client({
             key={2}
           >
             <h4 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
-              Pertama-tama, Kudoku udah kirim kode OTP ke nomor{' '}
+              Pertama-tama, Kudoku udah kirim kode OTP ke email{' '}
               <span className="text-primary dark:text-primaryDark">
-                +{whatsapp}
+                {email}
               </span>
               !
             </h4>
@@ -244,8 +245,8 @@ export default function Client({
             </p>
             <OtpInput
               placeholder="123123"
-              value={otpWa}
-              onChange={setOtpWa}
+              value={otp}
+              onChange={setOtp}
               numInputs={6}
               isInputNum={true}
               containerStyle={
@@ -273,8 +274,8 @@ export default function Client({
                           const { data } = await axios.post(
                             '/api/verify/confirmcode',
                             {
-                              receiver: `+${whatsapp}`,
-                              code: otpWa,
+                              receiver: email,
+                              code: otp,
                             }
                           );
                           resolve(data);
@@ -284,26 +285,17 @@ export default function Client({
                       })();
                     });
                   };
-                  toast.promise(
-                    myPromise().then(async (data: any) => {
-                      if (data.valid) {
-                        await axios.get('/api/postgres/pushwatodb', {
-                          params: {
-                            wa: `+${whatsapp}`,
-                          },
-                        });
-                        setProgress(3);
-                      }
-                      // setProgress(3);
-                    }),
-                    {
+                  toast
+                    .promise(myPromise(), {
                       loading: 'Loading...',
                       success: 'Kode OTP benar!',
                       error: 'Kode OTP salah',
-                    }
-                  );
+                    })
+                    .then(() => {
+                      setProgress(3);
+                    });
                 }}
-                disabled={!otpWa || otpWa.length < 6}
+                disabled={!otp || otp.length < 6}
               >
                 Lanjut
               </LoginButton>
@@ -338,7 +330,7 @@ export default function Client({
             <p className="text-onPrimaryContainer dark:text-surfaceVariant">
               Klik tombol dibawah untuk isi formnya yaa!
             </p>
-            <Typeform wa={whatsapp} handleSubmit={() => setProgress(4)} />
+            <Typeform email={email} handleSubmit={() => setProgress(4)} />
 
             <motion.div
               className="mt-12 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
@@ -391,18 +383,18 @@ export default function Client({
 }
 
 const Typeform = ({
-  wa,
+  email,
   handleSubmit,
 }: {
-  wa: any;
+  email: string;
   handleSubmit: () => void;
 }) => {
   return (
     <PopupButton
-      id="EnKbwQJL"
+      id="e6haAlGW"
       hidden={{
         index: '2',
-        wa: `${wa}`,
+        email,
       }}
       onSubmit={handleSubmit}
       className="px-2 py-2 cursor-pointer rounded-md shadow-md bg-primary text-onPrimary dark:bg-primaryDark dark:text-onPrimaryDark text-xl w-full font-bold"

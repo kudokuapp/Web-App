@@ -13,7 +13,7 @@ interface IDataPayload {
   invited: boolean;
 }
 
-async function fetchUser(wa: string) {
+async function fetchUser(email: string) {
   let isKudos: boolean,
     result = {} as IDataPayload;
   const host =
@@ -25,7 +25,7 @@ async function fetchUser(wa: string) {
   try {
     const { data } = await axios.get(url.href, {
       params: {
-        wa,
+        email,
       },
     });
 
@@ -48,17 +48,17 @@ async function fetchUser(wa: string) {
 
 // eslint-disable-next-line no-unused-vars
 export default async function Page({ params }: any) {
-  const { wa } = params;
-  if (!wa) redirect('/login');
+  const { email } = params;
+  if (!email) redirect('/login');
 
-  const getKudos = await fetchUser(wa);
+  const getKudos = await fetchUser(email);
   const { result, isKudos } = getKudos;
 
   if (result.invited) redirect('/login');
 
   return (
     <>
-      <Client kudos={isKudos} user={result} whatsapp={wa} />
+      <Client kudos={isKudos} user={result} email={email} />
     </>
   );
 }

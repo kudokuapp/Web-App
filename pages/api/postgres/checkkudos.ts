@@ -19,11 +19,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { wa: param } = req.query;
-  const wa = `+${param}`;
+  const { email } = req.query;
 
   try {
-    const response = await dbQuery(wa);
+    const response = await dbQuery(email as string);
     res.status(200).json({ ...response } as IDataPayload);
   } catch (e) {
     console.error(e);
@@ -31,9 +30,9 @@ export default async function handler(
   }
 }
 
-const dbQuery = async (wa: string): Promise<any> => {
-  const queryString = `SELECT * FROM users_final WHERE whatsapp=$1`;
-  const arr = [wa];
+const dbQuery = async (email: string): Promise<any> => {
+  const queryString = `SELECT * FROM users_final WHERE email=$1`;
+  const arr = [email];
   return new Promise((resolve, reject) => {
     pool.query(queryString, arr, (err, res) => {
       if (err) {
