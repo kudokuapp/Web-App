@@ -48,7 +48,8 @@ async function fetchUser(email: string) {
 
 // eslint-disable-next-line no-unused-vars
 export default async function Page({ params }: any) {
-  const { email } = params;
+  const { email: emailURI } = params;
+  const email = decodeURIComponent(emailURI);
   if (!email) redirect('/login');
 
   const getKudos = await fetchUser(email);
