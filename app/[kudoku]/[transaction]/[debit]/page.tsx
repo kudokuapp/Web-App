@@ -3,7 +3,7 @@ import { authLinkToken, httpLink } from '$utils/graphql';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { faListDots, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { mutationDisconnectDebit } from 'app/kudoku/mutation';
+import { mutationDisconnectDebit } from 'app/[kudoku]/mutation';
 import { getCookie } from 'cookies-next';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';

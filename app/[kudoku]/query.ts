@@ -60,6 +60,7 @@ const queryAllCashTransaction = gql`
         picture
         url
       }
+      transactionName
     }
   }
 `;

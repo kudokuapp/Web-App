@@ -1,6 +1,6 @@
 import { authLinkToken, httpLink } from '$utils/graphql';
 import { useLazyQuery } from '@apollo/client';
-import { queryAllDebitAccount } from 'app/kudoku/query';
+import { queryAllDebitAccount } from 'app/[kudoku]/query';
 import { getCookie } from 'cookies-next';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';

@@ -26,42 +26,58 @@ const mutationAddCashAccount = gql`
 const mutationAddCashTransaction = gql`
   mutation AddCashTransaction(
     $cashAccountId: String!
+    $transactionName: String!
     $amount: String!
     $category: [CategoryInputType]!
     $transactionType: ExpenseTypeEnum!
     $direction: DirectionTypeEnum!
+    $tags: [String!]!
     $currency: String!
+    $notes: String
     $isHideFromBudget: Boolean!
     $isHideFromInsight: Boolean!
-    $merchantId: String
-    $tags: [String!]!
   ) {
     addCashTransaction(
       cashAccountId: $cashAccountId
+      transactionName: $transactionName
       amount: $amount
       category: $category
       transactionType: $transactionType
       direction: $direction
+      tags: $tags
       currency: $currency
+      notes: $notes
       isHideFromBudget: $isHideFromBudget
       isHideFromInsight: $isHideFromInsight
-      merchantId: $merchantId
-      tags: $tags
     ) {
-      amount
-      cashAccountId
-      currency
-      dateTimestamp
-      direction
       id
-      isHideFromBudget
-      isHideFromInsight
-      transactionType
+      cashAccountId
+      dateTimestamp
+      currency
+      amount
+      merchant {
+        id
+        name
+        picture
+        url
+      }
       merchantId
+      category {
+        name
+        amount
+      }
+      transactionType
+      internalTransferAccountId
+      direction
+      notes
       location {
         latitude
         longitude
       }
+      tags
+      isHideFromBudget
+      isHideFromInsight
+      transactionName
     }
   }
 `;
@@ -131,6 +147,47 @@ const mutationDisconnectDebit = gql`
   }
 `;
 
+const mutationRefreshBCA = gql`
+  mutation RefreshBcaTransactionViaBrick($debitAccountId: String!) {
+    refreshBcaTransactionViaBrick(debitAccountId: $debitAccountId) {
+      id
+      debitAccountId
+      dateTimestamp
+      referenceId
+      institutionId
+      currency
+      amount
+      onlineTransaction
+      isReviewed
+      merchant {
+        id
+        name
+        picture
+        url
+      }
+      merchantId
+      category {
+        name
+        amount
+      }
+      transactionType
+      description
+      internalTransferAccountId
+      direction
+      isSubscription
+      notes
+      location {
+        latitude
+        longitude
+      }
+      tags
+      isHideFromBudget
+      isHideFromInsight
+      transactionMethod
+    }
+  }
+`;
+
 export {
   mutationAddCashAccount,
   mutationAddCashTransaction,
@@ -139,4 +196,5 @@ export {
   mutationReconcile,
   mutationConnectBCA,
   mutationDisconnectDebit,
+  mutationRefreshBCA,
 };

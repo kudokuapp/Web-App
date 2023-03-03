@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   mutationAddCashAccount,
   mutationConnectBCA,
-} from 'app/kudoku/mutation';
+} from 'app/[kudoku]/mutation';
 import Image from 'next/image';
 import { FormEventHandler, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -72,9 +72,11 @@ export const ModalAddFinancialAccount = ({
           .then((res: any) => {
             setAccountName(res.data.addCashAccount.accountName);
             setBalance(res.data.addCashAccount.balance);
+            toast.success('Akun cash berhasil ditambahkan!');
             resolve(res);
           })
           .catch((error) => {
+            toast.error(error.message);
             reject(error);
           });
       });

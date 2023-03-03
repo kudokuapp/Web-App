@@ -1,11 +1,17 @@
 'use client';
 import { authLinkToken, httpLink } from '$utils/graphql';
-import { useLazyQuery } from '@apollo/client';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { useLazyQuery, useMutation } from '@apollo/client';
+import {
+  faEye,
+  faEyeSlash,
+  faRefresh,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { mutationRefreshBCA } from 'app/[kudoku]/mutation';
 import { getCookie } from 'cookies-next';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { queryAllDebitTransaction } from '../../query';
 import TransactionDetailsDebit from './transaction-detail';
 
@@ -59,7 +65,6 @@ export default function TransactionListDebit({
     isHideFromInsight: false,
     merchant: { id: '', name: '', picture: '', url: '' },
   });
-  const [isHidden, setIsHidden] = useState(true);
   const [hideBalance, setIsHiddeBalance] = useState(true);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -77,10 +82,12 @@ export default function TransactionListDebit({
       currency: 'IDR',
     }).format(number);
   };
-  const [allDebitTransaction, { client }] = useLazyQuery(
-    queryAllDebitTransaction,
-    { variables: { debitAccountId: searchParamsID } }
-  );
+  const [allDebitTransaction] = useLazyQuery(queryAllDebitTransaction, {
+    variables: { debitAccountId: searchParamsID },
+  });
+  const [refreshBCA, { client }] = useMutation(mutationRefreshBCA, {
+    variables: { debitAccountId: searchParamsID },
+  });
   client.setLink(authLinkToken(token).concat(httpLink));
   const getAllDebitTransaction = () => {
     setTransaction([]);
@@ -195,6 +202,127 @@ export default function TransactionListDebit({
   const [className, setIsClassName] = useState(
     'flex flex-col w-7/12 gap-4 border-r-2 border-outline'
   );
+
+  const refreshTransaction = () => {
+    setTransaction([]);
+    setTransactionGroup([]);
+    return new Promise((resolve, reject) => {
+      refreshBCA()
+        .then((res: any) => {
+          let length = res.data.getAllDebitTransaction.length;
+          let data = res.data.getAllDebitTransaction;
+          let result = [];
+          if (length < 2 && length > 0) {
+            setIsTransactionEmpty(false);
+            setIsSingleData(true);
+            setTransactionGroup(data);
+            setTransactionDetail({
+              ...transactionDetail,
+              id: data[0].id,
+              debitAccountId: data[0].debitAccountId,
+              dateTimestamp: data[0].dateTimestamp,
+              currency: data[0].currency,
+              amount: data[0].amount,
+              description: data[0].description,
+              category: [
+                {
+                  name: data[0].description,
+                  amount: data[0].category[0].amount,
+                },
+              ],
+              transactionType: data[0].transactionType,
+              internalTransferAccountId: null,
+              direction: data[0].direction,
+              notes: data[0].notes,
+              location: null,
+              tags: data[0].tags,
+              isHideFromBudget: false,
+              isHideFromInsight: false,
+              merchant: data[0].merchant
+                ? {
+                    id: data[0].merchant.id,
+                    name: data[0].merchant.name,
+                    picture: data[0].merchant.picture,
+                    url: data[0].merchant.url,
+                  }
+                : { id: '', name: '', picture: '', url: '' },
+            });
+            setTransaction(data);
+          } else if (length > 1) {
+            setIsTransactionEmpty(false);
+            setIsSingleData(false);
+            const groups = data.reduce((groups: any, game: any) => {
+              const date = formatDate(
+                new Date(game.dateTimestamp).toISOString().split('T')[0]
+              );
+              if (!groups[date]) {
+                groups[date] = [];
+              }
+              groups[date].push(game);
+              return groups;
+            }, {});
+
+            // Edit: to add it in the array format instead
+            const groupArrays = Object.keys(groups).map((date) => {
+              return {
+                date,
+                data: groups[date],
+              };
+            });
+            setTransactionGroup(groupArrays);
+            setTransactionDetail({
+              ...transactionDetail,
+              id: data[0].id,
+              debitAccountId: data[0].debitAccountId,
+              dateTimestamp: data[0].dateTimestamp,
+              currency: data[0].currency,
+              amount: data[0].amount,
+              description: data[0].description,
+              category: [
+                {
+                  name: data[0].description,
+                  amount: data[0].category[0].amount,
+                },
+              ],
+              transactionType: data[0].transactionType,
+              internalTransferAccountId: null,
+              direction: data[0].direction,
+              notes: data[0].notes,
+              location: null,
+              tags: data[0].tags,
+              isHideFromBudget: false,
+              isHideFromInsight: false,
+              merchant: data[0].merchant
+                ? {
+                    id: data[0].merchant.id,
+                    name: data[0].merchant.name,
+                    picture: data[0].merchant.picture,
+                    url: data[0].merchant.url,
+                  }
+                : { id: '', name: '', picture: '', url: '' },
+            });
+            setTransaction(data);
+          } else if (length <= 0) {
+            setIsTransactionEmpty(true);
+          }
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+
+      toast
+        .promise(refreshBCA(), {
+          loading: 'Loading...',
+          success: 'Transaksi berhasil diupdate!',
+          error: (err) => err.message,
+        })
+        .then(() => {
+          window.location.reload();
+        });
+    });
+  };
+
   useEffect(() => {
     getAllDebitTransaction();
     if (window.innerWidth <= 640) {
@@ -203,7 +331,7 @@ export default function TransactionListDebit({
     if (window.innerWidth > 640) {
       setIsClassName('flex flex-col w-7/12 gap-4 border-r-2 border-outline');
     }
-  }, [searchParamsID]);
+  }, [searchParamsName]);
   return (
     <>
       {isSingleData ? (
@@ -222,6 +350,25 @@ export default function TransactionListDebit({
                   .join(' ')}{' '}
                 Transactions
               </h2>
+              <button
+                className="border-2 border-outline py-1 px-2 rounded-md"
+                onClick={() => refreshTransaction()}
+              >
+                <FontAwesomeIcon
+                  icon={faRefresh}
+                  className="cursor-pointer"
+                  size="xs"
+                />{' '}
+                Refresh Transaction
+              </button>
+              <Toaster
+                position="top-right"
+                containerStyle={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                }}
+              />
             </header>
             <div className="overflow-auto gap-4 flex flex-col">
               <h4 className="text-center">Current Balance :</h4>
@@ -243,7 +390,7 @@ export default function TransactionListDebit({
                 <>
                   <div className="flex flex-row items-center gap-4 w-full self-center justify-center">
                     <h3 className="text-xl font-bold text-center text-secondary dark:text-secondaryDark">
-                      {rupiah(accountDebitItems)}
+                      {rupiah(accountDebitItems).replace(/\s/g, '')}
                     </h3>
                     <FontAwesomeIcon
                       icon={faEye}
@@ -275,7 +422,11 @@ export default function TransactionListDebit({
                     <tbody>
                       {item.category.map((categories: any) => (
                         <tr
-                          className="flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-background text-sm cursor-pointer hover:text-onSurfaceVariant"
+                          className={`${
+                            transactionDetail.id === categories.id
+                              ? `bg-primaryContainer dark:bg-primaryContainerDark`
+                              : ``
+                          } flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-primaryContainer cursor-pointer hover:text-onSurfaceVariant`}
                           onClick={() => setTransactionDetail(item)}
                         >
                           <td className="w-1/2">{item.description}</td>
@@ -288,7 +439,7 @@ export default function TransactionListDebit({
                                 : `text-error dark:text-errorDark`
                             }
                           >
-                            {rupiah(categories.amount)}
+                            {rupiah(categories.amount).replace(/\s/g, '')}
                           </td>
                         </tr>
                       ))}
@@ -316,6 +467,25 @@ export default function TransactionListDebit({
                   .join(' ')}{' '}
                 Transactions
               </h2>
+              <button
+                className="border-2 border-outline py-1 px-2 rounded-md"
+                onClick={() => refreshTransaction()}
+              >
+                <FontAwesomeIcon
+                  icon={faRefresh}
+                  className="cursor-pointer"
+                  size="xs"
+                />{' '}
+                Refresh Transaction
+              </button>
+              <Toaster
+                position="top-right"
+                containerStyle={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                }}
+              />
             </header>
             <div className="overflow-auto gap-4 flex flex-col">
               <h4 className="text-center">Current Balance :</h4>
@@ -337,7 +507,7 @@ export default function TransactionListDebit({
                 <>
                   <div className="flex flex-row items-center gap-4 w-full self-center justify-center">
                     <h3 className="text-xl font-bold text-center text-secondary dark:text-secondaryDark">
-                      {rupiah(accountDebitItems)}
+                      {rupiah(accountDebitItems).replace(/\s/g, '')}
                     </h3>
                     <FontAwesomeIcon
                       icon={faEye}
@@ -374,7 +544,11 @@ export default function TransactionListDebit({
                         )
                         .map((value: any) => (
                           <tr
-                            className="flex justify-between w-full gap-x-4 px-4 py-1 cursor-pointer hover:bg-background text-sm hover:text-onSurfaceVariant"
+                            className={`${
+                              transactionDetail.id === value.id
+                                ? `bg-primaryContainer dark:bg-primaryContainerDark`
+                                : ``
+                            } flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-primaryContainer cursor-pointer text-sm hover:text-onSurfaceVariant`}
                             key={value}
                             onClick={() => setTransactionDetail(value)}
                           >
@@ -391,7 +565,10 @@ export default function TransactionListDebit({
                                         : `text-error dark:text-errorDark`
                                     }
                                   >
-                                    {rupiah(categories.amount)}
+                                    {rupiah(categories.amount).replace(
+                                      /\s/g,
+                                      ''
+                                    )}
                                   </td>
                                 </>
                               ))
@@ -408,7 +585,7 @@ export default function TransactionListDebit({
                                         : `text-error dark:text-errorDark`
                                     }
                                   >
-                                    {rupiah(value.amount)}
+                                    {rupiah(value.amount).replace(/\s/g, '')}
                                   </td>
                                 </>
                               </>

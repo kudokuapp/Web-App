@@ -2,7 +2,7 @@ import { authLinkToken, httpLink } from '$utils/graphql';
 import { useLazyQuery } from '@apollo/client';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { queryAllCashAccount } from 'app/kudoku/query';
+import { queryAllCashAccount } from 'app/[kudoku]/query';
 import { getCookie } from 'cookies-next';
 import { useEffect, useState } from 'react';
 

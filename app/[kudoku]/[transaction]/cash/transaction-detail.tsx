@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { mutationDeleteCashTransaction } from '../mutation';
+import { mutationDeleteCashTransaction } from '../../mutation';
 
 type MyObject = {
   id: string;
@@ -13,6 +13,7 @@ type MyObject = {
   dateTimestamp: string;
   currency: string;
   amount: string;
+  transactionName: string;
   merchantId: string;
   category: [{ name: string; amount: string }];
   transactionType: string;
@@ -35,6 +36,7 @@ export default function TransactionDetails({
     dateTimestamp: string;
     currency: string;
     amount: string;
+    transactionName: string;
     merchantId: string;
     category: [{ name: string; amount: string }];
     transactionType: string;
@@ -129,51 +131,49 @@ export default function TransactionDetails({
               <FontAwesomeIcon icon={faTrash} size="sm" />
             </button>
           </header>
-          <div className="flex flex-row justify-start gap-8 p-4 mt-2">
-            <div className="flex flex-col justify-start">
-              <h4 className="text-outline text-sm">Account</h4>
-              <h4>{searchParamsName}</h4>
+          <div className="h-screen">
+            <div className="flex flex-row justify-start gap-8 p-4 mt-2">
+              <div className="flex flex-col justify-start">
+                <h4 className="text-outline text-sm">Account</h4>
+                <h4>{searchParamsName}</h4>
+              </div>
+              <div className="flex flex-col justify-start">
+                <h4 className="text-outline text-sm">Transaction Type</h4>
+                <h4>{transactionDetail.transactionType}</h4>
+              </div>
             </div>
-            <div className="flex flex-col justify-start">
-              <h4 className="text-outline text-sm">Transaction Type</h4>
-              <h4>{transactionDetail.transactionType}</h4>
-            </div>
-          </div>
-          <div className="flex flex-col justify-between gap-2 p-4 mt-2">
-            <h4 className="text-outline text-sm">
-              <FontAwesomeIcon icon={faCalendar} size="lg" />{' '}
-              {formatDate(transactionDetail.dateTimestamp)}
-            </h4>
+            <div className="flex flex-col justify-between gap-2 p-4 mt-2">
+              <h4 className="text-outline text-sm">
+                <FontAwesomeIcon icon={faCalendar} size="lg" />{' '}
+                {formatDate(transactionDetail.dateTimestamp)}
+              </h4>
 
-            <div className="flex flex-row justify-between">
-              <h4>
+              <div className="flex flex-row justify-between">
+                <h4>{transactionDetail.transactionName}</h4>
+                <h4>{rupiah(transactionDetail.amount).replace(/\s/g, '')}</h4>
+              </div>
+            </div>
+            <div className="flex flex-col justify-between gap-2 p-4 mt-2">
+              <h4 className="text-outline text-sm">Category</h4>
+              <p>
                 {transactionDetail.category
                   ? transactionDetail.category[0].name
                   : transactionDetail.transactionType}
-              </h4>
-              <h4>{rupiah(transactionDetail.amount)}</h4>
+              </p>
             </div>
-          </div>
-          <div className="flex flex-col justify-between gap-2 p-4 mt-2">
-            <h4 className="text-outline text-sm">Category</h4>
-            <p>
-              {transactionDetail.category
-                ? transactionDetail.category[0].name
-                : transactionDetail.transactionType}
-            </p>
-          </div>
-          <hr className="p-2 mx-4 text-outline" />
-          <div className="flex flex-col justify-between gap-2 p-4 mt-2">
-            <h4 className="text-outline text-sm">Notes</h4>
-            <textarea
-              name=""
-              id=""
-              cols={30}
-              rows={10}
-              disabled
-              value={transactionDetail.tags}
-              className="bg-neutralBackground dark:bg-neutral rounded-sm p-2"
-            />
+            <hr className="p-2 mx-4 text-outline" />
+            <div className="flex flex-col justify-between gap-2 p-4 mt-2">
+              <h4 className="text-outline text-sm">Notes</h4>
+              <textarea
+                name=""
+                id=""
+                cols={30}
+                rows={10}
+                disabled
+                value={transactionDetail.notes}
+                className="bg-neutralBackground border-outline border-2 dark:bg-neutral rounded-sm p-2"
+              />
+            </div>
           </div>
         </div>
       ) : (

@@ -4,7 +4,8 @@ import { useLazyQuery } from '@apollo/client';
 import { getCookie } from 'cookies-next';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { queryAllCashTransaction } from '../query';
+import { queryAllCashTransaction } from '../../query';
+import EmptyCash from './empty-transaction';
 import TransactionDetails from './transaction-detail';
 
 type MyObject = {
@@ -13,6 +14,7 @@ type MyObject = {
   dateTimestamp: string;
   currency: string;
   amount: string;
+  transactionName: string;
   merchantId: string;
   category: [{ name: string; amount: string }];
   transactionType: string;
@@ -28,11 +30,9 @@ type MyObject = {
 
 export default function TransactionList({
   setIsAddTransaction,
-  setIsTransactionEmpty,
   balanceCash,
 }: {
   setIsAddTransaction: any;
-  setIsTransactionEmpty: any;
   balanceCash: string;
 }) {
   const token = getCookie('token') as string;
@@ -42,12 +42,14 @@ export default function TransactionList({
   const [isSingleData, setIsSingleData] = useState(false);
   const [transaction, setTransaction] = useState<any[]>([]);
   const [transactionGroup, setTransactionGroup] = useState<any[]>([]);
+  const [isTransactionEmpty, setIsTransactionEmpty] = useState(false);
   const [transactionDetail, setTransactionDetail] = useState<MyObject>({
     id: '',
     cashAccountId: '',
     dateTimestamp: '',
     currency: '',
     amount: '',
+    transactionName: '',
     merchantId: '',
     category: [{ name: '', amount: '' }],
     transactionType: '',
@@ -60,7 +62,6 @@ export default function TransactionList({
     isHideFromInsight: false,
     merchant: { id: '', name: '', picture: '', url: '' },
   });
-  const [isHidden, setIsHidden] = useState(true);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -98,6 +99,7 @@ export default function TransactionList({
             setTransactionDetail({
               ...transactionDetail,
               id: data[0].id,
+              transactionName: data[0].transactionName,
               cashAccountId: data[0].cashAccountId,
               dateTimestamp: data[0].dateTimestamp,
               currency: data[0].currency,
@@ -155,6 +157,7 @@ export default function TransactionList({
             setTransactionDetail({
               ...transactionDetail,
               id: data[0].id,
+              transactionName: data[0].transactionName,
               cashAccountId: data[0].cashAccountId,
               dateTimestamp: data[0].dateTimestamp,
               currency: data[0].currency,
@@ -212,76 +215,86 @@ export default function TransactionList({
   }, [searchParamsName]);
   return (
     <>
-      {isSingleData ? (
+      {isTransactionEmpty ? (
+        <EmptyCash setIsAddTransaction={setIsAddTransaction} />
+      ) : (
         <>
-          <div className={className}>
-            <header className="bg-onPrimary dark:bg-onBackground p-4 border-b-2 border-outline flex justify-between align-middle items-center">
-              <h2 className="text-primary dark:text-primaryDark font-bold text-xl">
-                {searchParamsName
-                  ?.toString()
-                  .replace(/-/g, ' ')
-                  .split(' ')
-                  .map(
-                    (word: string) =>
-                      word.charAt(0).toUpperCase() + word.slice(1)
-                  )
-                  .join(' ')}{' '}
-                Transactions
-              </h2>
-              <button
-                onClick={() => setIsAddTransaction((c: any) => !c)}
-                className="border-2 border-outline py-1 px-2 rounded-md"
-              >
-                + Add Transaction
-              </button>
-            </header>
-            <div className="overflow-auto gap-4 flex flex-col">
-              <h4 className="text-center">Current Balance :</h4>
-              <h3 className="text-xl text-center text-secondary dark:text-secondaryDark">
-                {rupiah(balanceCash)}
-              </h3>
-              {transactionGroup.map((item: any) => (
-                <div className="flex flex-col py-4">
-                  <div className="flex flex-row justify-between p-4 bg-onPrimary dark:bg-onBackground text-black dark:text-surfaceVariant border-y-2 border-black dark:border-surfaceVariant align-middle items-center">
-                    <h2>
-                      {formatDate(
-                        new Date(item.dateTimestamp).toISOString().split('T')[0]
-                      )}
-                    </h2>
-                    <div className="flex flex-row gap-4 items-center align-middle">
-                      {/* <h4>-{rupiah(item.amount)}</h4> */}
-                      {/* <button
+          {isSingleData ? (
+            <>
+              <div className={className}>
+                <header className="bg-onPrimary dark:bg-onBackground p-4 border-b-2 border-outline flex justify-between align-middle items-center">
+                  <h2 className="text-primary dark:text-primaryDark font-bold text-xl">
+                    {searchParamsName
+                      ?.toString()
+                      .replace(/-/g, ' ')
+                      .split(' ')
+                      .map(
+                        (word: string) =>
+                          word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(' ')}{' '}
+                    Transactions
+                  </h2>
+                  <button
+                    onClick={() => setIsAddTransaction((c: any) => !c)}
+                    className="border-2 border-outline py-1 px-2 rounded-md"
+                  >
+                    + Add Transaction
+                  </button>
+                </header>
+                <div className="overflow-auto gap-4 flex flex-col h-screen">
+                  <h4 className="text-center">Current Balance :</h4>
+                  <h3 className="text-xl text-center text-secondary dark:text-secondaryDark">
+                    {rupiah(balanceCash).replace(/\s/g, '')}
+                  </h3>
+                  {transactionGroup.map((item: any) => (
+                    <div className="flex flex-col py-4">
+                      <div className="flex flex-row justify-between bg-onPrimary p-4 dark:bg-onBackground text-black dark:text-surfaceVariant border-y-2 border-black dark:border-surfaceVariant align-middle items-center">
+                        <h2>
+                          {formatDate(
+                            new Date(item.dateTimestamp)
+                              .toISOString()
+                              .split('T')[0]
+                          )}
+                        </h2>
+                        <div className="flex flex-row gap-4 items-center align-middle">
+                          {/* <h4>-{rupiah(item.amount)}</h4> */}
+                          {/* <button
                         className="text-sm h-5 w-4"
                         onClick={() => setIsHidden((c) => !c)}
                       >
                         <FontAwesomeIcon icon={faSquareCaretDown} size="lg" />
                       </button> */}
-                    </div>
-                  </div>
-                  <table className="table-auto mt-4">
-                    <tbody>
-                      {item.category.map((categories: any) => (
-                        <tr
-                          className="flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-background cursor-pointer hover:text-onSurfaceVariant"
-                          onClick={() => setTransactionDetail(item)}
-                        >
-                          <td>{categories.name}</td>
-                          <td>{searchParamsName}</td>
-                          <td>{categories.name}</td>
-                          <td
-                            className={
-                              item.direction === 'IN'
-                                ? `text-secondary dark:text-secondaryDark`
-                                : `text-error dark:text-errorDark`
-                            }
-                          >
-                            {rupiah(categories.amount)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {/* <div className="flex flex-col w-2/3 items-center self-center border-2 rounded-md border-primary mt-4 p-4">
+                        </div>
+                      </div>
+                      <table className="table-auto mt-4">
+                        <tbody>
+                          {item.category.map((categories: any) => (
+                            <tr
+                              className={`${
+                                transactionDetail.id === item.id
+                                  ? `bg-primaryContainer dark:bg-primaryContainerDark`
+                                  : ``
+                              } flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-primaryContainer cursor-pointer hover:text-onSurfaceVariant`}
+                              onClick={() => setTransactionDetail(item)}
+                            >
+                              <td>{item.transactionName}</td>
+                              <td>{searchParamsName}</td>
+                              <td>{categories.name}</td>
+                              <td
+                                className={
+                                  item.direction === 'IN'
+                                    ? `text-secondary dark:text-secondaryDark`
+                                    : `text-error dark:text-errorDark`
+                                }
+                              >
+                                {rupiah(categories.amount).replace(/\s/g, '')}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {/* <div className="flex flex-col w-2/3 items-center self-center border-2 rounded-md border-primary mt-4 p-4">
                     <h4>Overview</h4>
                     <h4 className="text-black dark:text-surfaceVariant font-bold">
                       Maret 2022
@@ -307,46 +320,46 @@ export default function TransactionList({
                       </div>
                     </div>
                   </div> */}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-          <TransactionDetails transactionDetail={transactionDetail} />
-        </>
-      ) : (
-        <>
-          <div className={className}>
-            <header className="bg-onPrimary dark:bg-onBackground p-4 border-b-2 border-outline flex justify-between align-middle items-center">
-              <h2 className="text-primary dark:text-primaryDark font-bold text-xl">
-                {searchParamsName
-                  ?.toString()
-                  .replace(/-/g, ' ')
-                  .split(' ')
-                  .map(
-                    (word: string) =>
-                      word.charAt(0).toUpperCase() + word.slice(1)
-                  )
-                  .join(' ')}{' '}
-                Transactions
-              </h2>
-              <button
-                onClick={() => setIsAddTransaction((c: any) => !c)}
-                className="border-2 border-outline py-1 px-2 rounded-md"
-              >
-                + Add Transaction
-              </button>
-            </header>
-            <div className="overflow-auto gap-4 flex flex-col">
-              <h4 className="text-center">Current Balance :</h4>
-              <h3 className="text-xl text-center text-secondary dark:text-secondaryDark">
-                {rupiah(balanceCash)}
-              </h3>
-              {transactionGroup.map((item: any) => (
-                <div className="flex flex-col py-4">
-                  <div className="flex flex-row justify-between p-4 bg-onPrimary dark:bg-onBackground text-black dark:text-surfaceVariant border-y-2 border-black dark:border-surfaceVariant align-middle items-center">
-                    <h2>{item.date}</h2>
-                    <div className="flex flex-row gap-4 items-center align-middle">
-                      {/* <h4>
+              </div>
+              <TransactionDetails transactionDetail={transactionDetail} />
+            </>
+          ) : (
+            <>
+              <div className={className}>
+                <header className="bg-onPrimary dark:bg-onBackground p-4 border-b-2 border-outline flex justify-between align-middle items-center">
+                  <h2 className="text-primary dark:text-primaryDark font-bold text-xl">
+                    {searchParamsName
+                      ?.toString()
+                      .replace(/-/g, ' ')
+                      .split(' ')
+                      .map(
+                        (word: string) =>
+                          word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(' ')}{' '}
+                    Transactions
+                  </h2>
+                  <button
+                    onClick={() => setIsAddTransaction((c: any) => !c)}
+                    className="border-2 border-outline py-1 px-2 rounded-md"
+                  >
+                    + Add Transaction
+                  </button>
+                </header>
+                <div className="overflow-auto gap-4 flex flex-col h-screen">
+                  <h4 className="text-center">Current Balance :</h4>
+                  <h3 className="text-xl text-center text-secondary dark:text-secondaryDark">
+                    {rupiah(balanceCash).replace(/\s/g, '')}
+                  </h3>
+                  {transactionGroup.map((item: any) => (
+                    <div className="flex flex-col py-4">
+                      <div className="flex flex-row justify-between p-4 bg-onPrimary dark:bg-onBackground text-black dark:text-surfaceVariant border-y-2 border-black dark:border-surfaceVariant align-middle items-center">
+                        <h2>{item.date}</h2>
+                        <div className="flex flex-row gap-4 items-center align-middle">
+                          {/* <h4>
                         -
                         {transaction
                           .filter((item: any) => item.direction === 'OUT')
@@ -355,71 +368,81 @@ export default function TransactionList({
                             0
                           )}
                       </h4> */}
-                      {/* <button
+                          {/* <button
                         className="text-sm h-5 w-4"
                         onClick={() => setIsHidden((c) => !c)}
                       >
                         <FontAwesomeIcon icon={faSquareCaretDown} size="lg" />
                       </button> */}
-                    </div>
-                  </div>
-                  <table className="table-auto mt-4">
-                    <tbody>
-                      {transaction
-                        .filter(
-                          (data: any) =>
-                            formatDate(
-                              new Date(data.dateTimestamp)
-                                .toISOString()
-                                .split('T')[0]
-                            ) === item.date
-                        )
-                        .map((value: any) => (
-                          <tr
-                            className="flex justify-between w-full gap-x-4 px-4 py-1 cursor-pointer hover:bg-background hover:text-onSurfaceVariant"
-                            key={value}
-                            onClick={() => setTransactionDetail(value)}
-                          >
-                            {value.category !== null ? (
-                              value.category.map((categories: any) => (
-                                <>
-                                  <td>{categories.name}</td>
-                                  <td>{searchParamsName}</td>
-                                  <td>{categories.name}</td>
-                                  <td
-                                    className={
-                                      value.direction === 'IN'
-                                        ? `text-secondary dark:text-secondaryDark`
-                                        : `text-error dark:text-errorDark`
-                                    }
-                                  >
-                                    {rupiah(categories.amount)}
-                                  </td>
-                                </>
-                              ))
-                            ) : (
-                              <>
-                                <>
-                                  <td>{value.transactionType}</td>
-                                  <td>{searchParamsName}</td>
-                                  <td>{value.transactionType}</td>
-                                  <td
-                                    className={
-                                      value.direction === 'IN'
-                                        ? `text-secondary dark:text-secondaryDark`
-                                        : `text-error dark:text-errorDark`
-                                    }
-                                  >
-                                    {rupiah(value.amount)}
-                                  </td>
-                                </>
-                              </>
-                            )}
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                  {/* <div className="flex flex-col w-2/3 items-center self-center border-2 rounded-md border-primary mt-4 p-4">
+                        </div>
+                      </div>
+                      <table className="table-auto mt-4">
+                        <tbody>
+                          {transaction
+                            .filter(
+                              (data: any) =>
+                                formatDate(
+                                  new Date(data.dateTimestamp)
+                                    .toISOString()
+                                    .split('T')[0]
+                                ) === item.date
+                            )
+                            .map((value: any) => (
+                              <tr
+                                className={`${
+                                  transactionDetail.id === value.id
+                                    ? `bg-primaryContainer dark:bg-primaryContainerDark`
+                                    : ``
+                                } flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-primaryContainer cursor-pointer hover:text-onSurfaceVariant`}
+                                key={value}
+                                onClick={() => setTransactionDetail(value)}
+                              >
+                                {value.category !== null ? (
+                                  value.category.map((categories: any) => (
+                                    <>
+                                      <td>{value.transactionName}</td>
+                                      <td>{searchParamsName}</td>
+                                      <td>{categories.name}</td>
+                                      <td
+                                        className={
+                                          value.direction === 'IN'
+                                            ? `text-secondary dark:text-secondaryDark`
+                                            : `text-error dark:text-errorDark`
+                                        }
+                                      >
+                                        {rupiah(categories.amount).replace(
+                                          /\s/g,
+                                          ''
+                                        )}
+                                      </td>
+                                    </>
+                                  ))
+                                ) : (
+                                  <>
+                                    <>
+                                      <td>{value.transactionType}</td>
+                                      <td>{searchParamsName}</td>
+                                      <td>{value.transactionType}</td>
+                                      <td
+                                        className={
+                                          value.direction === 'IN'
+                                            ? `text-secondary dark:text-secondaryDark`
+                                            : `text-error dark:text-errorDark`
+                                        }
+                                      >
+                                        {rupiah(value.amount).replace(
+                                          /\s/g,
+                                          ''
+                                        )}
+                                      </td>
+                                    </>
+                                  </>
+                                )}
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                      {/* <div className="flex flex-col w-2/3 items-center self-center border-2 rounded-md border-primary mt-4 p-4">
                     <h4>Overview</h4>
                     <h4 className="text-black dark:text-surfaceVariant font-bold">
                       Maret 2022
@@ -445,11 +468,13 @@ export default function TransactionList({
                       </div>
                     </div>
                   </div> */}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-          <TransactionDetails transactionDetail={transactionDetail} />
+              </div>
+              <TransactionDetails transactionDetail={transactionDetail} />
+            </>
+          )}
         </>
       )}
     </>

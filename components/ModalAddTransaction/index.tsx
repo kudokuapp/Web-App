@@ -1,6 +1,6 @@
 import TextInput from '$components/InputPlaceholder/TextInput';
 import { useMutation } from '@apollo/client';
-import { mutationAddCashTransaction } from 'app/kudoku/mutation';
+import { mutationAddCashTransaction } from 'app/[kudoku]/mutation';
 import { useSearchParams } from 'next/navigation';
 import { FormEventHandler, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -15,13 +15,15 @@ export const ModalAddTransaction = ({
   const searchParamsID = useSearchParams().get('id') as string;
   const [type, setType] = useState('EXPENSE');
   const [transactionName, setTransactionName] = useState('');
+  const [categoryName, setCategoryName] = useState('');
   const [direction, setDirection] = useState('OUT');
   const [nominal, setNominal] = useState('');
   const [showCategory, setShowCategory] = useState(true);
-  const [notes, setNotes] = useState(['']);
+  const [notes, setNotes] = useState('');
   const [addCashTransaction] = useMutation(mutationAddCashTransaction, {
     variables: {
       amount: nominal,
+      transactionName: transactionName,
       cashAccountId: searchParamsID,
       currency: 'IDR',
       transactionType: type,
@@ -29,8 +31,9 @@ export const ModalAddTransaction = ({
       isHideFromBudget: false,
       isHideFromInsight: false,
       merchantId: '63d3be20009767d5eb7e74e9',
-      tags: notes,
-      category: [{ amount: nominal, name: transactionName }],
+      notes: notes,
+      tags: [''],
+      category: [{ amount: nominal, name: categoryName }],
     },
   });
 
@@ -166,7 +169,12 @@ export const ModalAddTransaction = ({
                     <h4 className="text-outline dark:text-surfaceVariant text-sm">
                       Category
                     </h4>
-                    <select className="bg-background dark:bg-outline px-2 py-1 text-sm rounded">
+                    <select
+                      className="bg-background dark:bg-outline px-2 py-1 text-sm rounded"
+                      onChange={(e) => {
+                        setCategoryName(e.target.value);
+                      }}
+                    >
                       {dataCategory.map((item) => (
                         <option className="px-2 py-1" value={item} key={item}>
                           {item}
@@ -190,7 +198,7 @@ export const ModalAddTransaction = ({
                     rows={2}
                     value={notes}
                     onChange={(e) => {
-                      setNotes([e.target.value]);
+                      setNotes(e.target.value);
                     }}
                     className="bg-neutralBackground dark:text-primaryContainerDark rounded-sm p-2"
                   />

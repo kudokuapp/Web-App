@@ -1,10 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-head-element */
-import { ModalAddFinancialAccount } from '$components/ModalAddFinancialAccount/index';
-import { ModalReconcile } from '$components/ModalReconcile';
 import DarkModeToggle from '$components/Switch/DarkModeToggle';
 import Logo from '$public/logo/secondary.svg';
-import EmptyData from '$public/splash_screens/emptyData.svg';
 import '$styles/globals.css';
 import { authLinkToken, httpLink } from '$utils/graphql';
 import { useLazyQuery, useMutation } from '@apollo/client';
@@ -22,25 +19,20 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { mutationDeleteCashAccount } from './mutation';
-import { queryAllCashAccount, queryProfile } from './query';
-import GetAllDebitAccount from './transaction/debit/page';
+import { mutationDeleteCashAccount } from '../../../app/[kudoku]/mutation';
+import { queryAllCashAccount, queryProfile } from '../../../app/[kudoku]/query';
+import GetAllDebitAccount from '../../../app/[kudoku]/[transaction]/[debit]/page';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function Page({ setIsAddAccount }: { setIsAddAccount: any }) {
   const router = useRouter();
   const [isHidden, setIsHidden] = useState(true);
   const [isHideBtn, setIsHideBtn] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
-  const [addAcount, setIsAddAccount] = useState(false);
   const [reconcile, setIsReconcile] = useState(false);
   const [isMoreActive, setIsMoreActive] = useState(false);
   const [isDeleteAccount, setIsDeleteAccount] = useState(false);
   const [accountId, setAccountId] = useState('');
-  const [username, setUserame] = useState({ username: '', kudosNo: '' });
+  const [profileUser, setProfileUser] = useState({ username: '', kudosNo: '' });
   const [accountItems, setAccountItems] = useState([
     { href: '', title: '', id: '' },
   ]);
@@ -103,7 +95,7 @@ export default function RootLayout({
     return new Promise((resolve, reject) => {
       profile()
         .then((res: any) => {
-          setUserame({
+          setProfileUser({
             username: res.data.getProfile.user.username,
             kudosNo: res.data.getProfile.user.kudosNo,
           });
@@ -157,15 +149,16 @@ export default function RootLayout({
               )}
               <div className="mb-4 flex flex-row justify-between items-center">
                 <div>
-                  <h4>{username.username}</h4>
-                  <h4>Kudos No.{username.kudosNo}</h4>
+                  <h4>{profileUser.username}</h4>
+                  <h4>Kudos No.{profileUser.kudosNo}</h4>
                 </div>
 
                 <DarkModeToggle />
               </div>
               {menuItems.map(({ title }) => (
                 <button
-                  onClick={() => setIsAddAccount((c) => !c)}
+                  onClick={() => setIsAddAccount((c: any) => !c)}
+                  key={title}
                   className={`flex p-2 w-full bg-primary dark:bg-primaryDark rounded text-onPrimary dark:text-onPrimaryDark cursor-pointer`}
                 >
                   {title}
@@ -342,45 +335,10 @@ export default function RootLayout({
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              clip-rule="evenodd"
-              fill-rule="evenodd"
-              d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
-            ></path>
+            <path d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
           </svg>
         </button>
       )}
-      <div className="sm:ml-64">
-        {isEmpty ? (
-          <>
-            <div className="flex flex-col items-center bg-onPrimary text-onSurfaceVariant dark:text-surfaceVariant dark:bg-onSurfaceVariant align-middle justify-center h-screen">
-              <Image
-                height={400}
-                src={EmptyData}
-                quality={100}
-                alt="Kudoku Logo"
-                draggable={false}
-              />
-              <h4>
-                No tracked transactions available. It seems like you haven’t
-                connect or create financial account.
-              </h4>
-              <h4 className="my-4">
-                {' '}
-                Click <strong>+ add financial account</strong> to get started!
-              </h4>
-            </div>
-          </>
-        ) : (
-          <>{children}</>
-        )}
-      </div>
-      {addAcount ? (
-        <ModalAddFinancialAccount setIsAddAccount={setIsAddAccount} />
-      ) : (
-        <></>
-      )}
-      {reconcile ? <ModalReconcile setIsReconcile={setIsReconcile} /> : <></>}
     </>
   );
 }

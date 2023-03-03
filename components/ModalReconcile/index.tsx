@@ -2,7 +2,7 @@ import TextInput from '$components/InputPlaceholder/TextInput';
 import { useMutation } from '@apollo/client';
 import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { mutationReconcile } from 'app/kudoku/mutation';
+import { mutationReconcile } from 'app/[kudoku]/mutation';
 import { useSearchParams } from 'next/navigation';
 import { FormEventHandler, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
