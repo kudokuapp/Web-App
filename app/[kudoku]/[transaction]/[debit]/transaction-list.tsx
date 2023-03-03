@@ -426,7 +426,7 @@ export default function TransactionListDebit({
                             transactionDetail.id === categories.id
                               ? `bg-primaryContainer dark:bg-primaryContainerDark`
                               : ``
-                          } flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-primaryContainer cursor-pointer hover:text-onSurfaceVariant`}
+                          } flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-primaryContainer dark:hover:bg-primaryContainerDark cursor-pointer text-sm hover:text-onSurfaceVariant dark:hover:text-onPrimary`}
                           onClick={() => setTransactionDetail(item)}
                         >
                           <td className="w-1/2">{item.description}</td>
@@ -548,7 +548,7 @@ export default function TransactionListDebit({
                               transactionDetail.id === value.id
                                 ? `bg-primaryContainer dark:bg-primaryContainerDark`
                                 : ``
-                            } flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-primaryContainer cursor-pointer text-sm hover:text-onSurfaceVariant`}
+                            } flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-primaryContainer dark:hover:bg-primaryContainerDark cursor-pointer text-sm hover:text-onSurfaceVariant dark:hover:text-onPrimary`}
                             key={value}
                             onClick={() => setTransactionDetail(value)}
                           >
