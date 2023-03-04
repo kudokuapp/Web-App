@@ -23,12 +23,17 @@ import { mutationDeleteCashAccount } from '../../../app/[kudoku]/mutation';
 import { queryAllCashAccount, queryProfile } from '../../../app/[kudoku]/query';
 import GetAllDebitAccount from '../../../app/[kudoku]/[transaction]/[debit]/page';
 
-export default function Page({ setIsAddAccount }: { setIsAddAccount: any }) {
+export default function Page({
+  setIsAddAccount,
+  setIsReconcile,
+}: {
+  setIsAddAccount: any;
+  setIsReconcile: any;
+}) {
   const router = useRouter();
   const [isHidden, setIsHidden] = useState(true);
   const [isHideBtn, setIsHideBtn] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
-  const [reconcile, setIsReconcile] = useState(false);
   const [isMoreActive, setIsMoreActive] = useState(false);
   const [isDeleteAccount, setIsDeleteAccount] = useState(false);
   const [accountId, setAccountId] = useState('');
@@ -236,7 +241,9 @@ export default function Page({ setIsAddAccount }: { setIsAddAccount: any }) {
                               {isMoreActive ? (
                                 <div className="absolute bg-onPrimary shadow-md dark:bg-onPrimary p-4 flex flex-col h-fit right-0 top-full items-end rounded z-10 gap-2">
                                   <button
-                                    onClick={() => setIsReconcile((c) => !c)}
+                                    onClick={() =>
+                                      setIsReconcile((c: any) => !c)
+                                    }
                                     className="text-sm gap-2 flex items-center"
                                   >
                                     <FontAwesomeIcon

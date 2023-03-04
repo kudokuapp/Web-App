@@ -53,6 +53,23 @@ export const ModalAddTransaction = ({
     'Work expenses',
   ];
 
+  const dataCategoryIncome = ['Salary', 'Gift', 'Interest'];
+
+  //   const dataCategory = [
+  //     { name: 'Food & beverages', bgColor: '#FBEAEB', color: '#9E3C60' },
+  //     { name: 'Vehicle', bgColor: '#BAF8FF', color: '#006974' },
+  //     { name: 'Cloting', bgColor: '#FFA7CD', color: '#3E001B' },
+  //     { name: 'Groceries', bgColor: '#BAD3EF', color: '#03458E' },
+  //     { name: 'Healthcare', bgColor: '#472452', color: '#E384FF' },
+  //     { name: 'Gym', bgColor: '#461D23', color: '#FFFFFF' },
+  //     { name: 'Rent', bgColor: '#183A1D', color: '#AFF1B9' },
+  //     { name: 'Shops', bgColor: '#F0A04B', color: '#281C0E' },
+  //     { name: 'Subscriptions', bgColor: '#537FE7', color: '#FFFFFF' },
+  //     { name: 'Transportation', bgColor: '#051D1E', color: '#3F979B' },
+  //     { name: 'Travel & vacation', bgColor: '#0069A4', color: '#FFFFFF' },
+  //     { name: 'Work expenses', bgColor: '#F8CBA6', color: '#FF7300' },
+  //   ];
+
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const addTransactionCash = () => {
@@ -79,7 +96,8 @@ export const ModalAddTransaction = ({
   return (
     <>
       <div className={styles.modalContainer}>
-        <div
+        <form
+          onSubmit={handleSubmit}
           className={`${styles.modalBody} bg-onPrimary relative dark:bg-onSurfaceVariant text-black dark:text-surface`}
         >
           <Toaster
@@ -91,18 +109,25 @@ export const ModalAddTransaction = ({
             }}
           />
           <div className="flex px-4 flex-row justify-between items-center mb-4">
-            <div className="flex flex-row gap-4">
+            <div className="flex flex-row gap-4 align-middle">
+              <button
+                className="text-lg font-bold"
+                onClick={() => setIsAddTransaction((c: any) => !c)}
+              >
+                x
+              </button>
               <h4 className="text-xl text-primary dark:text-primaryDark font-bold">
                 Add Transaction
               </h4>
             </div>
-            <button onClick={() => setIsAddTransaction((c: any) => !c)}>
-              x
+
+            <button className="bg-primary hover:bg-secondary dark:bg-primaryDark dark:hover:bg-secondaryDark dark:text-primaryContainerDark text-white py-1 px-3 rounded-md my-2">
+              Save
             </button>
           </div>
           <hr className="border-b-2" />
           <div className={styles.modalContent}>
-            <form onSubmit={handleSubmit}>
+            <div>
               <div className="flex flex-row justify-start gap-4 w-full">
                 <div className="flex flex-col justify-start">
                   <h4 className="text-outline dark:text-surfaceVariant text-sm">
@@ -183,7 +208,23 @@ export const ModalAddTransaction = ({
                     </select>
                   </div>
                 ) : (
-                  <></>
+                  <div className="flex flex-col w-fit justify-start mt-2">
+                    <h4 className="text-outline dark:text-surfaceVariant text-sm">
+                      Category
+                    </h4>
+                    <select
+                      className="bg-background dark:bg-outline px-2 py-1 text-sm rounded"
+                      onChange={(e) => {
+                        setCategoryName(e.target.value);
+                      }}
+                    >
+                      {dataCategoryIncome.map((item) => (
+                        <option className="px-2 py-1" value={item} key={item}>
+                          {item}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 )}
                 {/* <div className="flex flex-col w-full mb-2 justify-start">
                     <TextInput placeholder="Add Merchant" id="merchant" />
@@ -203,13 +244,10 @@ export const ModalAddTransaction = ({
                     className="bg-neutralBackground dark:text-primaryContainerDark rounded-sm p-2"
                   />
                 </div>
-                <button className="w-full bg-primary hover:bg-secondary dark:bg-primaryDark dark:hover:bg-secondaryDark dark:text-primaryContainerDark text-white py-2 rounded-md my-2">
-                  Save
-                </button>
               </div>
-            </form>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </>
   );

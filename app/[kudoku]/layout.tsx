@@ -37,7 +37,10 @@ export default function RootLayout({
 
   return (
     <>
-      <Sidebar setIsAddAccount={setIsAddAccount} />
+      <Sidebar
+        setIsAddAccount={setIsAddAccount}
+        setIsReconcile={setIsReconcile}
+      />
       <div className="sm:ml-64">{children}</div>
       {addAcount ? (
         <ModalAddFinancialAccount setIsAddAccount={setIsAddAccount} />

@@ -3,7 +3,7 @@
 }
 
 .input {
-  @apply bg-transparent focus:outline-none text-xl w-full h-full font-bold placeholder:opacity-50;
+  @apply bg-transparent focus:outline-none w-full h-full font-bold placeholder:opacity-50;
 }
 
 .label {

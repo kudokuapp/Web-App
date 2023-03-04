@@ -82,6 +82,71 @@ const mutationAddCashTransaction = gql`
   }
 `;
 
+const mutationEditCashTransaction = gql`
+  mutation EditCashTransaction(
+    $transactionId: String!
+    $transactionName: String!
+    $category: [CategoryInputType]
+    $transactionType: ExpenseTypeEnum
+    $direction: DirectionTypeEnum
+    $notes: String
+    $location: LocationInputType
+    $tags: [String!]
+    $isHideFromBudget: Boolean
+    $isHideFromInsight: Boolean
+    $internalTransferAccountId: String
+    $merchantId: String
+    $amount: String
+    $currency: String
+  ) {
+    editCashTransaction(
+      transactionId: $transactionId
+      transactionName: $transactionName
+      category: $category
+      transactionType: $transactionType
+      direction: $direction
+      notes: $notes
+      location: $location
+      tags: $tags
+      isHideFromBudget: $isHideFromBudget
+      isHideFromInsight: $isHideFromInsight
+      internalTransferAccountId: $internalTransferAccountId
+      merchantId: $merchantId
+      amount: $amount
+      currency: $currency
+    ) {
+      id
+      cashAccountId
+      dateTimestamp
+      currency
+      amount
+      merchant {
+        id
+        name
+        picture
+        url
+      }
+      merchantId
+      category {
+        name
+        amount
+      }
+      transactionType
+      internalTransferAccountId
+      direction
+      notes
+      location {
+        latitude
+        longitude
+      }
+      tags
+      isHideFromBudget
+      isHideFromInsight
+      transactionName
+    }
+  }
+`;
+
 const mutationDeleteCashTransaction = gql`
   mutation DeleteCashTransaction($transactionId: String!) {
     deleteCashTransaction(transactionId: $transactionId) {
@@ -192,6 +257,7 @@ export {
   mutationAddCashAccount,
   mutationAddCashTransaction,
   mutationDeleteCashTransaction,
+  mutationEditCashTransaction,
   mutationDeleteCashAccount,
   mutationReconcile,
   mutationConnectBCA,

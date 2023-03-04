@@ -62,6 +62,23 @@ export default function TransactionList({
     isHideFromInsight: false,
     merchant: { id: '', name: '', picture: '', url: '' },
   });
+  const dataCategory = [
+    { name: 'Food & beverages', bgColor: '#FBEAEB', color: '#9E3C60' },
+    { name: 'Vehicle', bgColor: '#BAF8FF', color: '#006974' },
+    { name: 'Cloting', bgColor: '#FFA7CD', color: '#3E001B' },
+    { name: 'Groceries', bgColor: '#BAD3EF', color: '#03458E' },
+    { name: 'Healthcare', bgColor: '#472452', color: '#E384FF' },
+    { name: 'Gym', bgColor: '#461D23', color: '#FFFFFF' },
+    { name: 'Rent', bgColor: '#183A1D', color: '#AFF1B9' },
+    { name: 'Shops', bgColor: '#F0A04B', color: '#281C0E' },
+    { name: 'Subscriptions', bgColor: '#537FE7', color: '#FFFFFF' },
+    { name: 'Transportation', bgColor: '#051D1E', color: '#3F979B' },
+    { name: 'Travel & vacation', bgColor: '#0069A4', color: '#FFFFFF' },
+    { name: 'Work expenses', bgColor: '#F8CBA6', color: '#FF7300' },
+    { name: 'Salary', bgColor: '#AFF1B9', color: '#000000' },
+    { name: 'Gift', bgColor: '#AFF1B9', color: '#000000' },
+    { name: 'Interest', bgColor: '#AFF1B9', color: '#000000' },
+  ];
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -280,7 +297,25 @@ export default function TransactionList({
                             >
                               <td>{item.transactionName}</td>
                               <td>{searchParamsName}</td>
-                              <td>{categories.name}</td>
+                              {categories.name ? (
+                                dataCategory.map((detail: any) =>
+                                  detail.name === categories.name ? (
+                                    <td
+                                      style={{
+                                        color: detail.color,
+                                        backgroundColor: detail.bgColor,
+                                      }}
+                                      className="rounded-xl py-1 px-2 text-xs font-bold"
+                                    >
+                                      {categories.name}
+                                    </td>
+                                  ) : (
+                                    <></>
+                                  )
+                                )
+                              ) : (
+                                <td></td>
+                              )}
                               <td
                                 className={
                                   item.direction === 'IN'
@@ -288,7 +323,15 @@ export default function TransactionList({
                                     : `text-error dark:text-errorDark`
                                 }
                               >
-                                {rupiah(categories.amount).replace(/\s/g, '')}
+                                {item.direction === 'IN'
+                                  ? `+ ${rupiah(categories.amount).replace(
+                                      /\s/g,
+                                      ''
+                                    )}`
+                                  : `- ${rupiah(categories.amount).replace(
+                                      /\s/g,
+                                      ''
+                                    )}`}
                               </td>
                             </tr>
                           ))}
@@ -393,16 +436,36 @@ export default function TransactionList({
                                   transactionDetail.id === value.id
                                     ? `bg-primaryContainer dark:bg-primaryContainerDark`
                                     : ``
-                                } flex justify-between w-full gap-x-4 px-4 py-1 hover:bg-primaryContainer dark:hover:bg-primaryContainerDark cursor-pointer hover:text-onSurfaceVariant dark:hover:text-onPrimary`}
+                                } flex justify-between w-full gap-x-20 my-1 px-4 py-1 hover:bg-primaryContainer dark:hover:bg-primaryContainerDark cursor-pointer hover:text-onSurfaceVariant dark:hover:text-onPrimary`}
                                 key={value}
                                 onClick={() => setTransactionDetail(value)}
                               >
-                                {value.category !== null ? (
-                                  value.category.map((categories: any) => (
-                                    <>
+                                {value.category.map((categories: any) => (
+                                  <>
+                                    <div className="flex justify-between w-full">
                                       <td>{value.transactionName}</td>
                                       <td>{searchParamsName}</td>
-                                      <td>{categories.name}</td>
+                                    </div>
+                                    <div className="flex justify-between w-full">
+                                      {categories.name ? (
+                                        dataCategory.map((detail: any) =>
+                                          detail.name === categories.name ? (
+                                            <td
+                                              style={{
+                                                color: detail.color,
+                                                backgroundColor: detail.bgColor,
+                                              }}
+                                              className="rounded-xl py-1 px-2 text-xs font-bold"
+                                            >
+                                              {categories.name}
+                                            </td>
+                                          ) : (
+                                            <></>
+                                          )
+                                        )
+                                      ) : (
+                                        <td></td>
+                                      )}
                                       <td
                                         className={
                                           value.direction === 'IN'
@@ -410,34 +473,17 @@ export default function TransactionList({
                                             : `text-error dark:text-errorDark`
                                         }
                                       >
-                                        {rupiah(categories.amount).replace(
-                                          /\s/g,
-                                          ''
-                                        )}
+                                        {value.direction === 'IN'
+                                          ? `+ ${rupiah(
+                                              categories.amount
+                                            ).replace(/\s/g, '')}`
+                                          : `- ${rupiah(
+                                              categories.amount
+                                            ).replace(/\s/g, '')}`}
                                       </td>
-                                    </>
-                                  ))
-                                ) : (
-                                  <>
-                                    <>
-                                      <td>{value.transactionType}</td>
-                                      <td>{searchParamsName}</td>
-                                      <td>{value.transactionType}</td>
-                                      <td
-                                        className={
-                                          value.direction === 'IN'
-                                            ? `text-secondary dark:text-secondaryDark`
-                                            : `text-error dark:text-errorDark`
-                                        }
-                                      >
-                                        {rupiah(value.amount).replace(
-                                          /\s/g,
-                                          ''
-                                        )}
-                                      </td>
-                                    </>
+                                    </div>
                                   </>
-                                )}
+                                ))}
                               </tr>
                             ))}
                         </tbody>
