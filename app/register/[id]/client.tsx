@@ -18,7 +18,7 @@ import { confirmEmailOtp, confirmWaOtp, getEmailOtp, getWaOtp } from './query';
 export default function Client({ user }: { user: MongoDBUserData }) {
   const router = useRouter();
 
-  const [progress, setProgress] = useState(4);
+  const [progress, setProgress] = useState(1);
   const [jwtToken, setJwtToken] = useState('');
   const [otpWa, setOtpWa] = useState('');
   const [otpEmail, setOtpEmail] = useState('');
