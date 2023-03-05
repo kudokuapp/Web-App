@@ -8,7 +8,7 @@ import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { FormEventHandler, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import OtpInput from 'react-otp-input';
 import { userSignUp } from './mutation';
@@ -107,39 +107,6 @@ export default function Client({ user }: { user: MongoDBUserData }) {
     passwordSymbol,
     passwordAndConfirmPassword,
   ]);
-
-  const handleSubmit: FormEventHandler = async (e) => {
-    e.preventDefault();
-    toast
-      .promise(checkIfUsernameIsAvailable(username), {
-        loading: 'Cek apakah username tersedia...',
-        success: 'Username tersedia!',
-        error: 'Username tidak tersedia!',
-      })
-      .then(() => {
-        //FULFILLED
-        toast
-          .promise(
-            userSignUp({
-              signupId: user._id,
-              username,
-              password,
-              pin,
-              jwtToken,
-            }),
-            {
-              loading: 'Daftarin kamu ke aplikasi Kudoku...',
-              success: 'Sukses!',
-              error: 'Error!',
-            }
-          )
-          .then(() => {
-            //FULFILLED
-            setProgress(6);
-          });
-      });
-  };
-
   const renderProgress = () => {
     if (progress === 1) {
       return (
@@ -451,7 +418,7 @@ export default function Client({ user }: { user: MongoDBUserData }) {
               </span>{' '}
               kamu yuk.
             </h4>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4">
               <div>
                 <TextInput
                   placeholder="Username"
@@ -601,9 +568,43 @@ export default function Client({ user }: { user: MongoDBUserData }) {
                 </div>
               </div>
               <div className="w-full h-fit flex items-center justify-end mt-6">
-                <LoginButton disabled={!allConditions}>Lanjut</LoginButton>
+                <LoginButton
+                  disabled={!allConditions}
+                  onClick={() => {
+                    toast
+                      .promise(checkIfUsernameIsAvailable(username), {
+                        loading: 'Cek apakah username tersedia...',
+                        success: 'Username tersedia!',
+                        error: 'Username tidak tersedia!',
+                      })
+                      .then(() => {
+                        //FULFILLED
+                        toast
+                          .promise(
+                            userSignUp({
+                              signupId: user._id,
+                              username,
+                              password,
+                              pin,
+                              jwtToken,
+                            }),
+                            {
+                              loading: 'Daftarin kamu ke aplikasi Kudoku...',
+                              success: 'Sukses!',
+                              error: 'Error!',
+                            }
+                          )
+                          .then(() => {
+                            //FULFILLED
+                            setProgress(6);
+                          });
+                      });
+                  }}
+                >
+                  Lanjut
+                </LoginButton>
               </div>
-            </form>
+            </div>
           </div>
           <motion.div
             className="mt-8 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
