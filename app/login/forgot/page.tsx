@@ -5,25 +5,23 @@ import TextInput from '$components/InputPlaceholder/TextInput';
 import LottieFC from '$components/Lottie';
 import Checked from '$components/Lottie/Checked';
 import { censorEmail, censorNumber } from '$utils/helper/censor';
-import { useLazyQuery, useMutation } from '@apollo/client';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import axios from 'axios';
 import { motion } from 'framer-motion';
-import type { ObjectId } from 'mongodb';
 import { useRouter } from 'next/navigation';
 import { FormEventHandler, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import OtpInput from 'react-otp-input';
+import { userSignUp } from './mutation';
 import {
-  queryChangePassword,
-  queryGetTokenFromOtp,
-  queryGetUser,
+  confirmEmailOtp,
+  confirmWaOtp,
+  getEmailOtp,
+  getUser,
+  getWaOtp,
 } from './query';
 
 interface IUser {
-  _id: ObjectId;
-  username: string;
   email: string;
   whatsapp: string;
 }
@@ -35,7 +33,10 @@ export default function Page() {
 
   const [otpWa, setOtpWa] = useState('');
   const [otpEmail, setOtpEmail] = useState('');
-  const [token, setToken] = useState('');
+
+  const [jwtToken, setJwtToken] = useState('');
+
+  const [selectedOption, setSelectedOption] = useState('');
 
   const [username, setUsername] = useState('');
 
@@ -52,37 +53,6 @@ export default function Page() {
   const [passwordAndConfirmPassword, setPasswordAndConfirmPassword] =
     useState(false);
   const [allConditions, setAllConditions] = useState(false);
-
-  // eslint-disable-next-line no-unused-vars
-  const [getUser, { data: userData }] = useLazyQuery(queryGetUser, {
-    variables: {
-      username,
-    },
-  });
-
-  // eslint-disable-next-line no-unused-vars
-  const [getTokenFromOtp, { data: getTokenFromOtpData }] = useMutation(
-    queryGetTokenFromOtp,
-    {
-      variables: {
-        otp: otpEmail,
-        email: user.email,
-      },
-    }
-  );
-
-  // eslint-disable-next-line no-unused-vars
-  const [changePassword, { data: changePasswordData }] = useMutation(
-    queryChangePassword,
-    {
-      variables: { password },
-      context: {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    }
-  );
 
   useEffect(() => {
     if (password === '') {
@@ -138,117 +108,23 @@ export default function Page() {
     passwordAndConfirmPassword,
   ]);
 
-  const handleVerifyWa = () => {
-    const confirmWaCode = () => {
-      return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            const { data } = await axios.post('/api/verify/confirmcode', {
-              receiver: user.whatsapp,
-              code: otpWa,
-            });
-            if (!data.valid || Object.keys(data).length === 0)
-              throw new Error('Invalid OTP');
-            resolve(data);
-          } catch (e) {
-            reject();
-          }
-        })();
-      });
-    };
-
-    const getEmailCode = () => {
-      return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            const { data } = await axios.post('/api/verify/getcode', {
-              receiver: user.email,
-              type: 'email',
-            });
-            if (!data || Object.keys(data).length === 0) throw new Error();
-            resolve(data);
-          } catch (e) {
-            console.error(e);
-            reject();
-          }
-        })();
-      });
-    };
-
-    toast
-      .promise(confirmWaCode(), {
-        loading: 'Loading...',
-        success: 'Sukses verifikasi OTP',
-        error: 'Kode OTP salah',
-      })
-      .then(() => {
-        toast
-          .promise(getEmailCode(), {
-            loading: 'Loading...',
-            success: 'Sukses kirim OTP ke email',
-            error: 'Servernya error',
-          })
-          .then(() => setProgress(3));
-      });
-  };
-
-  const handleVerifyEmail = async () => {
-    const confirmEmailCode = () => {
-      return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            const {
-              data: { getTokenFromOtp: data },
-            } = await getTokenFromOtp();
-            if (!data || Object.keys(data).length === 0) throw new Error();
-            resolve(data);
-          } catch (e) {
-            reject();
-          }
-        })();
-      });
-    };
-
-    toast
-      .promise(confirmEmailCode(), {
-        loading: 'Loading...',
-        success: 'Sukses verifikasi OTP',
-        error: 'Kode OTP salah',
-      })
-      .then((data: any) => {
-        setProgress(4);
-        setToken(data.token);
-      });
-  };
-
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
 
-    const myPromise = () => {
-      return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            const {
-              data: { changePassword: data },
-            } = await changePassword();
-
-            if (!data || Object.keys(data).length === 0) throw new Error();
-
-            resolve(data);
-          } catch (e) {
-            reject(e);
-          }
-        })();
-      });
-    };
-
     toast
-      .promise(myPromise(), {
-        loading: 'Loading...',
-        success: 'Sukses ganti password',
-        error: 'Token invalid',
+      .promise(userSignUp({ password, jwtToken }), {
+        loading: 'Ganti password kamu...',
+        success: 'Pergantian password sukses!',
+        error: 'Gagal ganti password kamu!',
       })
-      .then(() => setProgress(5));
+      .then(() => {
+        //FULFILLED
+        setProgress(6);
+      });
+  };
+
+  const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedOption(event.target.value);
   };
 
   const renderProgress = () => {
@@ -260,65 +136,16 @@ export default function Page() {
             onSubmit={async (e) => {
               e.preventDefault();
 
-              const myPromise = () => {
-                return new Promise((resolve, reject) => {
-                  (async () => {
-                    try {
-                      const {
-                        data: { getuserbyusername: data },
-                      } = await getUser();
-
-                      if (!data || Object.keys(data).length === 0)
-                        throw new Error('Wrong username');
-
-                      resolve(data);
-                    } catch (e) {
-                      console.error(e);
-                      reject();
-                    }
-                  })();
-                });
-              };
-
-              const secondPromise = (receiver: string) => {
-                return new Promise((resolve, reject) => {
-                  (async () => {
-                    try {
-                      const { data } = await axios.post('/api/verify/getcode', {
-                        receiver,
-                        type: 'sms',
-                      });
-                      resolve(data);
-                    } catch (e) {
-                      reject();
-                    }
-                  })();
-                });
-              };
-
               toast
-                .promise(myPromise(), {
-                  loading: 'Lagi cek username...',
+                .promise(getUser(username), {
+                  loading: 'Cek username kamu...',
                   success: 'Username ditemukan',
-                  error: 'Username tidak ditemukan',
+                  error: 'Username tidak ditemukan!',
                 })
-                .then((data: any) => {
-                  setUser({
-                    _id: data.id,
-                    username,
-                    email: data.email,
-                    whatsapp: data.whatsapp,
-                  });
-
-                  toast
-                    .promise(secondPromise(data.whatsapp), {
-                      loading: 'Kirim OTP...',
-                      success: 'Kirim OTP Sukses',
-                      error: 'Kirim OTP Gagal',
-                    })
-                    .then(() => {
-                      setProgress(2);
-                    });
+                .then((data) => {
+                  //FULFILLED
+                  setUser({ email: data.email, whatsapp: data.whatsapp });
+                  setProgress(2);
                 });
             }}
           >
@@ -374,6 +201,148 @@ export default function Page() {
         >
           <div className="flex flex-col gap-4">
             <h4 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
+              Pilih metode kirim OTP yang kamu mau.
+            </h4>
+            <p className="text-onPrimaryContainer dark:text-surfaceVariant">
+              Data-data ini data yang kamu masukkan saat registrasi Kudos
+              pertama kali!
+            </p>
+          </div>
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center">
+              <input
+                type="radio"
+                id="email"
+                name="radio"
+                value="email"
+                checked={selectedOption === 'email'}
+                onChange={handleOptionChange}
+                className="hidden"
+              />
+
+              <label
+                htmlFor="email"
+                className={`flex items-center justify-center border border-gray-400 rounded-full w-6 h-6 transition-colors duration-200 ${
+                  selectedOption === 'email'
+                    ? 'bg-blue-500 border-blue-500 text-white'
+                    : 'hover:bg-gray-200'
+                }`}
+              >
+                {selectedOption === 'email' && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 19a9 9 0 110-18 9 9 0 010 18zm-1.414-8.828L6.586 9.172a1 1 0 111.414-1.414l1.414 1.414 5.293-5.293a1 1 0 111.414 1.414l-6 6a1 1 0 01-1.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                )}
+              </label>
+
+              <span className="ml-3 text-onPrimaryContainer dark:text-surfaceVariant">
+                Kirim OTP ke email <strong>{censorEmail(user.email)}</strong>
+              </span>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                type="radio"
+                id="whatsapp"
+                name="radio"
+                value="whatsapp"
+                checked={selectedOption === 'whatsapp'}
+                onChange={handleOptionChange}
+                className="hidden"
+              />
+
+              <label
+                htmlFor="whatsapp"
+                className={`flex items-center justify-center border border-gray-400 rounded-full w-6 h-6 transition-colors duration-200 ${
+                  selectedOption === 'whatsapp'
+                    ? 'bg-blue-500 border-blue-500 text-white'
+                    : 'hover:bg-gray-200'
+                }`}
+              >
+                {selectedOption === 'whatsapp' && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 19a9 9 0 110-18 9 9 0 010 18zm-1.414-8.828L6.586 9.172a1 1 0 111.414-1.414l1.414 1.414 5.293-5.293a1 1 0 111.414 1.414l-6 6a1 1 0 01-1.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                )}
+              </label>
+
+              <span className="ml-3 text-onPrimaryContainer dark:text-surfaceVariant">
+                Kirim OTP via SMS ke nomor{' '}
+                <strong>{censorNumber(user.whatsapp)}</strong>
+              </span>
+            </div>
+          </div>
+          <div className="w-full h-fit flex items-center justify-end">
+            <LoginButton
+              onClick={() => {
+                if (selectedOption === 'whatsapp') {
+                  toast
+                    .promise(getWaOtp(user.whatsapp), {
+                      loading: 'Kirim OTP...',
+                      success: 'Kirim OTP Sukses!',
+                      error: 'Gagal kirim OTP!',
+                    })
+                    .then(() => {
+                      //FULFILLED
+                      setProgress(3);
+                    });
+                } else if (selectedOption === 'email') {
+                  toast
+                    .promise(getEmailOtp(user.email), {
+                      loading: 'Kirim OTP...',
+                      success: 'Kirim OTP Sukses!',
+                      error: 'Gagal kirim OTP!',
+                    })
+                    .then(() => {
+                      //FULFILLED
+                      setProgress(4);
+                    });
+                }
+              }}
+              disabled={selectedOption === ''}
+            >
+              Lanjut
+            </LoginButton>
+          </div>
+          <motion.div
+            className="mt-8 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
+            animate={{ width: '35%' }}
+            style={{
+              width: '20%',
+            }}
+            transition={{ duration: 2, type: 'spring' }}
+          />
+        </motion.div>
+      );
+    } else if (progress === 3) {
+      return (
+        <motion.div
+          animate={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col gap-8"
+          key={2}
+        >
+          <div className="flex flex-col gap-4">
+            <h4 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
               Kudoku udah kirim sms ke{' '}
               <span className="text-primary dark:text-primaryDark">
                 {censorNumber(user.whatsapp)}
@@ -405,19 +374,39 @@ export default function Page() {
             />
           </div>
           <div className="w-full h-fit flex items-center justify-end">
-            <LoginButton onClick={handleVerifyWa}>Lanjut</LoginButton>
+            <LoginButton
+              disabled={!otpWa || otpWa.length < 6}
+              onClick={async () => {
+                toast
+                  .promise(
+                    confirmWaOtp({ whatsapp: user.whatsapp, otp: otpWa }),
+                    {
+                      loading: 'Cek OTP...',
+                      success: 'OTP benar!',
+                      error: 'OTP salah!',
+                    }
+                  )
+                  .then((data) => {
+                    //FULFILLED
+                    setJwtToken(data.token);
+                    setProgress(5);
+                  });
+              }}
+            >
+              Lanjut
+            </LoginButton>
           </div>
           <motion.div
             className="mt-8 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
-            animate={{ width: '40%' }}
+            animate={{ width: '50%' }}
             style={{
-              width: '20%',
+              width: '35%',
             }}
             transition={{ duration: 2, type: 'spring' }}
           />
         </motion.div>
       );
-    } else if (progress === 3) {
+    } else if (progress === 4) {
       return (
         <motion.div
           animate={{ opacity: 1 }}
@@ -429,9 +418,11 @@ export default function Page() {
           <div className="flex flex-col gap-4">
             <h4 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
               Kudoku udah kirim <b>email</b> ke{' '}
-              <span className="text-primary dark:text-primaryDark">
-                {censorEmail(user.email)}
-              </span>
+              {user.email && (
+                <span className="text-primary dark:text-primaryDark">
+                  {censorEmail(user.email)}
+                </span>
+              )}
               .
             </h4>
             <p className="text-onPrimaryContainer dark:text-surfaceVariant">
@@ -459,19 +450,39 @@ export default function Page() {
             />
           </div>
           <div className="w-full h-fit flex items-center justify-end">
-            <LoginButton onClick={handleVerifyEmail}>Lanjut</LoginButton>
+            <LoginButton
+              disabled={!otpEmail || otpEmail.length < 6}
+              onClick={async () => {
+                toast
+                  .promise(
+                    confirmEmailOtp({ email: user.email, otp: otpEmail }),
+                    {
+                      loading: 'Cek OTP...',
+                      success: 'OTP benar!',
+                      error: 'OTP salah!',
+                    }
+                  )
+                  .then((data) => {
+                    //FULFILLED
+                    setJwtToken(data.token);
+                    setProgress(5);
+                  });
+              }}
+            >
+              Lanjut
+            </LoginButton>
           </div>
           <motion.div
             className="mt-8 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
-            animate={{ width: '60%' }}
+            animate={{ width: '50%' }}
             style={{
-              width: '40%',
+              width: '35%',
             }}
             transition={{ duration: 2, type: 'spring' }}
           />
         </motion.div>
       );
-    } else if (progress === 4) {
+    } else if (progress === 5) {
       return (
         <motion.div
           animate={{ opacity: 1 }}
@@ -612,13 +623,13 @@ export default function Page() {
             className="mt-8 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
             animate={{ width: '80%' }}
             style={{
-              width: '60%',
+              width: '50%',
             }}
             transition={{ duration: 2, type: 'spring' }}
           />
         </motion.div>
       );
-    } else if (progress === 5) {
+    } else if (progress === 6) {
       return (
         <>
           <div className="flex flex-col justify-center items-center">

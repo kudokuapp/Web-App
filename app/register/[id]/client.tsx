@@ -4,37 +4,28 @@ import PasswordInput from '$components/InputPlaceholder/PasswordInput';
 import TextInput from '$components/InputPlaceholder/TextInput';
 import LottieFC from '$components/Lottie';
 import Checked from '$components/Lottie/Checked';
-import unavailableusername from '$utils/data/unavailableusername';
-import { gql, useLazyQuery, useMutation } from '@apollo/client';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import axios from 'axios';
 import { motion } from 'framer-motion';
-import { ObjectId } from 'mongodb';
 import { useRouter } from 'next/navigation';
 import { FormEventHandler, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import OtpInput from 'react-otp-input';
+import { userSignUp } from './mutation';
+import { checkIfUsernameIsAvailable } from './promise';
+import { confirmEmailOtp, confirmWaOtp, getEmailOtp, getWaOtp } from './query';
 
-interface IUser {
-  _id: ObjectId;
-  username?: string | undefined;
-  password?: string | undefined;
-  firstName: string;
-  lastName: string;
-  email: string;
-  whatsapp: string;
-  kudos: number;
-}
-
-export default function Client({ user }: { user: IUser }) {
+export default function Client({ user }: { user: MongoDBUserData }) {
   const router = useRouter();
 
-  const [progress, setProgress] = useState(1);
+  const [progress, setProgress] = useState(4);
+  const [jwtToken, setJwtToken] = useState('');
   const [otpWa, setOtpWa] = useState('');
   const [otpEmail, setOtpEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [pin, setPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [usernameMinFiveChar, setUsernameMinFiveChar] = useState(false);
@@ -51,42 +42,7 @@ export default function Client({ user }: { user: IUser }) {
 
   const [allConditions, setAllConditions] = useState(false);
 
-  const querySignup = gql`
-    mutation Mutation($signupId: ID!, $username: String!, $password: String!) {
-      signup(id: $signupId, username: $username, password: $password) {
-        token
-      }
-    }
-  `;
-
-  const [
-    userSignup,
-    {
-      // loading: userSignupLoading,
-      // eslint-disable-next-line no-unused-vars
-      error: userSignupError,
-      // data: userSignupData,
-    },
-  ] = useMutation(querySignup, {
-    variables: {
-      signupId: user._id,
-      username: username,
-      password: password,
-    },
-  });
-
-  const queryGetUsername = gql`
-    query Getalluser {
-      getalluser {
-        username
-      }
-    }
-  `;
-
-  // eslint-disable-next-line no-unused-vars
-  const [getUsername, { data: allUsername }] = useLazyQuery(queryGetUsername);
-
-  const { firstName, lastName, email, whatsapp, kudos } = user;
+  const { firstName, lastName, email, whatsapp, kudosNo } = user;
 
   useEffect(() => {
     if (username === '') {
@@ -152,152 +108,36 @@ export default function Client({ user }: { user: IUser }) {
     passwordAndConfirmPassword,
   ]);
 
-  const handleVerifyWa = () => {
-    const confirmWaCode = () => {
-      return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            const { data } = await axios.post('/api/verify/confirmcode', {
-              receiver: `+${whatsapp}`,
-              code: otpWa,
-            });
-            if (!data.valid || Object.keys(data).length === 0)
-              throw new Error('Invalid OTP');
-            resolve(data);
-          } catch (e) {
-            reject();
-          }
-        })();
-      });
-    };
-
-    const getEmailCode = () => {
-      return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            const { data } = await axios.post('/api/verify/getcode', {
-              receiver: email,
-              type: 'email',
-            });
-            if (!data || Object.keys(data).length === 0) throw new Error();
-            resolve(data);
-          } catch (e) {
-            console.error(e);
-            reject();
-          }
-        })();
-      });
-    };
-
-    toast
-      .promise(confirmWaCode(), {
-        loading: 'Loading...',
-        success: 'Sukses verifikasi OTP',
-        error: 'Kode OTP salah',
-      })
-      .then(() => {
-        toast
-          .promise(getEmailCode(), {
-            loading: 'Loading...',
-            success: 'Sukses kirim OTP ke email',
-            error: 'Servernya error',
-          })
-          .then(() => setProgress(3));
-      });
-  };
-
-  const handleVerifyEmail = async () => {
-    const confirmEmailCode = () => {
-      return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            const { data } = await axios.post('/api/verify/confirmcode', {
-              receiver: email,
-              code: otpEmail,
-            });
-            if (!data || Object.keys(data).length === 0) throw new Error();
-            resolve(data);
-          } catch (e) {
-            reject();
-          }
-        })();
-      });
-    };
-
-    toast
-      .promise(confirmEmailCode(), {
-        loading: 'Loading...',
-        success: 'Sukses verifikasi OTP',
-        error: 'Kode OTP salah',
-      })
-      .then(() => setProgress(4));
-  };
-
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
-    const getUsernamePromise = () => {
-      return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            // iterate through all username from graphql
-            const {
-              data: { getalluser },
-            } = await getUsername();
-            for (const element of getalluser) {
-              if (element.username === username) {
-                reject('Username not available');
-              }
-            }
-            // iterate through all username from unavailable username
-            for (const element of unavailableusername) {
-              if (element === username) {
-                reject('Username not available');
-              }
-            }
-            resolve('Username available');
-          } catch (e) {
-            reject(e);
-          }
-        })();
-      });
-    };
-
-    const signupPromise = () => {
-      return new Promise((resolve, reject) => {
-        (async () => {
-          try {
-            const { data } = await userSignup();
-            if (Object.keys(data).length === 0) reject();
-            resolve(data);
-          } catch (e) {
-            reject(e);
-          }
-        })();
-      });
-    };
     toast
-      .promise(getUsernamePromise(), {
-        loading: 'Check apakah username tersedia...',
+      .promise(checkIfUsernameIsAvailable(username), {
+        loading: 'Cek apakah username tersedia...',
         success: 'Username tersedia!',
         error: 'Username tidak tersedia!',
       })
-      .then(
-        () => {
-          setUsernameTakenError(false);
-          toast
-            .promise(signupPromise(), {
-              loading: 'Registering...',
-              success: 'Sukses registrasi!',
-              error: 'Servernya error',
-            })
-            .then(() => {
-              setProgress(5);
-            });
-        },
-        () => {
-          setUsernameTakenError(true);
-        }
-      );
+      .then(() => {
+        //FULFILLED
+        toast
+          .promise(
+            userSignUp({
+              signupId: user._id,
+              username,
+              password,
+              pin,
+              jwtToken,
+            }),
+            {
+              loading: 'Daftarin kamu ke aplikasi Kudoku...',
+              success: 'Sukses!',
+              error: 'Error!',
+            }
+          )
+          .then(() => {
+            //FULFILLED
+            setProgress(6);
+          });
+      });
   };
 
   const renderProgress = () => {
@@ -310,7 +150,7 @@ export default function Client({ user }: { user: IUser }) {
               <span className="text-primary dark:text-primaryDark">{`${firstName} ${lastName}`}</span>
               ,{' '}
               <span className="text-secondary dark:text-secondaryDark">
-                Kudos No.{kudos}
+                Kudos No.{kudosNo}
               </span>{' '}
               kamu udah bisa cobain Kudoku!
             </h1>
@@ -321,33 +161,17 @@ export default function Client({ user }: { user: IUser }) {
           </div>
           <div className="w-full h-fit flex items-center justify-end">
             <LoginButton
-              onClick={() => {
-                const myPromise = () => {
-                  return new Promise((resolve, reject) => {
-                    (async () => {
-                      try {
-                        const { data } = await axios.post(
-                          '/api/verify/getcode',
-                          {
-                            receiver: `+${whatsapp}`,
-                            type: 'sms',
-                          }
-                        );
-                        resolve(data);
-                      } catch (e) {
-                        reject();
-                      }
-                    })();
+              onClick={async () => {
+                toast
+                  .promise(getWaOtp(user.whatsapp), {
+                    loading: 'Kirim OTP lewat SMS...',
+                    success: 'Sukses kirim OTP!',
+                    error: 'Error kirim OTP!',
+                  })
+                  .then(() => {
+                    //FULFILLED
+                    setProgress(2);
                   });
-                };
-                toast.promise(
-                  myPromise().then(() => setProgress(2)),
-                  {
-                    loading: 'Loading...',
-                    success: 'Sukses kirim otp',
-                    error: 'Servernya error',
-                  }
-                );
               }}
             >
               Mulai
@@ -355,7 +179,7 @@ export default function Client({ user }: { user: IUser }) {
           </div>
           <motion.div
             className="mt-8 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
-            animate={{ width: '20%' }}
+            animate={{ width: '15%' }}
             style={{
               width: '0%',
             }}
@@ -405,13 +229,40 @@ export default function Client({ user }: { user: IUser }) {
             />
           </div>
           <div className="w-full h-fit flex items-center justify-end">
-            <LoginButton onClick={handleVerifyWa}>Lanjut</LoginButton>
+            <LoginButton
+              onClick={() => {
+                toast
+                  .promise(
+                    confirmWaOtp({ whatsapp: user.whatsapp, otp: otpWa }),
+                    {
+                      loading: 'Cek OTP...',
+                      success: 'OTP benar!',
+                      error: 'OTP salah!',
+                    }
+                  )
+                  .then(() => {
+                    //FULFILLED
+                    toast
+                      .promise(getEmailOtp(user.email), {
+                        loading: 'Kirim OTP lewat email...',
+                        success: 'Kirim OTP sukses!',
+                        error: 'Gagal kirim OTP!',
+                      })
+                      .then(() => {
+                        //FULFILLED
+                        setProgress(3);
+                      });
+                  });
+              }}
+            >
+              Lanjut
+            </LoginButton>
           </div>
           <motion.div
             className="mt-8 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
-            animate={{ width: '40%' }}
+            animate={{ width: '30%' }}
             style={{
-              width: '20%',
+              width: '15%',
             }}
             transition={{ duration: 2, type: 'spring' }}
           />
@@ -459,19 +310,127 @@ export default function Client({ user }: { user: IUser }) {
             />
           </div>
           <div className="w-full h-fit flex items-center justify-end">
-            <LoginButton onClick={handleVerifyEmail}>Lanjut</LoginButton>
+            <LoginButton
+              onClick={() => {
+                toast
+                  .promise(
+                    confirmEmailOtp({ email: user.email, otp: otpEmail }),
+                    {
+                      loading: 'Cek OTP...',
+                      success: 'OTP benar!',
+                      error: 'OTP salah!',
+                    }
+                  )
+                  .then((data) => {
+                    //FULFILLED
+                    setJwtToken(data.token);
+                    setProgress(4);
+                  });
+              }}
+            >
+              Lanjut
+            </LoginButton>
           </div>
           <motion.div
             className="mt-8 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
-            animate={{ width: '60%' }}
+            animate={{ width: '45%' }}
             style={{
-              width: '40%',
+              width: '30%',
             }}
             transition={{ duration: 2, type: 'spring' }}
           />
         </motion.div>
       );
     } else if (progress === 4) {
+      return (
+        <motion.div
+          animate={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col gap-8"
+          key={3}
+        >
+          <div className="flex flex-col gap-4">
+            <h4 className="text-2xl font-medium text-onPrimaryContainer dark:text-surfaceVariant">
+              Buat PIN <b>Kudoku</b> kamu.
+            </h4>
+            <p className="text-onPrimaryContainer dark:text-surfaceVariant">
+              PIN harus dalam berbentuk angka yaa!
+            </p>
+            <div className="flex flex-col gap-4 mt-2">
+              <div className="flex flex-col gap-1">
+                <p className="text-onPrimaryContainer dark:text-surfaceVariant text-sm">
+                  PIN Kamu
+                </p>
+                <OtpInput
+                  placeholder="696969"
+                  value={pin}
+                  onChange={setPin}
+                  numInputs={6}
+                  isInputNum={true}
+                  containerStyle={
+                    'w-full flex flex-row justify-between gap-1 font-medium text-xl'
+                  }
+                  focusStyle={{ border: '2px solid #BA1B1B', outline: 'none' }}
+                  inputStyle={{
+                    backgroundColor: '#d6e3ff',
+                    borderRadius: '0.375rem',
+                    padding: '0.5rem',
+                    color: '#001a40',
+                    width: '100%',
+                    maxWidth: '60px',
+                    border: '2px solid #d6e3ff',
+                  }}
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-onPrimaryContainer dark:text-surfaceVariant text-sm">
+                  Konfirmasi PIN Kamu
+                </p>
+                <OtpInput
+                  placeholder="696969"
+                  value={confirmPin}
+                  onChange={setConfirmPin}
+                  numInputs={6}
+                  isInputNum={true}
+                  containerStyle={
+                    'w-full flex flex-row justify-between gap-1 font-medium text-xl'
+                  }
+                  focusStyle={{ border: '2px solid #BA1B1B', outline: 'none' }}
+                  inputStyle={{
+                    backgroundColor: '#d6e3ff',
+                    borderRadius: '0.375rem',
+                    padding: '0.5rem',
+                    color: '#001a40',
+                    width: '100%',
+                    maxWidth: '60px',
+                    border: '2px solid #d6e3ff',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="w-full h-fit flex items-center justify-end">
+            <LoginButton
+              onClick={() => {
+                setProgress(5);
+              }}
+              disabled={pin !== confirmPin || pin.length < 6}
+            >
+              Lanjut
+            </LoginButton>
+          </div>
+          <motion.div
+            className="mt-8 h-[5px] bg-primary dark:bg-primaryDark rounded-md"
+            animate={{ width: '60%' }}
+            style={{
+              width: '45%',
+            }}
+            transition={{ duration: 2, type: 'spring' }}
+          />
+        </motion.div>
+      );
+    } else if (progress === 5) {
       return (
         <motion.div
           animate={{ opacity: 1 }}
@@ -656,7 +615,7 @@ export default function Client({ user }: { user: IUser }) {
           />
         </motion.div>
       );
-    } else if (progress === 5) {
+    } else if (progress === 6) {
       return (
         <>
           <div className="flex flex-col justify-center items-center">

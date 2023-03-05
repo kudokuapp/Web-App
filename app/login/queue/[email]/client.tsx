@@ -5,23 +5,44 @@ import AldiAvatar from '$public/avatar/aldi.png';
 import FurqonAvatar from '$public/avatar/furqon.png';
 import RizqyAvatar from '$public/avatar/rizqy.png';
 import '$styles/animation.css';
-import { PopupButton } from '@typeform/embed-react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import OtpInput from 'react-otp-input';
+import { cekOtpEmail, getCodeEmail } from './promise';
+import { Typeform } from './Typeform';
 
-interface IDataPayload {
-  id: number;
-  firstname: string;
-  lastname: string;
-  email: string;
-  whatsapp: string;
-  registerdate: Date;
-  invited: boolean;
-}
+const fetchLastKudos = async () => {
+  const host =
+    process.env.NODE_ENV === 'production'
+      ? 'https://app.kudoku.id'
+      : 'http://localhost:3000';
+
+  const url = new URL('/api/postgres/lastkudos', host);
+  try {
+    const { data } = await axios.get(url.href);
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const useFetchLastKudos = (interval: number) => {
+  const [data, setData] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchDataInterval = setInterval(async () => {
+      const data = await fetchLastKudos();
+      setData(data);
+    }, interval);
+
+    return () => clearInterval(fetchDataInterval);
+  }, [interval]);
+
+  return data;
+};
 
 export default function Client({
   kudos,
@@ -29,20 +50,13 @@ export default function Client({
   email,
 }: {
   kudos: boolean;
-  user: IDataPayload;
+  user: PostgresDataKudokuUser;
   email: string;
 }) {
   const [progress, setProgress] = useState(1);
   const [otp, setOtp] = useState('');
-  const [lastKudos, setLastKudos] = useState(1);
-  const [loadingLastKudos, setLoadingLastKudos] = useState(true);
 
-  useEffect(() => {
-    axios.get('/api/postgres/lastkudos').then((data) => {
-      setLastKudos(data.data);
-      setLoadingLastKudos(false);
-    });
-  }, []);
+  const lastKudos = useFetchLastKudos(2000);
 
   const caldata = [
     {
@@ -64,6 +78,22 @@ export default function Client({
       calLink: 'aldi-megantara-arifin/30min',
     },
   ];
+
+  const renderLastKudos = () => {
+    if (!lastKudos) {
+      return (
+        <span className="px-2 py-1 bg-gradient-to-br from-primary to-secondary dark:from-primaryDark dark:to-secondaryDark dark:text-onPrimaryContainer text-surfaceVariant rounded-md shadow-md">
+          Loading...
+        </span>
+      );
+    } else {
+      return (
+        <span className="px-2 py-1 bg-gradient-to-br from-primary to-secondary dark:from-primaryDark dark:to-secondaryDark dark:text-onPrimaryContainer text-surfaceVariant rounded-md shadow-md">
+          Kudos No. {lastKudos}
+        </span>
+      );
+    }
+  };
 
   const renderProgress = () => {
     if (kudos) {
@@ -167,36 +197,14 @@ export default function Client({
             </p>
             <div className="w-full flex justify-center items-center">
               <p className="text-onPrimaryContainer dark:text-surfaceVariant">
-                Kamu akan jadi{' '}
-                <span className="px-2 py-1 bg-gradient-to-br from-primary to-secondary dark:from-primaryDark dark:to-secondaryDark dark:text-onPrimaryContainer text-surfaceVariant rounded-md shadow-md">
-                  Kudos No. {!loadingLastKudos && lastKudos + 1}
-                </span>
+                Kamu akan jadi {renderLastKudos()}
               </p>
             </div>
             <div className="w-full h-fit flex items-center justify-end mt-4">
               <LoginButton
                 onClick={() => {
-                  const myPromise = () => {
-                    return new Promise((resolve, reject) => {
-                      (async () => {
-                        try {
-                          // setTimeout(() => resolve('sukses'), 2000);
-                          const { data } = await axios.post(
-                            '/api/verify/getcode',
-                            {
-                              receiver: email,
-                              type: 'email',
-                            }
-                          );
-                          resolve(data);
-                        } catch (e) {
-                          reject();
-                        }
-                      })();
-                    });
-                  };
                   toast
-                    .promise(myPromise(), {
+                    .promise(getCodeEmail(email), {
                       loading: 'Loading...',
                       success: 'Sukses kirim otp',
                       error: 'Servernya error',
@@ -266,27 +274,8 @@ export default function Client({
             <div className="w-full h-fit flex items-center justify-end mt-4">
               <LoginButton
                 onClick={() => {
-                  const myPromise = () => {
-                    return new Promise((resolve, reject) => {
-                      (async () => {
-                        try {
-                          // setTimeout(() => resolve('sukses'), 2000);
-                          const { data } = await axios.post(
-                            '/api/verify/confirmcode',
-                            {
-                              receiver: email,
-                              code: otp,
-                            }
-                          );
-                          resolve(data);
-                        } catch (e) {
-                          reject();
-                        }
-                      })();
-                    });
-                  };
                   toast
-                    .promise(myPromise(), {
+                    .promise(cekOtpEmail({ email, otp }), {
                       loading: 'Loading...',
                       success: 'Kode OTP benar!',
                       error: 'Kode OTP salah',
@@ -381,25 +370,3 @@ export default function Client({
 
   return <>{renderProgress()}</>;
 }
-
-const Typeform = ({
-  email,
-  handleSubmit,
-}: {
-  email: string;
-  handleSubmit: () => void;
-}) => {
-  return (
-    <PopupButton
-      id="e6haAlGW"
-      hidden={{
-        index: '2',
-        email,
-      }}
-      onSubmit={handleSubmit}
-      className="px-2 py-2 cursor-pointer rounded-md shadow-md bg-primary text-onPrimary dark:bg-primaryDark dark:text-onPrimaryDark text-xl w-full font-bold"
-    >
-      Isi Form
-    </PopupButton>
-  );
-};

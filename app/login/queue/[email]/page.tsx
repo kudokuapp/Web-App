@@ -1,21 +1,10 @@
-//Harcoded url
 import axios from 'axios';
 import { redirect } from 'next/navigation';
 import Client from './client';
 
-interface IDataPayload {
-  id: number;
-  firstname: string;
-  lastname: string;
-  email: string;
-  whatsapp: string;
-  registerdate: Date;
-  invited: boolean;
-}
-
 async function fetchUser(email: string) {
   let isKudos: boolean,
-    result = {} as IDataPayload;
+    result = {} as PostgresDataKudokuUser;
   const host =
     process.env.NODE_ENV === 'production'
       ? 'https://app.kudoku.id'
@@ -47,7 +36,7 @@ async function fetchUser(email: string) {
 */
 
 // eslint-disable-next-line no-unused-vars
-export default async function Page({ params }: any) {
+export default async function Page({ params }: { params: { email: string } }) {
   const { email: emailURI } = params;
   const email = decodeURIComponent(emailURI);
   if (!email) redirect('/login');
@@ -57,9 +46,5 @@ export default async function Page({ params }: any) {
 
   if (result.invited) redirect('/login');
 
-  return (
-    <>
-      <Client kudos={isKudos} user={result} email={email} />
-    </>
-  );
+  return <Client kudos={isKudos} user={result} email={email} />;
 }

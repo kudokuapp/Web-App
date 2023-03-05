@@ -1,33 +1,27 @@
 import client from '$utils/graphql';
 import { gql } from '@apollo/client';
 
-interface IGetUser {
+interface IGetAllUsername {
   __typename: 'User';
-  email: string;
-  whatsapp: string;
+  username: string;
 }
 
-export async function getUser(username: string): Promise<IGetUser> {
+export async function getAllUsername(): Promise<IGetAllUsername[]> {
   const query = gql`
-    query GetUser($username: String!) {
-      getUser(username: $username) {
-        email
-        whatsapp
+    query GetAllUser {
+      getAllUser {
+        username
       }
     }
   `;
+
   return new Promise((resolve, reject) => {
     (async () => {
       try {
         const {
-          data: { GetUser },
-        } = await client.query({
-          query,
-          variables: {
-            username,
-          },
-        });
-        resolve(GetUser);
+          data: { getAllUser },
+        } = await client.query({ query });
+        resolve(getAllUser);
       } catch (e) {
         reject(e);
       }

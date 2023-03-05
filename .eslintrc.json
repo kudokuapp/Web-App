@@ -7,7 +7,14 @@
   ],
   "globals": {
     "React": "readonly",
-    "JSX": "readonly"
+    "JSX": "readonly",
+    "BrickTransactionData": "readonly",
+    "BrickGetClientIdandRedirectRefId": "readonly",
+    "BrickAccountDetail": "readonly",
+    "BrickTokenData": "readonly",
+    "BrickOTPData": "readonly",
+    "PostgresDataKudokuUser": "readonly",
+    "MongoDBUserData": "readonly"
   },
   "overrides": [
     {

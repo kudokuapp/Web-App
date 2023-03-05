@@ -18,7 +18,7 @@ export default async function handler(
   }
 }
 
-const dbQuery = async (): Promise<any> => {
+const dbQuery = async (): Promise<PostgresDataKudokuUser> => {
   const queryString = `SELECT * FROM users_final ORDER BY id DESC`;
   const arr: any[] = [];
   return new Promise((resolve, reject) => {

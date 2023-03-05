@@ -7,16 +7,6 @@ import { motion } from 'framer-motion';
 import Image, { ImageProps } from 'next/image';
 import { Fragment, useState } from 'react';
 
-interface IDataPayload {
-  id: number;
-  firstname: string;
-  lastname: string;
-  email: string;
-  whatsapp: string;
-  registerdate: Date;
-  invited: boolean;
-}
-
 interface IFoundersCal {
   calLink: string;
   name: string;
@@ -26,7 +16,7 @@ interface IFoundersCal {
 
 export interface ICalCom extends React.ComponentPropsWithRef<'div'> {
   founders: IFoundersCal;
-  user: IDataPayload;
+  user: PostgresDataKudokuUser;
 }
 
 const CalCom: React.FC<ICalCom> = ({ founders, user }) => {

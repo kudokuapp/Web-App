@@ -2,13 +2,12 @@
 import LoginButton from '$components/Button/LoginButton';
 import PasswordInput from '$components/InputPlaceholder/PasswordInput';
 import TextInput from '$components/InputPlaceholder/TextInput';
-import { useLazyQuery } from '@apollo/client';
 import { getCookie, setCookie } from 'cookies-next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEventHandler, useState } from 'react';
 import toast from 'react-hot-toast';
-import { queryDataUser, querySignin } from './query';
+import { getUser, signIn } from './query';
 
 export default function Page() {
   const router = useRouter();
@@ -17,55 +16,21 @@ export default function Page() {
 
   const token = getCookie('token');
 
-  if (token) router.push('/kudoku/transaction');
-
-  const [userSignin] = useLazyQuery(querySignin, {
-    variables: {
-      username: username,
-      password: password,
-    },
-  });
-
-  const [dataUser] = useLazyQuery(queryDataUser, {
-    variables: {
-      username: username,
-    },
-  });
+  if (token) router.push('/kudoku/');
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-    console.log('submit');
     e.preventDefault();
 
-    const signInPromise = () => {
-      return new Promise((resolve, reject) => {
-        userSignin()
-          .then((res: any) => {
-            if (res.data) {
-              resolve(res);
-            } else {
-              if (res.error.message === 'Invalid password') {
-                toast.error('Password salah bos!');
-              }
-              if (res.error.message === 'No such user found') {
-                toast.error('User gak nemu!');
-              }
-              reject(res);
-            }
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
-    };
-
     toast
-      .promise(signInPromise(), {
+      .promise(signIn({ username, password }), {
         loading: 'Loading...',
         success: 'Sukses login!',
         error: 'Login gagal!',
       })
-      .then((data: any) => {
-        setCookie('token', data.data.login.token, {
+      .then((data) => {
+        // FULFILLED
+
+        setCookie('token', data.token, {
           path: '/',
           sameSite: 'strict',
           secure: process.env.NODE_ENV === 'production',
@@ -73,17 +38,17 @@ export default function Page() {
           maxAge: 60 * 60 * 24 * 30,
         });
 
-        dataUser()
-          .then((res: any) => {
-            setCookie('user_id', res.data.getUser.id, {
+        getUser(username)
+          .then((res) => {
+            setCookie('user_id', res.id, {
               path: '/',
               sameSite: 'strict',
               secure: process.env.NODE_ENV === 'production',
               maxAge: 60 * 60 * 24 * 30,
             });
-            router.push('/kudoku/transaction');
+            router.push('/kudoku/');
           })
-          .catch((error) => {
+          .catch(() => {
             toast.error('User gak nemu!');
           });
       });
@@ -116,12 +81,12 @@ export default function Page() {
             }}
             minLength={8}
           />
-          {/* <Link
+          <Link
             href="/login/forgot"
             className="text-primary dark:text-primaryDark w-fit"
           >
             Lupa password?
-          </Link> */}
+          </Link>
         </div>
         <div className="w-full h-fit flex items-center justify-end mt-3">
           <LoginButton disabled={!username || !password}>Login</LoginButton>

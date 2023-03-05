@@ -3,7 +3,7 @@ import axios from 'axios';
 import { redirect } from 'next/navigation';
 import Client from './client';
 
-async function fetchUser(id: string) {
+async function fetchUser(id: string): Promise<MongoDBUserData> {
   const host =
     process.env.NODE_ENV === 'production'
       ? 'https://app.kudoku.id'
@@ -11,17 +11,20 @@ async function fetchUser(id: string) {
 
   const url = new URL('/api/mongodb/checkuserbyid', host);
 
-  try {
-    const res = await axios.get(url.href, {
-      params: {
-        id,
-      },
-    });
-    const { data } = res;
-    return data;
-  } catch (e) {
-    console.error(e);
-  }
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const { data } = await axios.get(url.href, {
+          params: {
+            id,
+          },
+        });
+        resolve(data);
+      } catch (e) {
+        reject(e);
+      }
+    })();
+  });
 }
 
 /*
@@ -31,7 +34,7 @@ async function fetchUser(id: string) {
 */
 
 // eslint-disable-next-line no-unused-vars
-export default async function Page({ params }: any) {
+export default async function Page({ params }: { params: { id: string } }) {
   const { id } = params;
   if (!id) redirect('/login');
 

@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
  * @see https://beta.nextjs.org/docs/data-fetching/api-routes
  */
 
-interface IDataPayload {
+export interface CheckUserExistDataPayload {
   exist: boolean;
   hasUsername: boolean;
   userId: ObjectId | undefined;
@@ -15,7 +15,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const data = {} as IDataPayload;
+  const data = {} as CheckUserExistDataPayload;
 
   const uri = process.env.MONGODB_DATABASE_URL as string;
   const client = new MongoClient(uri);
