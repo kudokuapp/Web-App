@@ -4,21 +4,16 @@ import { getAllUsername } from './query';
 export async function checkIfUsernameIsAvailable(username: string) {
   const data = await getAllUsername();
 
-  const allUsername = [...unavailableUsername];
-
-  for (let i = 0; i < data.length; i++) {
-    const element = data[i];
-
-    allUsername.push(element.username);
-  }
+  const allUsername = new Set([
+    ...unavailableUsername,
+    ...data.map((d) => d.username),
+  ]);
 
   return new Promise((resolve, reject) => {
-    allUsername.forEach((value) => {
-      if (username === value) {
-        reject('Username is unavailable');
-      } else {
-        resolve('Username is available');
-      }
-    });
+    if (allUsername.has(username)) {
+      reject('Username is unavailable');
+    } else {
+      resolve('Username is available');
+    }
   });
 }
