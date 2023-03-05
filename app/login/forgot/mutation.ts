@@ -1,18 +1,18 @@
 import client from '$utils/graphql';
 import { gql } from '@apollo/client';
 
-interface IUserSignUp {
+interface IChangePassword {
   __typename: 'AuthPayLoad';
   token: string;
 }
 
-export async function userSignUp({
+export async function changePassword({
   password,
   jwtToken,
 }: {
   password: string;
   jwtToken: string;
-}): Promise<IUserSignUp> {
+}): Promise<IChangePassword> {
   const mutation = gql`
     mutation ChangePassword($password: String!, $jwtToken: String!) {
       changePassword(password: $password, jwtToken: $jwtToken) {
@@ -25,12 +25,12 @@ export async function userSignUp({
     (async () => {
       try {
         const {
-          data: { ChangePassword },
+          data: { changePassword },
         } = await client.mutate({
           mutation,
           variables: { password, jwtToken },
         });
-        resolve(ChangePassword);
+        resolve(changePassword);
       } catch (e) {
         reject(e);
       }

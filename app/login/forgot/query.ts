@@ -20,14 +20,14 @@ export async function getUser(username: string): Promise<IGetUser> {
     (async () => {
       try {
         const {
-          data: { GetUser },
+          data: { getUser },
         } = await client.query({
           query,
           variables: {
             username,
           },
         });
-        resolve(GetUser);
+        resolve(getUser);
       } catch (e) {
         reject(e);
       }
@@ -53,14 +53,14 @@ export async function getWaOtp(whatsapp: string): Promise<IGetOtp> {
     (async () => {
       try {
         const {
-          data: { GetOtp },
+          data: { getOtp },
         } = await client.query({
           query,
           variables: {
             whatsapp,
           },
         });
-        resolve(GetOtp);
+        resolve(getOtp);
       } catch (e) {
         reject(e);
       }
@@ -81,14 +81,14 @@ export async function getEmailOtp(email: string): Promise<IGetOtp> {
     (async () => {
       try {
         const {
-          data: { GetOtp },
+          data: { getOtp },
         } = await client.query({
           query,
           variables: {
             email,
           },
         });
-        resolve(GetOtp);
+        resolve(getOtp);
       } catch (e) {
         reject(e);
       }
@@ -120,7 +120,7 @@ export async function confirmWaOtp({
     (async () => {
       try {
         const {
-          data: { VerifyOtp },
+          data: { verifyOtp },
         } = await client.query({
           query,
           variables: {
@@ -128,7 +128,7 @@ export async function confirmWaOtp({
             otp,
           },
         });
-        resolve(VerifyOtp);
+        resolve(verifyOtp);
       } catch (e) {
         reject(e);
       }
@@ -155,7 +155,7 @@ export async function confirmEmailOtp({
     (async () => {
       try {
         const {
-          data: { VerifyOtp },
+          data: { verifyOtp },
         } = await client.query({
           query,
           variables: {
@@ -163,7 +163,7 @@ export async function confirmEmailOtp({
             otp,
           },
         });
-        resolve(VerifyOtp);
+        resolve(verifyOtp);
       } catch (e) {
         reject(e);
       }

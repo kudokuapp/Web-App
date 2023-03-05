@@ -25,7 +25,7 @@ export async function signIn({
     (async () => {
       try {
         const {
-          data: { Login },
+          data: { login },
         } = await client.query({
           query,
           variables: {
@@ -34,7 +34,7 @@ export async function signIn({
           },
         });
 
-        resolve(Login);
+        resolve(login);
       } catch (e) {
         reject(e);
       }
@@ -60,7 +60,7 @@ export async function getUser(username: string): Promise<IGetUser> {
     (async () => {
       try {
         const {
-          data: { GetUser },
+          data: { getUser },
         } = await client.query({
           query,
           variables: {
@@ -68,7 +68,7 @@ export async function getUser(username: string): Promise<IGetUser> {
           },
         });
 
-        resolve(GetUser);
+        resolve(getUser);
       } catch (e) {
         reject(e);
       }

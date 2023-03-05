@@ -44,12 +44,12 @@ export async function userSignUp({
     (async () => {
       try {
         const {
-          data: { Signup },
+          data: { signup },
         } = await client.mutate({
           mutation,
           variables: { signupId, username, password, pin, jwtToken },
         });
-        resolve(Signup);
+        resolve(signup);
       } catch (e) {
         reject(e);
       }

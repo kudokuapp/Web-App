@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import { FormEventHandler, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import OtpInput from 'react-otp-input';
-import { userSignUp } from './mutation';
+import { changePassword } from './mutation';
 import {
   confirmEmailOtp,
   confirmWaOtp,
@@ -112,7 +112,7 @@ export default function Page() {
     e.preventDefault();
 
     toast
-      .promise(userSignUp({ password, jwtToken }), {
+      .promise(changePassword({ password, jwtToken }), {
         loading: 'Ganti password kamu...',
         success: 'Pergantian password sukses!',
         error: 'Gagal ganti password kamu!',
