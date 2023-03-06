@@ -44,7 +44,6 @@ const queryAllCashTransaction = gql`
         amount
       }
       transactionType
-      internalTransferAccountId
       direction
       notes
       location {
@@ -61,6 +60,7 @@ const queryAllCashTransaction = gql`
         url
       }
       transactionName
+      internalTransferTransactionId
     }
   }
 `;
