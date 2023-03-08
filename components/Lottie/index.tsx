@@ -1,3 +1,4 @@
+'use client';
 import Lottie, { LottieComponentProps } from 'lottie-react';
 
 export interface ILottie extends LottieComponentProps {}

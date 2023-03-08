@@ -1,317 +1,692 @@
-import PasswordInput from '$components/InputPlaceholder/PasswordInput';
-import TextInput from '$components/InputPlaceholder/TextInput';
-import Logo from '$public/logo/primary.svg';
-import { useMutation } from '@apollo/client';
-import { faLightbulb } from '@fortawesome/free-regular-svg-icons';
+'use client';
+import BCA from '$public/logo/bank/bca.png';
+import Gopay from '$public/logo/bank/gojek.png';
+import cleanNum from '$utils/helper/cleanNum';
 import {
   faArrowLeft,
+  faClose,
   faMoneyBill1Wave,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  mutationAddCashAccount,
-  mutationConnectBCA,
-} from 'app/[kudoku]/mutation';
+import { Dialog, Transition } from '@headlessui/react';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { FormEventHandler, useState } from 'react';
+import { Fragment, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import styles from './index.module.css';
+import BCAMenu from './atomic/BCA/BCAMenu';
+import { KlikBCA } from './atomic/BCA/KlikBCA';
+import { addBcaAccount } from './atomic/BCA/mutation';
+import { MyBCAInternet } from './atomic/BCA/MyBCAInternet';
+import { MyBCAMobile } from './atomic/BCA/MyBCAMobile';
+import { Cash } from './atomic/Cash';
+import { addCashAccount } from './atomic/Cash/mutation';
+import { FailedProgress } from './atomic/FailedProgress';
+import { GopayOtp } from './atomic/Gopay/GopayOtp';
+import { GopayPhoneNum } from './atomic/Gopay/GopayPhoneNum';
+import { connectGopay } from './atomic/Gopay/mutation';
+import { ISendOtpGopay, sendOtpGopay } from './atomic/Gopay/query';
+import { Loading } from './atomic/Loading';
+import { Footer } from './atomic/other/Footer';
+import { Navbar } from './atomic/other/Navbar';
+import { Success } from './atomic/Success';
 
-export const ModalAddFinancialAccount = ({
-  setIsAddAccount,
+export function ModalAddFinancialAccount({
+  isOpen = true,
+  closeModal = () => {},
 }: {
-  setIsAddAccount: any;
-}) => {
-  const [id, setId] = useState(0);
-  const [accountName, setAccountName] = useState('');
-  const [username, setUserame] = useState('');
-  const [password, setPassword] = useState('');
-  const [balance, setBalance] = useState('');
+  isOpen: boolean;
+  closeModal: () => void;
+}) {
+  /**
+   * Progress yang awalnya 2: Cash
+   * Progress yang awalnya 3: Debit
+   * Progress yang awalnya 4: Gopay
+   * Progress 888: success
+   * Progress 999: failed
+   */
+  const [progress, setProgress] = useState(1);
+
+  /**
+   * Cash
+   */
+  const [cashAccountName, setCashAccountname] = useState('');
+  const [cashInitialBalance, setCashInitialBalance] = useState('');
+
+  /**
+   * Klik BCA
+   */
+  const [klikBcaUserId, setKlikBcaUserId] = useState('');
+  const [klikBcaPassword, setKlikBcaPassword] = useState('');
+
+  /**
+   * My BCA Internet
+   */
+  const [myBcaInternetUserId, setMyBcaInternetUserId] = useState('');
+  const [myBcaInternetPassword, setMyBcaInternetPassword] = useState('');
+
+  /**
+   * My BCA Mobile
+   */
+  const [myBcaMobileUserId, setMyBcaMobileUserId] = useState('');
+  const [myBcaMobilePassword, setMyBcaMobilePassword] = useState('');
+
+  /**
+   * Gopay
+   */
+  const [gopayPhoneNum, setGopayPhoneNum] = useState('');
+  const [gopayOtp, setGopayOtp] = useState('');
+  const [gopayOtpData, setGopayOtpData] = useState({} as ISendOtpGopay);
+
   const menuItems = [
     {
-      title: 'Manual',
-      description: 'Use this to track your transaction manually',
+      title: 'Cash',
+      description: 'Buat akun cash dan track secara manual',
       action: 'Create',
+      type: 'manual',
       id: 1,
+      icon: faMoneyBill1Wave,
+      iconType: 'FontAwesome',
+      disabled: false,
     },
     {
       title: 'BCA',
-      description: 'PT. Bank Central Asia, Tbk',
+      description: 'Koneksikan BCA kamu lewat KlikBCA atau MyBCA',
       action: 'Connect',
+      type: 'otomatis',
       id: 2,
+      icon: BCA,
+      iconType: 'Image',
+      disable: false,
     },
     {
-      title: 'GOPAY',
-      description: 'PT. Gojek Indonesia',
-      action: 'Soon',
+      title: 'Gopay',
+      description: 'Koneksikan akun Gopay kamu, udah sama GopayLater',
+      action: 'Connect',
+      type: 'otomatis',
       id: 3,
+      icon: Gopay,
+      iconType: 'Image',
+      disable: false,
     },
   ];
 
-  const [addCashAccount] = useMutation(mutationAddCashAccount, {
-    variables: {
-      accountName: accountName,
-      startingBalance: balance,
-      currency: 'IDR',
-    },
-  });
-
-  const [connectBCA] = useMutation(mutationConnectBCA, {
-    variables: {
-      brickInstitutionId: 2,
-      username: username,
-      password: password,
-    },
-  });
-
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    const addAccountCash = () => {
-      return new Promise((resolve, reject) => {
-        addCashAccount()
-          .then((res: any) => {
-            setAccountName(res.data.addCashAccount.accountName);
-            setBalance(res.data.addCashAccount.balance);
-            toast.success('Akun cash berhasil ditambahkan!');
-            resolve(res);
-          })
-          .catch((error) => {
-            toast.error(error.message);
-            reject(error);
-          });
-      });
-    };
-    toast
-      .promise(addAccountCash(), {
-        loading: 'Loading...',
-        success: 'Akun cash berhasil ditambahkan!',
-        error: 'Akun cash gagal ditambahkan!',
-      })
-      .then(() => {
-        window.location.reload();
-      });
+  const resetAll = () => {
+    setCashAccountname('');
+    setCashInitialBalance('');
+    setKlikBcaUserId('');
+    setKlikBcaPassword('');
+    setMyBcaInternetUserId('');
+    setMyBcaInternetPassword('');
+    setMyBcaMobileUserId('');
+    setMyBcaMobilePassword('');
+    setGopayOtp('');
+    setGopayPhoneNum('');
+    setGopayOtpData({} as ISendOtpGopay);
+    setProgress(1);
   };
-  const handleSubmitBCA: FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    const connectBCaccount = () => {
-      return new Promise((resolve, reject) => {
-        connectBCA()
-          .then((res: any) => {
-            resolve(res);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
-    };
-    toast
-      .promise(connectBCaccount(), {
-        loading: 'Loading...',
-        success: 'Akun BCA berhasil terhubung!',
-        error: 'Akun BCA gagal terhubung!',
-      })
-      .then(() => {
-        // window.location.reload();
-      });
+
+  const renderProgress = () => {
+    switch (progress) {
+      case 1:
+        return (
+          <motion.section
+            className="flex flex-col gap-14"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <section className="flex flex-col gap-4">
+              {menuItems.map((value) => {
+                return (
+                  <section
+                    key={value.id}
+                    className="flex justify-between gap-4 items-center"
+                  >
+                    <section className="flex gap-2">
+                      {value.iconType === 'FontAwesome' && (
+                        <FontAwesomeIcon
+                          // @ts-ignore
+                          icon={value.icon}
+                          className="w-[30px] h-[30px] text-[25px] dark:text-white text-black"
+                        />
+                      )}
+
+                      {value.iconType === 'Image' && (
+                        <Image
+                          // @ts-ignore
+                          src={value.icon}
+                          alt={`Icon ${value.title}`}
+                          width={30}
+                          height={30}
+                          quality={100}
+                          draggable={false}
+                          className="w-[30px] h-[30px]"
+                        />
+                      )}
+
+                      <section className="flex flex-col gap-1">
+                        <section className="flex gap-4 items-center">
+                          <p className="font-bold text-lg text-onPrimaryContainer dark:text-onPrimaryContainerDark">
+                            {value.title}
+                          </p>
+                          <p
+                            className={`px-1 py-0.5 rounded-md shadow-sm text-xs flex items-center justify-center w-fit h-fit ${
+                              value.type === 'otomatis'
+                                ? 'bg-green-400 text-green-900'
+                                : 'bg-blue-400 text-blue-900'
+                            }`}
+                          >
+                            {value.type}
+                          </p>
+                        </section>
+                        <p className="max-w-[250px] text-onPrimaryContainer dark:text-onPrimaryContainerDark text-sm">
+                          {value.description}
+                        </p>
+                      </section>
+                    </section>
+
+                    <button
+                      className={`px-2 py-1 w-fit h-fit font-medium text-base rounded-md shadow-lg ${
+                        value.disable
+                          ? 'bg-gray-600 dark:bg-gray-300'
+                          : 'bg-primary dark:bg-primaryDark hover:bg-secondary dark:hover:bg-secondaryDark'
+                      } text-onPrimary dark:text-onPrimaryDark`}
+                      disabled={value.disable}
+                      onClick={() => {
+                        switch (value.title) {
+                          case 'Cash':
+                            setProgress(20);
+                            break;
+
+                          case 'BCA':
+                            setProgress(30);
+                            break;
+
+                          case 'Gopay':
+                            setProgress(40);
+                            break;
+                        }
+                      }}
+                    >
+                      {value.action}
+                    </button>
+                  </section>
+                );
+              })}
+            </section>
+
+            <Footer />
+          </motion.section>
+        );
+
+      case 20:
+        return (
+          <Cash
+            onClick={() => {
+              setProgress(21);
+              addCashAccount({
+                accountName: cashAccountName,
+                displayPicture: null,
+                startingBalance: cashInitialBalance,
+                currency: 'IDR',
+              })
+                .then(() => {
+                  setTimeout(() => {
+                    setProgress(888);
+                  }, 2500); // Wait for 2.5 second before setting progress to 888
+                })
+                .catch(() => {
+                  setProgress(999);
+                });
+            }}
+            accountName={cashAccountName}
+            setAccountName={setCashAccountname}
+            balanceForDb={cashInitialBalance}
+            setBalanceForDb={setCashInitialBalance}
+          />
+        );
+
+      case 21:
+        return <Loading text="Lagi buat akun Cash kamu..." />;
+
+      case 30:
+        return (
+          <BCAMenu
+            onClickKlikBca={() => setProgress(31)}
+            onClickMyBcaInternet={() => setProgress(32)}
+            onClickMyBcaMobile={() => setProgress(33)}
+          />
+        );
+
+      /**
+       * Klik BCA
+       */
+      case 31:
+        return (
+          <KlikBCA
+            onClick={() => {
+              setProgress(311);
+              addBcaAccount({
+                brickInstitutionId: 2,
+                username: klikBcaUserId,
+                password: klikBcaPassword,
+              })
+                .then(() => {
+                  setProgress(888);
+                })
+                .catch(() => {
+                  setProgress(999);
+                });
+            }}
+            userId={klikBcaUserId}
+            setUserId={setKlikBcaUserId}
+            password={klikBcaPassword}
+            setPassword={setKlikBcaPassword}
+          />
+        );
+
+      case 311:
+        return <Loading text="Lagi coba connect BCA via KlikBCA..." />;
+
+      /**
+       * MyBCA Internet
+       */
+      case 32:
+        return (
+          <MyBCAInternet
+            onClick={() => {
+              () => {
+                setProgress(322);
+                addBcaAccount({
+                  brickInstitutionId: 37,
+                  username: myBcaInternetUserId,
+                  password: myBcaInternetPassword,
+                })
+                  .then(() => {
+                    setProgress(888);
+                  })
+                  .catch(() => {
+                    setProgress(999);
+                  });
+              };
+            }}
+            userId={myBcaInternetUserId}
+            setUserId={setMyBcaInternetUserId}
+            password={myBcaInternetPassword}
+            setPassword={setMyBcaInternetPassword}
+          />
+        );
+
+      case 322:
+        return <Loading text="Lagi coba connect BCA via MyBCA..." />;
+
+      /**
+       * MyBCA Mobile
+       */
+      case 33:
+        return (
+          <MyBCAMobile
+            onClick={() => {
+              () => {
+                () => {
+                  setProgress(322);
+                  addBcaAccount({
+                    brickInstitutionId: 38,
+                    username: myBcaMobileUserId,
+                    password: myBcaMobilePassword,
+                  })
+                    .then(() => {
+                      setProgress(888);
+                    })
+                    .catch(() => {
+                      setProgress(999);
+                    });
+                };
+              };
+            }}
+            userId={myBcaMobileUserId}
+            setUserId={setMyBcaMobileUserId}
+            password={myBcaMobilePassword}
+            setPassword={setMyBcaMobilePassword}
+          />
+        );
+
+      /**
+       * Gopay
+       */
+      case 40:
+        return (
+          <GopayPhoneNum
+            onClick={() => {
+              toast
+                .promise(
+                  sendOtpGopay({ nomorHp: `+62${cleanNum(gopayPhoneNum)}` }),
+                  {
+                    loading: 'Kirim OTP dari Gojek...',
+                    success: 'Kirim OTP sukses! yuk cek HPmu',
+                    error: 'Error dari Gojek!',
+                  }
+                )
+                .then((data) => {
+                  //FULFILLED
+                  setGopayOtpData({ ...data });
+                  setProgress(41);
+                });
+            }}
+            phoneNumber={gopayPhoneNum}
+            setPhoneNumber={setGopayPhoneNum}
+          />
+        );
+
+      case 41:
+        return (
+          <GopayOtp
+            otp={gopayOtp}
+            setOtp={setGopayOtp}
+            onClick={() => {
+              connectGopay({
+                username: gopayOtpData.username,
+                redirectRefId: gopayOtpData.redirectRefId,
+                clientId: gopayOtpData.clientId,
+                sessionId: gopayOtpData.sessionId,
+                uniqueId: gopayOtpData.uniqueId,
+                otpToken: gopayOtpData.otpToken,
+                otp: gopayOtp,
+              })
+                .then(() => {
+                  setProgress(888);
+                })
+                .catch(() => {
+                  setProgress(999);
+                });
+            }}
+          />
+        );
+
+      case 888:
+        return (
+          <Success
+            onClick={() => {
+              resetAll();
+            }}
+          />
+        );
+
+      case 999:
+        return (
+          <FailedProgress
+            onClick={() => {
+              resetAll();
+            }}
+          />
+        );
+    }
+  };
+
+  const renderTitle = () => {
+    switch (progress) {
+      case 1:
+        return (
+          <Dialog.Title
+            as="div"
+            className="w-full flex justify-between border-b-[1px] border-gray-600 dark:border-gray-400 pb-2"
+          >
+            <Navbar />
+            <button
+              onClick={() => {
+                resetAll();
+                closeModal();
+              }}
+              className="rounded-full dark:hover:bg-gray-500 hover:bg-gray-200 w-[30px] h-[30px] flex items-center justify-center text-2xl text-primary dark:text-primaryDark"
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </button>
+          </Dialog.Title>
+        );
+
+      case 20:
+        return (
+          <Dialog.Title
+            as="div"
+            className="w-full flex justify-between border-b-[1px] border-gray-600 dark:border-gray-400 pb-2"
+          >
+            <GoBackButon
+              onClick={() => {
+                setCashAccountname('');
+                setCashInitialBalance('');
+                setProgress(1);
+              }}
+            />
+            <button
+              onClick={() => {
+                resetAll();
+                closeModal();
+              }}
+              className="rounded-full dark:hover:bg-gray-500 hover:bg-gray-200 w-[30px] h-[30px] flex items-center justify-center text-2xl text-primary dark:text-primaryDark"
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </button>
+          </Dialog.Title>
+        );
+
+      case 21:
+        return <></>;
+
+      case 30:
+        return (
+          <Dialog.Title
+            as="div"
+            className="w-full flex justify-between border-b-[1px] border-gray-600 dark:border-gray-400 pb-2"
+          >
+            <GoBackButon
+              onClick={() => {
+                setProgress(1);
+              }}
+            />
+            <button
+              onClick={() => {
+                resetAll();
+                closeModal();
+              }}
+              className="rounded-full dark:hover:bg-gray-500 hover:bg-gray-200 w-[30px] h-[30px] flex items-center justify-center text-2xl text-primary dark:text-primaryDark"
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </button>
+          </Dialog.Title>
+        );
+
+      case 31:
+        return (
+          <Dialog.Title
+            as="div"
+            className="w-full flex justify-between border-b-[1px] border-gray-600 dark:border-gray-400 pb-2"
+          >
+            <GoBackButon
+              onClick={() => {
+                setKlikBcaPassword('');
+                setKlikBcaUserId('');
+                setProgress(30);
+              }}
+            />
+            <button
+              onClick={() => {
+                resetAll();
+                closeModal();
+              }}
+              className="rounded-full dark:hover:bg-gray-500 hover:bg-gray-200 w-[30px] h-[30px] flex items-center justify-center text-2xl text-primary dark:text-primaryDark"
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </button>
+          </Dialog.Title>
+        );
+
+      case 311:
+        return <></>;
+
+      case 32:
+        return (
+          <Dialog.Title
+            as="div"
+            className="w-full flex justify-between border-b-[1px] border-gray-600 dark:border-gray-400 pb-2"
+          >
+            <GoBackButon
+              onClick={() => {
+                setMyBcaInternetUserId('');
+                setMyBcaInternetPassword('');
+                setProgress(30);
+              }}
+            />
+            <button
+              onClick={() => {
+                resetAll();
+                closeModal();
+              }}
+              className="rounded-full dark:hover:bg-gray-500 hover:bg-gray-200 w-[30px] h-[30px] flex items-center justify-center text-2xl text-primary dark:text-primaryDark"
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </button>
+          </Dialog.Title>
+        );
+
+      case 322:
+        return <></>;
+
+      case 33:
+        return (
+          <Dialog.Title
+            as="div"
+            className="w-full flex justify-between border-b-[1px] border-gray-600 dark:border-gray-400 pb-2"
+          >
+            <GoBackButon
+              onClick={() => {
+                setMyBcaMobileUserId('');
+                setMyBcaMobilePassword('');
+                setProgress(30);
+              }}
+            />
+            <button
+              onClick={() => {
+                resetAll();
+                closeModal();
+              }}
+              className="rounded-full dark:hover:bg-gray-500 hover:bg-gray-200 w-[30px] h-[30px] flex items-center justify-center text-2xl text-primary dark:text-primaryDark"
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </button>
+          </Dialog.Title>
+        );
+
+      case 40:
+        return (
+          <Dialog.Title
+            as="div"
+            className="w-full flex justify-between border-b-[1px] border-gray-600 dark:border-gray-400 pb-2"
+          >
+            <GoBackButon
+              onClick={() => {
+                setGopayPhoneNum('');
+                setProgress(1);
+              }}
+            />
+            <button
+              onClick={() => {
+                resetAll();
+                closeModal();
+              }}
+              className="rounded-full dark:hover:bg-gray-500 hover:bg-gray-200 w-[30px] h-[30px] flex items-center justify-center text-2xl text-primary dark:text-primaryDark"
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </button>
+          </Dialog.Title>
+        );
+
+      case 41:
+        return (
+          <Dialog.Title
+            as="div"
+            className="w-full flex justify-between border-b-[1px] border-gray-600 dark:border-gray-400 pb-2"
+          >
+            <GoBackButon
+              onClick={() => {
+                setGopayOtp('');
+                setGopayPhoneNum('');
+                setGopayOtpData({} as ISendOtpGopay);
+                setProgress(40);
+              }}
+            />
+            <button
+              onClick={() => {
+                resetAll();
+                closeModal();
+              }}
+              className="rounded-full dark:hover:bg-gray-500 hover:bg-gray-200 w-[30px] h-[30px] flex items-center justify-center text-2xl text-primary dark:text-primaryDark"
+            >
+              <FontAwesomeIcon icon={faClose} />
+            </button>
+          </Dialog.Title>
+        );
+
+      case 888:
+        return <></>;
+
+      case 999:
+        return <></>;
+    }
   };
 
   return (
-    <>
-      <div className={styles.modalContainer}>
-        <div
-          className={`${styles.modalBody} bg-onPrimary dark:bg-onSurfaceVariant text-black dark:text-surface`}
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog
+        as="div"
+        className="relative z-[100000000000] select-none"
+        onClose={() => {
+          return;
+        }}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
         >
-          {id === 0 ? (
-            <>
-              <div className="flex px-4 flex-row justify-between items-center">
-                <div className="flex flex-row gap-4">
-                  <Image
-                    height={20}
-                    src={Logo}
-                    quality={100}
-                    alt="Kudoku Logo"
-                    draggable={false}
-                  />
-                  <h4 className="text-xl">Add financial account</h4>
-                </div>
-                <button onClick={() => setIsAddAccount((c: any) => !c)}>
-                  x
-                </button>
-              </div>
-              <p className="text-sm px-4 my-2">
-                Create or connect your financial accounts.
-              </p>
-              <hr className="border-b-2" />
-              <div className={styles.modalContent}>
-                {menuItems.map(({ title, description, action, id }) => (
-                  <>
-                    <div className="flex flex-row py-4 align-middle justify-between items-center w-full border-b-2">
-                      <div className="flex flex-row gap-4 items-center">
-                        <FontAwesomeIcon icon={faMoneyBill1Wave} size="sm" />
-                        <div>
-                          <h3 className={`flex rounded text-xl cursor-pointer`}>
-                            {title}
-                          </h3>
-                          <p className="text-xs">{description}</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setId((c) => (c = id))}
-                        className={
-                          title === 'GOPAY'
-                            ? `bg-outline px-8 rounded py-1 dark:hover:bg-outline cursor-not-allowed`
-                            : `${styles.buttonAction} dark:bg-primaryDark dark:hover:bg-secondaryDark dark:text-primaryContainerDark`
-                        }
-                        disabled={title === 'GOPAY' ? true : false}
-                      >
-                        {action}
-                      </button>
-                    </div>
-                  </>
-                ))}
-              </div>
-            </>
-          ) : id === 1 ? (
-            <>
-              <div className="flex px-4 gap-4 relative flex-row items-center">
-                <Toaster
-                  position="top-right"
-                  containerStyle={{
-                    position: 'absolute',
-                    right: 0,
-                    top: 0,
-                  }}
-                />
-                <button onClick={() => setId((c) => (c = 0))}>
-                  <FontAwesomeIcon icon={faArrowLeft} size="sm" />
-                </button>
-                <div>
-                  <h4 className="text-xl">Creating manual account</h4>
-                  <p className="text-sm my-2">
-                    Use manual account to track transaction manually.
-                  </p>
-                </div>
-              </div>
-              <hr className="border-b-2" />
-              <div className={styles.modalContent}>
-                <FontAwesomeIcon
-                  icon={faMoneyBill1Wave}
-                  className="self-center my-4"
-                  size="xl"
-                />
-                <form
-                  onSubmit={handleSubmit}
-                  className="flex flex-col gap-2 w-full"
-                >
-                  <TextInput
-                    placeholder="Account name"
-                    id="accountName"
-                    value={accountName}
-                    onChange={(e) => {
-                      setAccountName(e.target.value);
-                    }}
-                  />
-                  <TextInput
-                    placeholder="Inital balance"
-                    id="initialBalance"
-                    value={balance}
-                    onChange={(e) => {
-                      setBalance(e.target.value);
-                    }}
-                  />
-                  <button
-                    disabled={!accountName || !balance}
-                    className="w-full bg-primary hover:bg-secondary dark:bg-primaryDark dark:hover:bg-secondaryDark dark:text-primaryContainerDark text-white py-2 rounded-md my-2"
-                  >
-                    Create
-                  </button>
-                  <div className="bg-neutralBackground px-4 flex flex-row items-center text-onSurfaceVariant gap-4 rounded-md mb-10">
-                    <FontAwesomeIcon
-                      icon={faLightbulb}
-                      className="self-center my-4"
-                      size="xs"
-                    />
-                    <p className="text-xs">
-                      You can create manual account as many as you want.
-                    </p>
-                  </div>
-                </form>
-              </div>
-            </>
-          ) : id === 2 ? (
-            <>
-              <div className="flex px-4 gap-4 relative flex-row items-center">
-                <Toaster
-                  position="top-right"
-                  containerStyle={{
-                    position: 'absolute',
-                    right: 0,
-                    top: 0,
-                  }}
-                />
-                <button onClick={() => setId((c) => (c = 0))}>
-                  <FontAwesomeIcon icon={faArrowLeft} size="sm" />
-                </button>
-                <div>
-                  <h4 className="text-xl">Connect Klik BCA</h4>
-                  <p className="text-sm my-2">PT. Bank Central Asia, Tbk</p>
-                </div>
-              </div>
-              <hr className="border-b-2" />
-              <div className={styles.modalContent}>
-                <h3 className="font-bold self-center text-xl">Klik BCA</h3>
-                <h4 className="font-bold self-center text-md">
-                  Klik BCA Internet Banking
-                </h4>
-                <p className="text-sm self-center">
-                  Masukan User ID & PIN kamu
-                </p>
-                <form
-                  onSubmit={handleSubmitBCA}
-                  className="flex flex-col gap-2 w-full"
-                >
-                  <TextInput
-                    placeholder="User ID"
-                    id="username"
-                    value={username}
-                    onChange={(e) => {
-                      setUserame(e.target.value);
-                    }}
-                  />
-                  <PasswordInput
-                    placeholder="PIN"
-                    id="password"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                    }}
-                  />
-                  <button
-                    disabled={!username || !password}
-                    className="w-full bg-primary hover:bg-secondary dark:bg-primaryDark dark:hover:bg-secondaryDark dark:text-primaryContainerDark text-white py-2 rounded-md my-2"
-                  >
-                    Connect
-                  </button>
-                  <div className="bg-neutralBackground px-4 flex flex-row items-center text-onSurfaceVariant gap-4 rounded-md mb-10">
-                    <FontAwesomeIcon
-                      icon={faLightbulb}
-                      className="self-center my-4"
-                      size="xs"
-                    />
-                    <p className="text-xs">
-                      You can create manual account as many as you want.
-                    </p>
-                  </div>
-                </form>
-              </div>
-            </>
-          ) : id === 3 ? (
-            <>x</>
-          ) : (
-            <></>
-          )}
+          <div className="fixed inset-0 bg-background dark:bg-onBackground bg-opacity-70 dark:bg-opacity-70" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-onPrimary dark:bg-onSurfaceVariant p-6 text-left align-middle shadow-xl transition-all">
+                <Toaster position="top-right" />
+                {renderTitle()}
+
+                <section className="mt-10">{renderProgress()}</section>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
         </div>
-      </div>
-    </>
+      </Dialog>
+    </Transition>
   );
-};
+}
+
+export function GoBackButon({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex gap-2 items-center text-lg font-bold text-onPrimaryContainer dark:text-onPrimaryContainerDark"
+    >
+      <FontAwesomeIcon icon={faArrowLeft} />
+      Kembali
+    </button>
+  );
+}

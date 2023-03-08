@@ -16,6 +16,7 @@ const TextInput: React.FC<ITextInput> = ({
   onChange,
   error,
   errorMessage,
+  onKeyDown,
   ...props
 }) => {
   const [fixLabelTop, setFixLabelTop] = useState(false);
@@ -50,6 +51,7 @@ const TextInput: React.FC<ITextInput> = ({
           className={`${styles.input} ${className} text-onPrimaryContainer dark:text-surfaceVariant`}
           type="text"
           onChange={onChange}
+          onKeyDown={onKeyDown}
           value={value}
           onFocus={(e) => e.target.value.trim() === '' && setFixLabelTop(true)}
           onBlur={(e) => e.target.value.trim() === '' && setFixLabelTop(false)}
