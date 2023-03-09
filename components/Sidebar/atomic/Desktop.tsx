@@ -16,8 +16,8 @@ import {
   faSignOut,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { deleteCookie } from 'cookies-next';
 import { AnimatePresence, motion, useAnimation } from 'framer-motion';
+import Cookies from 'js-cookie';
 import _ from 'lodash';
 import { ObjectId } from 'mongodb';
 import Image from 'next/image';
@@ -376,8 +376,8 @@ export default function Desktop({
           animate={{ opacity: 1 }}
           whileHover={{ scale: 1.1 }}
           onClick={() => {
-            deleteCookie('token');
-            deleteCookie('user_id');
+            Cookies.remove('token');
+            Cookies.remove('user_id');
             router.push('/login');
           }}
           className={`dark:text-error text-errorDark dark:bg-errorContainer bg-errorContainerDark px-2 py-1.5 w-full gap-2 flex items-center shadow-sm rounded-md text-start ${
