@@ -35,7 +35,7 @@ export default function Client({
     return (
       <>
         <Sidebar kudosNo={kudosNo} accounts={accounts} />
-        <main>{children}</main>
+        <main className="pb-[73px]">{children}</main>
       </>
     );
   }
