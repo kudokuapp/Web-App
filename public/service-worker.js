@@ -1,4 +1,4 @@
-const VERSION = '0.0.1';
+const VERSION = '0.0.2';
 
 const CACHE_NAME = `pwa-cache-${VERSION}`;
 
@@ -10,7 +10,7 @@ const INITIAL_CACHED_RESOURCES = [
   '/kudoku/',
   '/kudoku/home/',
   '/kudoku/monthly/',
-  '/kudoku/transactions/',
+  '/kudoku/transaction/',
   '/kudoku/assets/',
   '/kudoku/more/',
 ];
