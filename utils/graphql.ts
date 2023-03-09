@@ -7,7 +7,6 @@ const httpLink = createHttpLink({
     process.env.NODE_ENV === 'production'
       ? 'https://api.kudoku.id'
       : 'http://localhost:8080',
-  credentials: 'include',
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -25,8 +24,6 @@ const authLink = setContext((_, { headers }) => {
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
-  connectToDevTools: true,
-  credentials: 'include',
 });
 
 export default client;
