@@ -12,7 +12,7 @@ export default function Client() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <motion.section
-      className="w-full h-[100vh] flex flex-col justify-center items-center gap-4 sm:m-0 m-4"
+      className="w-full h-[100vh] flex flex-col justify-center items-center gap-4 sm:p-0 p-4"
       animate={{ opacity: 1 }}
     >
       <Image src={TheImage} alt="" quality={100} />
