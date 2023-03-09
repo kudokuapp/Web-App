@@ -16,18 +16,21 @@ export default function Mobile() {
           <motion.button
             animate={{ opacity: 1 }}
             whileHover={{
-              scale: value.url === pathname || value.disabled ? 1 : 1.1,
+              scale:
+                value.regex.test(pathname as string) || value.disabled
+                  ? 1
+                  : 1.1,
             }}
             key={value.id}
             className={`w-full flex flex-col items-center rounded-md p-1 m-1 text-sm gap-1  ${
-              value.url === pathname
+              value.regex.test(pathname as string)
                 ? 'bg-primary dark:bg-primaryDark text-onPrimary dark:text-onPrimaryDark'
                 : 'hover:bg-primary dark:hover:bg-primaryDark hover:bg-opacity-20 text-onPrimaryContainer dark:text-surfaceVariant'
             } ${value.disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             onClick={() => {
               router.push(value.url);
             }}
-            disabled={value.url === pathname || value.disabled}
+            disabled={value.regex.test(pathname as string) || value.disabled}
           >
             <FontAwesomeIcon icon={value.icon} size="xl" />
             {value.name}

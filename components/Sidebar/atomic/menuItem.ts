@@ -7,12 +7,20 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 const menuItem = [
-  { id: 1, name: 'Home', icon: faHouse, url: '/kudoku/home', disabled: true },
+  {
+    id: 1,
+    name: 'Home',
+    icon: faHouse,
+    url: '/kudoku/home',
+    regex: /\/kudoku\/home(.*)/,
+    disabled: true,
+  },
   {
     id: 2,
     name: 'Monthly',
     icon: faCalendar,
     url: '/kudoku/monthly',
+    regex: /\/kudoku\/monthly(.*)/,
     disabled: true,
   },
   {
@@ -20,6 +28,7 @@ const menuItem = [
     name: 'Transaction',
     icon: faList,
     url: '/kudoku/transaction',
+    regex: /\/kudoku\/transaction(.*)/,
     disabled: false,
   },
   {
@@ -27,6 +36,7 @@ const menuItem = [
     name: 'Asset',
     icon: faChartLine,
     url: '/kudoku/asset',
+    regex: /\/kudoku\/asset(.*)/,
     disabled: true,
   },
   {
@@ -34,6 +44,7 @@ const menuItem = [
     name: 'More',
     icon: faEllipsis,
     url: '/kudoku/more',
+    regex: /\/kudoku\/more(.*)/,
     disabled: true,
   },
 ];

@@ -130,7 +130,10 @@ export default function Desktop({
               <motion.button
                 animate={{ opacity: 1 }}
                 whileHover={{
-                  scale: value.url === pathname || value.disabled ? 1 : 1.1,
+                  scale:
+                    value.regex.test(pathname as string) || value.disabled
+                      ? 1
+                      : 1.1,
                 }}
                 key={value.id}
                 className={`w-full flex items-center rounded-md ${
@@ -138,18 +141,20 @@ export default function Desktop({
                     ? 'justify-between px-2 py-1.5'
                     : 'justify-center p-2'
                 } ${
-                  value.url === pathname
+                  value.regex.test(pathname as string)
                     ? 'bg-primary dark:bg-primaryDark'
                     : 'hover:bg-primary dark:hover:bg-primaryDark hover:bg-opacity-20'
                 } ${value.disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 onClick={() => {
                   router.push(value.url);
                 }}
-                disabled={value.url === pathname || value.disabled}
+                disabled={
+                  value.regex.test(pathname as string) || value.disabled
+                }
               >
                 <p
                   className={`flex items-center justify-center gap-2 font-medium ${
-                    value.url === pathname
+                    value.regex.test(pathname as string)
                       ? 'text-onPrimary dark:text-onPrimaryDark'
                       : 'text-onPrimaryContainer dark:text-surfaceVariant'
                   } ${isSidebarOpen ? 'text-base' : 'text-xl'}`}

@@ -5,7 +5,8 @@ import {
   getAllDebitAccount,
   getAllEMoneyAccount,
   getAllEWalletAccount,
-} from './query';
+} from '../query';
+import Client from './client';
 
 export default async function Page() {
   const nextCookies = cookies();
@@ -30,6 +31,6 @@ export default async function Page() {
   } else if (eMoneyAccount.length > 0) {
     return redirect(`/kudoku/transaction/emoney/${eMoneyAccount[0].id}`);
   } else {
-    return redirect('kudoku/transaction/empty');
+    return <Client />;
   }
 }
