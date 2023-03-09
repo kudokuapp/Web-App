@@ -2,7 +2,7 @@
   "name": "kudoku-webapp",
   "author": "PT. Kudoku Finansial Indonesia",
   "description": "Kudoku WebApp",
-  "version": "0.0.2-beta",
+  "version": "0.0.1",
   "private": true,
   "license": "MIT",
   "homepage": "https://app.kudoku.id",
@@ -43,13 +43,15 @@
     "next": "latest",
     "next-pwa": "latest",
     "next-with-workbox": "^3.0.5",
+    "nookies": "^2.5.2",
     "pg": "^8.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.0",
     "react-modal-sheet": "^1.8.1",
     "react-otp-input": "^2.4.0",
-    "twilio": "^3.83.1"
+    "twilio": "^3.83.1",
+    "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",

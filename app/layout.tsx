@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-head-element */
+import { DeviceContextProvider } from '$context/DeviceContext';
+import { SidebarProvider } from '$context/SidebarContext';
 import { ThemeContextProvider } from '$context/ThemeContext';
 import '$styles/globals.css';
 import { ApolloNextClient, InstallDiv } from './client';
@@ -211,9 +213,13 @@ export default function RootLayout({
         <title>Kudoku</title>
       </head>
       <ApolloNextClient>
-        <ThemeContextProvider>
-          <InstallDiv>{children}</InstallDiv>
-        </ThemeContextProvider>
+        <DeviceContextProvider>
+          <ThemeContextProvider>
+            <SidebarProvider>
+              <InstallDiv>{children}</InstallDiv>
+            </SidebarProvider>
+          </ThemeContextProvider>
+        </DeviceContextProvider>
       </ApolloNextClient>
     </html>
   );

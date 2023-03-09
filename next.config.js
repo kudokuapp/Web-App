@@ -16,6 +16,9 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: { appDir: true },
   swcMinify: true,
+  env: {
+    VERSION: require('./package.json').version,
+  },
   // images: {
   //   domains: ['i.pravatar.cc'],
   // },

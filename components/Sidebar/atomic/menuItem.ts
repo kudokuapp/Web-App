@@ -1,0 +1,41 @@
+import {
+  faCalendar,
+  faChartLine,
+  faEllipsis,
+  faHouse,
+  faList,
+} from '@fortawesome/free-solid-svg-icons';
+
+const menuItem = [
+  { id: 1, name: 'Home', icon: faHouse, url: '/kudoku/home', disabled: true },
+  {
+    id: 2,
+    name: 'Monthly',
+    icon: faCalendar,
+    url: '/kudoku/monthly',
+    disabled: true,
+  },
+  {
+    id: 3,
+    name: 'Transaction',
+    icon: faList,
+    url: '/kudoku/transaction',
+    disabled: false,
+  },
+  {
+    id: 4,
+    name: 'Asset',
+    icon: faChartLine,
+    url: '/kudoku/asset',
+    disabled: true,
+  },
+  {
+    id: 5,
+    name: 'More',
+    icon: faEllipsis,
+    url: '/kudoku/more',
+    disabled: true,
+  },
+];
+
+export default menuItem;

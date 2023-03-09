@@ -4,12 +4,25 @@
  * @constructor
  * @param {string} text - The title of the book.
  */
-function censorWord(text: string) {
+export function censorWord(text: string) {
   if (text.length > 3) {
     return `${text[0]}${text[1]}${'*'.repeat(text.length - 2)}`;
   } else {
     return `${'*'.repeat(text.length)}`;
   }
+}
+
+/**
+ * Censor every character except the last four character of a word.
+ * @constructor
+ * @param {string} text - The uncensored string.
+ * @return {string} The censored string. 8 Characters long
+ */
+export function censorWordFixedChar(text: string) {
+  const length = text.length;
+  return `${'*'.repeat(4)}${text[length - 4]}${text[length - 3]}${
+    text[length - 2]
+  }${text[length - 1]}`;
 }
 
 /**
