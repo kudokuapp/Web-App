@@ -169,20 +169,7 @@ export async function getAllEMoneyAccount(
   });
 }
 
-interface IGetKudosInfo {
-  _id: string;
-  username: string;
-  password: string;
-  pin: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  whatsapp: string;
-  kudosNo: number;
-  createdAt: string | Date;
-}
-
-export async function getKudosInfo(userId: string): Promise<IGetKudosInfo> {
+export async function getKudosInfo(userId: string): Promise<MongoDBUserData> {
   return new Promise((resolve, reject) => {
     (async () => {
       try {

@@ -27,7 +27,7 @@ declare global {
     status: 'CONFIRMED' | 'PENDING';
     direction: 'out' | 'in';
     reference_id: string;
-    category: Category;
+    category: BrickCategory;
     transaction_type: null | string;
   }
 
@@ -121,12 +121,37 @@ declare global {
     kudosNo: number;
     createdAt: Date | string;
   }
+
+  /**
+   * Data dari Kudoku-Server
+   * Buat query "GetAllCashTransaction"
+   */
+  interface IGetAllCashTransaction {
+    __typename: 'CashTransaction';
+    id: string;
+    transactionName: string;
+    cashAccountId: string;
+    dateTimestamp: string;
+    currency: 'IDR';
+    amount: string;
+    merchant: Merchant;
+    merchantId: string;
+    category: Category;
+    transactionType: 'EXPENSE' | 'INCOME' | 'TRANSFER';
+    internalTransferTransactionId: string | null;
+    direction: 'OUT' | 'IN';
+    notes: string;
+    location: Location | null;
+    tags: [string];
+    isHideFromBudget: boolean;
+    isHideFromInsight: boolean;
+  }
 }
 
 /**
  * Category type dari Brick
  */
-type Category = {
+type BrickCategory = {
   category_id: number;
   category_name:
     | 'transfer-out'
@@ -140,4 +165,24 @@ type Category = {
   classification_group: string;
   classification_subgroup_id: number;
   classification_subgroup: string;
+};
+
+/**
+ * Type dari Kudoku-server
+ */
+type Merchant = {
+  id: string;
+  name: string;
+  picture: string;
+  url: string;
+};
+
+type Category = {
+  name: string;
+  ammount: string;
+};
+
+type Location = {
+  latitude: string;
+  longitude: string;
 };

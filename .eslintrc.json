@@ -14,7 +14,8 @@
     "BrickTokenData": "readonly",
     "BrickOTPData": "readonly",
     "PostgresDataKudokuUser": "readonly",
-    "MongoDBUserData": "readonly"
+    "MongoDBUserData": "readonly",
+    "IGetAllCashTransaction": "readonly"
   },
   "overrides": [
     {
