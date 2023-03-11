@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import Client from './client';
 import {
   getAllCashAccount,
   getAllDebitAccount,
@@ -10,7 +9,8 @@ import {
   getLatestDebitTransaction,
   getLatestEMoneyTransaction,
   getLatestEWalletTransaction,
-} from './query';
+} from '../../query';
+import Client from './client';
 
 export default async function Layout({
   children,
