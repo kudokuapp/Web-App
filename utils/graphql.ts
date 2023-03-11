@@ -5,7 +5,7 @@ import { setContext } from '@apollo/client/link/context';
 const httpLink = createHttpLink({
   uri:
     process.env.NODE_ENV === 'production'
-      ? 'https://api.kudoku.id'
+      ? 'https://kudoku-server.et.r.appspot.com'
       : 'http://localhost:8080',
 });
 
