@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
 import moment from 'moment';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+// import { useEffect, useRef } from 'react';
 import { IFetchAllAccounts } from './layout';
 
 interface IClientProps {
@@ -26,26 +26,26 @@ export default function Client({ accounts }: IClientProps) {
   const selectedAccountIndex = accounts.findIndex(({ id }) =>
     createIdRegex(id as string).test(pathname as string)
   );
-  const selectedAccountRef = useRef<HTMLButtonElement>(null);
+  // const selectedAccountRef = useRef<HTMLButtonElement>(null);
 
-  const scrollToSelectedAccount = () => {
-    if (selectedAccountRef.current) {
-      selectedAccountRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'center',
-      });
-    }
-  };
+  // const scrollToSelectedAccount = () => {
+  //   if (selectedAccountRef.current) {
+  //     selectedAccountRef.current.scrollIntoView({
+  //       behavior: 'smooth',
+  //       block: 'center',
+  //       inline: 'center',
+  //     });
+  //   }
+  // };
 
-  useEffect(() => {
-    scrollToSelectedAccount();
-  }, [pathname, selectedAccountRef]);
+  // useEffect(() => {
+  //   scrollToSelectedAccount();
+  // }, [pathname, selectedAccountRef]);
 
   const handleClick = (type: string, id: string) => {
     router.push(`kudoku/transaction/${type.toLowerCase()}/${id}`);
 
-    scrollToSelectedAccount();
+    // scrollToSelectedAccount();
   };
 
   return (
@@ -67,7 +67,7 @@ export default function Client({ accounts }: IClientProps) {
           return (
             <motion.button
               key={index}
-              ref={isSelected ? selectedAccountRef : null}
+              // ref={isSelected ? selectedAccountRef : null}
               className={`flex flex-col gap-4 items-start justify-start rounded-lg shadow-2xl p-4 min-w-[300px] ${
                 isSelected
                   ? 'dark:bg-yellow-400 bg-yellow-900'
