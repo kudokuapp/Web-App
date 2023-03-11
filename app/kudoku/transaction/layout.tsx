@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import Client from './client';
 import {
   getAllCashAccount,
   getAllDebitAccount,
@@ -26,11 +25,11 @@ export default async function Layout({
   const user_id = nextCookies.get('user_id')?.value;
   if (!user_id) redirect('/login');
 
-  const accounts = await fetchAllAccounts(token);
+  // const accounts = await fetchAllAccounts(token);
 
   return (
     <section className="min-h-[100vh] w-full flex flex-col sm:p-10 p-4">
-      <Client accounts={accounts} />
+      {/* <Client accounts={accounts} /> */}
       {children}
     </section>
   );
