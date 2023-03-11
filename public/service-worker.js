@@ -7,12 +7,12 @@ const INITIAL_CACHED_RESOURCES = [
   '/login/',
   '/login/queue/',
   '/register/',
-  '/kudoku/',
-  '/kudoku/home/',
-  '/kudoku/monthly/',
-  '/kudoku/transaction/',
-  '/kudoku/assets/',
-  '/kudoku/more/',
+  // '/kudoku/',
+  // '/kudoku/home/',
+  // '/kudoku/monthly/',
+  // '/kudoku/transaction/',
+  // '/kudoku/assets/',
+  // '/kudoku/more/',
 ];
 
 // install event handler (note async operation)
