@@ -30,7 +30,8 @@ export default async function Layout({
 
   return (
     <section className="min-h-[100vh] w-full flex flex-col sm:p-10 p-4">
-      <Client accounts={accounts}>{children}</Client>
+      <Client accounts={accounts} />
+      {children}
     </section>
   );
 }

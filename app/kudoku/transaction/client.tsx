@@ -11,11 +11,10 @@ import { useEffect, useRef } from 'react';
 import { IFetchAllAccounts } from './layout';
 
 interface IClientProps {
-  children: React.ReactNode;
   accounts: IFetchAllAccounts[];
 }
 
-export default function Client({ children, accounts }: IClientProps) {
+export default function Client({ accounts }: IClientProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -135,7 +134,6 @@ export default function Client({ children, accounts }: IClientProps) {
           );
         })}
       </div>
-      {children}
     </>
   );
 }
