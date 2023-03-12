@@ -1,3 +1,4 @@
+import BalanceCard from '$components/BalanceCard';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import {
@@ -10,7 +11,6 @@ import {
   getLatestEMoneyTransaction,
   getLatestEWalletTransaction,
 } from '../../query';
-import Client from './client';
 
 export default async function Layout({
   children,
@@ -29,13 +29,13 @@ export default async function Layout({
 
   return (
     <section className="min-h-[100vh] w-full flex flex-col sm:p-10 p-4">
-      <Client accounts={accounts} />
+      <BalanceCard accounts={accounts} />
       <main className="w-full h-fit">{children}</main>
     </section>
   );
 }
 
-export interface IFetchAllAccounts {
+interface IFetchAllAccounts {
   type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney';
   id: string;
   institutionId: 'Cash' | string;

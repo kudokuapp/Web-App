@@ -8,13 +8,22 @@ import { motion } from 'framer-motion';
 import moment from 'moment';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-import { IFetchAllAccounts } from './layout';
 
 interface IClientProps {
-  accounts: IFetchAllAccounts[];
+  accounts: IAccountsProps[];
 }
 
-export default function Client({ accounts }: IClientProps) {
+interface IAccountsProps {
+  type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney';
+  id: string;
+  institutionId: 'Cash' | string;
+  accountNumber: string;
+  balance: string;
+  createdAt: string;
+  latestTransaction: string | null;
+}
+
+export default function BalanceCard({ accounts }: IClientProps) {
   const router = useRouter();
   const pathname = usePathname();
 

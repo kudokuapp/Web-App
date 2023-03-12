@@ -132,19 +132,72 @@ declare global {
     transactionName: string;
     cashAccountId: string;
     dateTimestamp: string;
-    currency: 'IDR';
+    currency: Currency;
     amount: string;
     merchant: Merchant;
     merchantId: string;
     category: Category;
-    transactionType: 'EXPENSE' | 'INCOME' | 'TRANSFER';
+    transactionType: TransactionType;
     internalTransferTransactionId: string | null;
-    direction: 'OUT' | 'IN';
-    notes: string;
+    direction: Direction;
+    notes: string | null;
     location: Location | null;
     tags: [string];
     isHideFromBudget: boolean;
     isHideFromInsight: boolean;
+  }
+
+  /**
+   * Data dari Kudoku-Server
+   * Buat query "GetAllDebitTransaction"
+   */
+  interface IGetAllDebitTransaction {
+    __typename: 'DebitTransaction';
+    amount: string;
+    category: Category;
+    currency: Currency;
+    dateTimestamp: string;
+    debitAccountId: string;
+    description: string;
+    direction: Direction;
+    id: string;
+    institutionId: string;
+    internalTransferTransactionId: string | null;
+    isHideFromBudget: boolean;
+    isHideFromInsight: boolean;
+    isReviewed: boolean;
+    isSubscription: boolean;
+    location: Location | null;
+    merchant: Merchant;
+    merchantId: string;
+    notes: string | null;
+    onlineTransaction: boolean;
+    referenceId: string;
+    tags: [string];
+    transactionMethod: string;
+    transactionName: string;
+    transactionType: TransactionType;
+  }
+
+  /**
+   * Data dari Kudoku-Server
+   * Buat query "GetAllEMoneyTransaction"
+   */
+  interface IGetAllEMoneyTransaction {
+    __typename: 'EMoneyTransaction';
+    amount: string;
+    category: Category;
+    currency: Currency;
+    dateTimestamp: string;
+    description: string;
+    direction: Direction;
+    eMoneyAccountId: string;
+    id: string;
+    institutionId: string;
+    internalTransferTransactionId: string | null;
+    isHideFromBudget: boolean;
+    isHideFromInsight: boolean;
+    isReviewed: boolean;
   }
 }
 
@@ -186,3 +239,9 @@ type Location = {
   latitude: string;
   longitude: string;
 };
+
+type Currency = 'IDR' | 'USD' | 'SGD';
+
+type Direction = 'OUT' | 'IN';
+
+type TransactionType = 'EXPENSE' | 'INCOME' | 'TRANSFER';
