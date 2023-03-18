@@ -13,8 +13,10 @@ export interface ISendOtpGopay {
 
 export async function sendOtpGopay({
   nomorHp,
+  token,
 }: {
   nomorHp: string;
+  token: string;
 }): Promise<ISendOtpGopay> {
   const query = gql`
     query SendOtpGopayViaBrick($nomorHp: String!) {
@@ -36,6 +38,11 @@ export async function sendOtpGopay({
           data: { sendOtpGopayViaBrick },
         } = await client.query({
           query,
+          context: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
           variables: {
             nomorHp,
           },

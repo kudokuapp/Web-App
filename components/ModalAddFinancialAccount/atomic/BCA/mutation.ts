@@ -10,10 +10,12 @@ export async function addBcaAccount({
   brickInstitutionId,
   username,
   password,
+  token,
 }: {
   brickInstitutionId: number;
   username: string;
   password: string;
+  token: string;
 }): Promise<IAddBcaAccount> {
   const mutation = gql`
     mutation ConnectBcaViaBrick(
@@ -38,6 +40,11 @@ export async function addBcaAccount({
           data: { connectBcaViaBrick },
         } = await client.mutate({
           mutation,
+          context: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
           variables: { brickInstitutionId, username, password },
         });
         resolve(connectBcaViaBrick);

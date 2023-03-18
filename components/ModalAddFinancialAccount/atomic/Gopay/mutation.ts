@@ -14,6 +14,7 @@ export async function connectGopay({
   uniqueId,
   otpToken,
   otp,
+  token,
 }: {
   username: string;
   redirectRefId: number;
@@ -22,6 +23,7 @@ export async function connectGopay({
   uniqueId: string;
   otpToken: string;
   otp: string;
+  token: string;
 }): Promise<IConnectGopay> {
   const mutation = gql`
     mutation ConnectGopayViaBrick(
@@ -54,6 +56,11 @@ export async function connectGopay({
           data: { connectGopayViaBrick },
         } = await client.mutate({
           mutation,
+          context: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
           variables: {
             username,
             redirectRefId,

@@ -1,16 +1,21 @@
 'use client';
 
+import { ModalAddFinancialAccount } from '$components/ModalAddFinancialAccount';
 import isAutomaticAccount from '$utils/helper/isAutomaticAccount';
 import renderImageFromInstitutionId from '$utils/helper/renderImageFromInstitutionId';
-import { faMoneyBill1Wave } from '@fortawesome/free-solid-svg-icons';
+import {
+  faMoneyBill1Wave,
+  faPlusCircle,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
 import moment from 'moment';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface IClientProps {
   accounts: IAccountsProps[];
+  token: string;
 }
 
 interface IAccountsProps {
@@ -23,9 +28,10 @@ interface IAccountsProps {
   latestTransaction: string | null;
 }
 
-export default function BalanceCard({ accounts }: IClientProps) {
+export default function BalanceCard({ accounts, token }: IClientProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [modalAddIsOpen, setModalAddIsOpen] = useState(false);
 
   const createIdRegex = (id: string): RegExp => {
     const regexStr = `(.*)${id}(.*)`;
@@ -142,6 +148,33 @@ export default function BalanceCard({ accounts }: IClientProps) {
             </motion.button>
           );
         })}
+
+        <motion.button
+          className={`flex flex-col gap-4 items-start justify-start rounded-lg shadow-2xl p-4 min-w-[300px] dark:bg-onPrimary bg-onPrimaryDark dark:text-onPrimaryContainer text-onPrimary max-h-[192px] py-14`}
+          onClick={() => {
+            setModalAddIsOpen(true);
+          }}
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.05 }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+        >
+          <div className="flex flex-col justify-center items-center w-full h-fit text-xl gap-4">
+            <FontAwesomeIcon icon={faPlusCircle} size="2xl" />
+            <p>Tambah akun</p>
+          </div>
+        </motion.button>
+
+        {modalAddIsOpen && (
+          <ModalAddFinancialAccount
+            isOpen={modalAddIsOpen}
+            closeModal={() => {
+              setModalAddIsOpen(false);
+            }}
+            token={token}
+          />
+        )}
       </div>
     </>
   );

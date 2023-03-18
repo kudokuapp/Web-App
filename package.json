@@ -48,6 +48,7 @@
     "pg": "^8.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-flags": "^0.1.18",
     "react-hot-toast": "^2.4.0",
     "react-intersection-observer": "^9.4.3",
     "react-modal-sheet": "^1.8.1",

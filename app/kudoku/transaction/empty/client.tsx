@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
 
-export default function Client() {
+export default function Client({ token }: { token: string }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <motion.section
@@ -38,6 +38,7 @@ export default function Client() {
           <ModalAddFinancialAccount
             isOpen={isOpen}
             closeModal={() => setIsOpen(false)}
+            token={token}
           />
         )}
       </section>

@@ -11,11 +11,13 @@ export async function addCashAccount({
   displayPicture,
   startingBalance,
   currency,
+  token,
 }: {
   accountName: string;
   displayPicture: string | null;
   startingBalance: string;
   currency: 'IDR';
+  token: string;
 }): Promise<IAddCashAccount> {
   const mutation = gql`
     mutation AddCashAccount(
@@ -42,6 +44,11 @@ export async function addCashAccount({
           data: { addCashAccount },
         } = await client.mutate({
           mutation,
+          context: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
           variables: { accountName, displayPicture, startingBalance, currency },
         });
         resolve(addCashAccount);

@@ -33,9 +33,11 @@ import { Success } from './atomic/Success';
 export function ModalAddFinancialAccount({
   isOpen = true,
   closeModal = () => {},
+  token,
 }: {
   isOpen: boolean;
   closeModal: () => void;
+  token: string;
 }) {
   /**
    * Progress yang awalnya 2: Cash
@@ -228,13 +230,15 @@ export function ModalAddFinancialAccount({
                 displayPicture: null,
                 startingBalance: cashInitialBalance,
                 currency: 'IDR',
+                token,
               })
                 .then(() => {
                   setTimeout(() => {
                     setProgress(888);
                   }, 2500); // Wait for 2.5 second before setting progress to 888
                 })
-                .catch(() => {
+                .catch((e) => {
+                  console.error(e);
                   setProgress(999);
                 });
             }}
@@ -269,6 +273,7 @@ export function ModalAddFinancialAccount({
                 brickInstitutionId: 2,
                 username: klikBcaUserId,
                 password: klikBcaPassword,
+                token,
               })
                 .then(() => {
                   setProgress(888);
@@ -300,6 +305,7 @@ export function ModalAddFinancialAccount({
                   brickInstitutionId: 37,
                   username: myBcaInternetUserId,
                   password: myBcaInternetPassword,
+                  token,
                 })
                   .then(() => {
                     setProgress(888);
@@ -333,6 +339,7 @@ export function ModalAddFinancialAccount({
                     brickInstitutionId: 38,
                     username: myBcaMobileUserId,
                     password: myBcaMobilePassword,
+                    token,
                   })
                     .then(() => {
                       setProgress(888);
@@ -359,7 +366,10 @@ export function ModalAddFinancialAccount({
             onClick={() => {
               toast
                 .promise(
-                  sendOtpGopay({ nomorHp: `+62${cleanNum(gopayPhoneNum)}` }),
+                  sendOtpGopay({
+                    nomorHp: `+62${cleanNum(gopayPhoneNum)}`,
+                    token,
+                  }),
                   {
                     loading: 'Kirim OTP dari Gojek...',
                     success: 'Kirim OTP sukses! yuk cek HPmu',
@@ -391,6 +401,7 @@ export function ModalAddFinancialAccount({
                 uniqueId: gopayOtpData.uniqueId,
                 otpToken: gopayOtpData.otpToken,
                 otp: gopayOtp,
+                token,
               })
                 .then(() => {
                   setProgress(888);

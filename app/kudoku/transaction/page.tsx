@@ -5,6 +5,7 @@ import {
   getAllDebitAccount,
   getAllEMoneyAccount,
   getAllEWalletAccount,
+  getAllPayLaterAccount,
 } from './query';
 
 export default async function Page() {
@@ -19,6 +20,7 @@ export default async function Page() {
   const cashAccount = await getAllCashAccount(token);
   const debitAccount = await getAllDebitAccount(token);
   const eWalletAccount = await getAllEWalletAccount(token);
+  const payLaterAccount = await getAllPayLaterAccount(token);
   const eMoneyAccount = await getAllEMoneyAccount(token);
 
   if (cashAccount.length > 0) {
@@ -27,6 +29,8 @@ export default async function Page() {
     return redirect(`/kudoku/transaction/debit/${debitAccount[0].id}`);
   } else if (eWalletAccount.length > 0) {
     return redirect(`/kudoku/transaction/ewallet/${eWalletAccount[0].id}`);
+  } else if (payLaterAccount.length > 0) {
+    return redirect(`/kudoku/transaction/paylater/${payLaterAccount[0].id}`);
   } else if (eMoneyAccount.length > 0) {
     return redirect(`/kudoku/transaction/emoney/${eMoneyAccount[0].id}`);
   } else {

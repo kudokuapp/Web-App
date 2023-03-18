@@ -257,6 +257,92 @@ export async function getLatestEWalletTransaction(
   });
 }
 
+interface IGetAllPayLaterAccount {
+  __typename: 'PayLaterAccount';
+  id: string;
+  institutionId: string;
+  accountNumber: string;
+  balance: string;
+  createdAt: string;
+}
+
+export async function getAllPayLaterAccount(
+  token: string
+): Promise<IGetAllPayLaterAccount[]> {
+  const query = gql`
+    query GetAllPayLaterAccount {
+      getAllPayLaterAccount {
+        id
+        institutionId
+        accountNumber
+        balance
+        createdAt
+      }
+    }
+  `;
+
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const {
+          data: { getAllPayLaterAccount },
+        } = await client.query({
+          query,
+          context: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        });
+
+        resolve(getAllPayLaterAccount);
+      } catch (e) {
+        reject(e);
+      }
+    })();
+  });
+}
+
+interface IGetLatestPayLaterTransaction {
+  __typename: 'PayLaterTransaction';
+  dateTimestamp: string;
+}
+
+export async function getLatestPayLaterTransaction(
+  token: string,
+  payLaterAccountId: string
+): Promise<IGetLatestPayLaterTransaction> {
+  const query = gql`
+    query GetAllPayLaterTransaction($payLaterAccountId: String!) {
+      getAllPayLaterTransaction(payLaterAccountId: $payLaterAccountId) {
+        dateTimestamp
+      }
+    }
+  `;
+
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const {
+          data: { getAllPayLaterTransaction },
+        } = await client.query({
+          query,
+          variables: { payLaterAccountId },
+          context: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        });
+
+        resolve(getAllPayLaterTransaction[0]);
+      } catch (e) {
+        reject(e);
+      }
+    })();
+  });
+}
+
 interface IGetAllEMoneyAccount {
   __typename: 'EMoneyAccount';
   id: string;

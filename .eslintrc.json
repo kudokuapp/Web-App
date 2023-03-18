@@ -16,7 +16,11 @@
     "PostgresDataKudokuUser": "readonly",
     "MongoDBUserData": "readonly",
     "IGetAllCashTransaction": "readonly",
-    "IGetAllDebitTransaction": "readonly"
+    "IGetAllDebitTransaction": "readonly",
+    "IGetAllEMoneyTransaction": "readonly",
+    "IGetAllEWalletTransaction": "readonly",
+    "IGetAllPayLaterTransaction": "readonly",
+    "GraphqlError": "readonly"
   },
   "overrides": [
     {

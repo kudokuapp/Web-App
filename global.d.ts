@@ -136,13 +136,13 @@ declare global {
     amount: string;
     merchant: Merchant;
     merchantId: string;
-    category: Category;
+    category: NameAmount[] | null;
     transactionType: TransactionType;
     internalTransferTransactionId: string | null;
     direction: Direction;
     notes: string | null;
     location: Location | null;
-    tags: [string];
+    tags: NameAmount[] | null;
     isHideFromBudget: boolean;
     isHideFromInsight: boolean;
   }
@@ -154,7 +154,7 @@ declare global {
   interface IGetAllDebitTransaction {
     __typename: 'DebitTransaction';
     amount: string;
-    category: Category;
+    category: NameAmount[] | null;
     currency: Currency;
     dateTimestamp: string;
     debitAccountId: string;
@@ -173,7 +173,7 @@ declare global {
     notes: string | null;
     onlineTransaction: boolean;
     referenceId: string;
-    tags: [string];
+    tags: NameAmount[] | null;
     transactionMethod: string;
     transactionName: string;
     transactionType: TransactionType;
@@ -186,7 +186,7 @@ declare global {
   interface IGetAllEMoneyTransaction {
     __typename: 'EMoneyTransaction';
     amount: string;
-    category: Category;
+    category: NameAmount[] | null;
     currency: Currency;
     dateTimestamp: string;
     description: string;
@@ -198,6 +198,96 @@ declare global {
     isHideFromBudget: boolean;
     isHideFromInsight: boolean;
     isReviewed: boolean;
+    location: Location | null;
+    merchant: Merchant;
+    merchantId: string;
+    notes: string | null;
+    tags: NameAmount[] | null;
+    transactionName: string;
+    transactionType: string;
+  }
+
+  /**
+   * Data dari Kudoku-Server
+   * Buat query "GetAllEWalletTransaction"
+   */
+  interface IGetAllEWalletTransaction {
+    __typename: 'EWalletTransaction';
+    amount: string;
+    category: NameAmount[] | null;
+    currency: Currency;
+    dateTimestamp: string;
+    description: string;
+    direction: Direction;
+    eWalletAccountId: string;
+    id: string;
+    institutionId: string;
+    internalTransferTransactionId: string | null;
+    isHideFromBudget: boolean;
+    isHideFromInsight: boolean;
+    isReviewed: boolean;
+    isSubscription: boolean;
+    location: Location | null;
+    merchant: Merchant;
+    merchantId: string;
+    notes: string | null;
+    onlineTransaction: boolean;
+    referenceId: string;
+    tags: NameAmount[] | null;
+    transactionName: string;
+    transactionType: string;
+  }
+
+  /**
+   * Data dari Kudoku-Server
+   * Buat query "GetAllPayLaterTransaction"
+   */
+  interface IGetAllPayLaterTransaction {
+    __typename: 'PayLaterTransaction';
+    amount: string;
+    category: NameAmount[] | null;
+    currency: Currency;
+    dateTimestamp: string;
+    description: string;
+    direction: Direction;
+    payLaterAccountId: string;
+    id: string;
+    institutionId: string;
+    internalTransferTransactionId: string | null;
+    isHideFromBudget: boolean;
+    isHideFromInsight: boolean;
+    isReviewed: boolean;
+    isSubscription: boolean;
+    location: Location | null;
+    merchant: Merchant;
+    merchantId: string;
+    notes: string | null;
+    onlineTransaction: boolean;
+    referenceId: string;
+    tags: NameAmount[] | null;
+    transactionName: string;
+    transactionType: string;
+  }
+
+  /**
+   * GraphQL Error
+   * ketika kita manggil query/mutation
+   * trus ada error
+   */
+  interface GraphqlError {
+    errors: {
+      message: string;
+      extensions: {
+        code: number;
+        exception: {
+          name: string;
+          message?: string;
+          thrownValue?: Record<string, unknown>;
+          stacktrace?: string[];
+        };
+      };
+    }[];
+    data: null;
   }
 }
 
@@ -230,9 +320,9 @@ type Merchant = {
   url: string;
 };
 
-type Category = {
+type NameAmount = {
   name: string;
-  ammount: string;
+  amount: string;
 };
 
 type Location = {

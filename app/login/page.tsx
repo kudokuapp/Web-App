@@ -32,7 +32,9 @@ export default function Page() {
 
         setCookie('token', data.token, {
           domain:
-            process.env.NODE_ENV === 'production' ? 'kudoku.id' : 'localhost',
+            process.env.NODE_ENV === 'production'
+              ? 'app.kudoku.id'
+              : 'localhost',
           path: '/',
           sameSite: 'strict',
           secure: process.env.NODE_ENV === 'production',
@@ -45,7 +47,7 @@ export default function Page() {
             setCookie('user_id', res.id, {
               domain:
                 process.env.NODE_ENV === 'production'
-                  ? 'kudoku.id'
+                  ? 'app.kudoku.id'
                   : 'localhost',
               path: '/',
               sameSite: 'strict',

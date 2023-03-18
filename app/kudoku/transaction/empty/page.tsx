@@ -31,6 +31,6 @@ export default async function Page() {
   } else if (eMoneyAccount.length > 0) {
     return redirect(`/kudoku/transaction/emoney/${eMoneyAccount[0].id}`);
   } else {
-    return <Client />;
+    return <Client token={token} />;
   }
 }
