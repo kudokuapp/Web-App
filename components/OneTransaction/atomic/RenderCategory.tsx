@@ -28,6 +28,7 @@ import {
   faPizzaSlice,
   faPlaneDeparture,
   faPlayCircle,
+  faQuestion,
   faRoad,
   faShoppingCart,
   faSmoking,
@@ -143,6 +144,18 @@ export const RenderCategory = ({ category }: { category: string }) => {
       return <Transport category={category} icon={faTaxi} />;
     case 'Tolls':
       return <Transport category={category} icon={faRoad} />;
+
+    /**
+     * Belum ada kategory
+     */
+
+    case 'UNDEFINED':
+      return (
+        <p className="flex gap-2 bg-gray-600 dark:bg-gray-300 sm:px-2.5 sm:py-0.5 sm:text-base sm:rounded-xl text-xs px-1 py-0 rounded-md  items-center justify-start w-fit h-fit text-onPrimaryContainer sm:max-w-fit max-w-[80px] truncate">
+          <FontAwesomeIcon icon={faQuestion} />
+          Belum ada category
+        </p>
+      );
 
     default:
       return <></>;
