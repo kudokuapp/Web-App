@@ -3,6 +3,7 @@
 import {
   faCalendar,
   faClose,
+  faHashtag,
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -33,13 +34,15 @@ const ModalShowTransaction: React.FC<Props> = ({
     const { category } = transaction;
     if (category !== null) {
       return (
-        <div className="flex flex-col">
-          <p>Category</p>
+        <div className="flex flex-col gap-2">
+          <p className="text-onPrimaryContainer dark:text-surfaceVariant">
+            Category
+          </p>
           {category.map((value, index) => {
             return (
-              <div key={index}>
+              <div key={index} className="flex gap-4">
                 <RenderCategory category={value.name} />
-                <p>
+                <p className="text-onPrimaryContainer dark:text-surfaceVariant">
                   {new Intl.NumberFormat('id-ID', {
                     style: 'currency',
                     currency: 'IDR',
@@ -53,6 +56,38 @@ const ModalShowTransaction: React.FC<Props> = ({
       );
     } else {
       return <></>;
+    }
+  };
+
+  const showTags = () => {
+    const { tags } = transaction;
+    if (tags !== null) {
+      return (
+        <div className="flex flex-col gap-2">
+          <p className="text-onPrimaryContainer dark:text-surfaceVariant">
+            Tags
+          </p>
+          {tags.map((value, index) => {
+            return (
+              <div key={index} className="flex gap-4">
+                <p className="flex gap-2 bg-primary dark:bg-primaryDark sm:px-2.5 sm:py-0.5 sm:text-base sm:rounded-xl text-xs px-1 py-0 rounded-md  items-center justify-start w-fit h-fit text-onPrimaryContainer sm:max-w-fit max-w-[80px] truncate">
+                  <FontAwesomeIcon icon={faHashtag} />
+                  {value.name}
+                </p>
+                <p className="text-onPrimaryContainer dark:text-surfaceVariant">
+                  {new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0,
+                  }).format(Number(value.amount))}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      );
+    } else {
+      return <p>Belum ada tags</p>;
     }
   };
   return (
@@ -135,6 +170,8 @@ const ModalShowTransaction: React.FC<Props> = ({
           </p>
         </div>
         {showCategory()}
+        
+        {showTags()}
 
         <div>
           <div></div>
