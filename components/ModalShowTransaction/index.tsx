@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import moment from 'moment';
 import Image from 'next/image';
 import Flag from 'react-flags/vendor/flags/flags-iso/flat/svg/ID.svg';
+import { RenderCategory } from '$components/OneTransaction/atomic/RenderCategory';
 
 interface Props {
   transaction:
@@ -28,6 +29,32 @@ const ModalShowTransaction: React.FC<Props> = ({
   isOpen,
   onCloseModal,
 }) => {
+  const showCategory = () => {
+    const { category } = transaction;
+    if (category !== null) {
+      return (
+        <div className="flex flex-col">
+          <p>Category</p>
+          {category.map((value, index) => {
+            return (
+              <div key={index}>
+                <RenderCategory category={value.name} />
+                <p>
+                  {new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0,
+                  }).format(Number(value.amount))}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      );
+    } else {
+      return <></>;
+    }
+  };
   return (
     <motion.div
       className="h-[100vh] max-h-[100vh] overflow-y-auto w-fit bg-background/50 dark:bg-onBackground/50 fixed right-0 top-0 flex flex-col gap-10 border-l-4 border-gray-500"
@@ -107,6 +134,8 @@ const ModalShowTransaction: React.FC<Props> = ({
             }).format(Number(transaction.amount))}
           </p>
         </div>
+        {showCategory()}
+
         <div>
           <div></div>
         </div>

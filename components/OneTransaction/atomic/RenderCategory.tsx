@@ -160,7 +160,7 @@ const GoodLife = ({ category, icon }: { category: string; icon: IconProp }) => {
 
 const Personal = ({ category, icon }: { category: string; icon: IconProp }) => {
   return (
-    <p>
+    <p className="flex gap-2 bg-orange-600 dark:bg-orange-300 sm:px-2.5 sm:py-0.5 sm:text-base sm:rounded-xl text-xs px-1 py-0 rounded-md  items-center justify-start w-fit h-fit text-onPrimaryContainer sm:max-w-fit max-w-[80px] truncate">
       <FontAwesomeIcon icon={icon} />
       {category}
     </p>
@@ -169,7 +169,7 @@ const Personal = ({ category, icon }: { category: string; icon: IconProp }) => {
 
 const Home = ({ category, icon }: { category: string; icon: IconProp }) => {
   return (
-    <p>
+    <p className="flex gap-2 bg-purple-600 dark:bg-purple-300 sm:px-2.5 sm:py-0.5 sm:text-base sm:rounded-xl text-xs px-1 py-0 rounded-md  items-center justify-start w-fit h-fit text-onPrimaryContainer sm:max-w-fit max-w-[80px] truncate">
       <FontAwesomeIcon icon={icon} />
       {category}
     </p>
@@ -184,7 +184,7 @@ const Transport = ({
   icon: IconProp;
 }) => {
   return (
-    <p>
+    <p className="flex gap-2 bg-blue-600 dark:bg-blue-300 sm:px-2.5 sm:py-0.5 sm:text-base sm:rounded-xl text-xs px-1 py-0 rounded-md  items-center justify-start w-fit h-fit text-onPrimaryContainer sm:max-w-fit max-w-[80px] truncate">
       <FontAwesomeIcon icon={icon} />
       {category}
     </p>
