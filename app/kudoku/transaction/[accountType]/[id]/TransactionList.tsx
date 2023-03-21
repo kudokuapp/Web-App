@@ -13,9 +13,11 @@ interface Props {
     | IGetAllEMoneyTransaction[]
     | IGetAllEWalletTransaction[]
     | IGetAllPayLaterTransaction[];
+
+  token: string;
 }
 
-const TransactionList: React.FC<Props> = ({ transactions }) => {
+const TransactionList: React.FC<Props> = ({ transactions, token }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<
     | IGetAllCashTransaction
@@ -52,26 +54,28 @@ const TransactionList: React.FC<Props> = ({ transactions }) => {
               <OneTransaction
                 transaction={transaction}
                 onClick={() => {
+                  setSelectedTransaction(null);
                   setSelectedTransaction(transaction);
                   setModalIsOpen(true);
                 }}
                 selectedTransaction={selectedTransaction}
               />
-
-              {selectedTransaction && isDesktop && (
-                <ModalShowTransaction
-                  transaction={selectedTransaction}
-                  onCloseModal={() => {
-                    setSelectedTransaction(null);
-                    setModalIsOpen(false);
-                  }}
-                  isOpen={modalIsOpen}
-                />
-              )}
             </div>
           );
         }
       })}
+
+      {selectedTransaction && isDesktop && (
+        <ModalShowTransaction
+          transaction={selectedTransaction}
+          onCloseModal={() => {
+            setSelectedTransaction(null);
+            setModalIsOpen(false);
+          }}
+          isOpen={modalIsOpen}
+          token={token}
+        />
+      )}
     </motion.div>
   );
 };

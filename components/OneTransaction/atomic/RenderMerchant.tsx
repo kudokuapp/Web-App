@@ -74,17 +74,20 @@ export const RenderMerchant = ({
       <RenderActualMerchant
         merchantId={merchantId}
         merchantName={merchantName}
+        size={30}
       />
     );
   }
 };
 
-const RenderActualMerchant = ({
+export const RenderActualMerchant = ({
   merchantId,
   merchantName,
+  size,
 }: {
   merchantId: string;
   merchantName: string;
+  size: number;
 }) => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
@@ -101,9 +104,10 @@ const RenderActualMerchant = ({
       <Image
         src={imageSrc}
         alt={`${merchantName} logo`}
-        width={30}
-        height={30}
+        width={size}
+        height={size}
         draggable={false}
+        quality={100}
       />
     );
   } else {

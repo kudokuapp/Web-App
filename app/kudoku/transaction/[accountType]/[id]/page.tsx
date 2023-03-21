@@ -56,7 +56,7 @@ export default async function Page({
   }
   return (
     <>
-      <TransactionList transactions={transaction} />
+      <TransactionList transactions={transaction} token={token} />
 
       {transaction.length === 0 && (
         <EmptyTransaction type={params.accountType} />
