@@ -687,7 +687,7 @@ const ModalShowTransaction: React.FC<Props> = ({
                     )
                     .then(
                       () => {
-                        window.location.reload();
+                        // window.location.reload();
                       },
                       (e) => {
                         console.log(e);
@@ -696,6 +696,7 @@ const ModalShowTransaction: React.FC<Props> = ({
                     );
 
                   setIsEdit(false);
+                  console.log(data);
                 }}
               >
                 Save
@@ -1388,9 +1389,10 @@ export const ModalShowTransactionMobile: React.FC<Props> = ({
       onClose={onCloseModal}
       snapPoints={[800, 400]}
       initialSnap={1}
-      onSnap={(snapIndex) =>
-        console.log('> Current snap point index:', snapIndex)
-      }
+      // onSnap={(snapIndex) =>
+      //   console.log('> Current snap point index:', snapIndex)
+      // }
+      style={{ zIndex: 30 }}
     >
       <Sheet.Container>
         {/**
@@ -1537,18 +1539,19 @@ export const ModalShowTransactionMobile: React.FC<Props> = ({
                         )
                         .then(
                           () => {
-                            window.location.reload();
+                            // window.location.reload();
                           },
                           (e) => {
                             console.log(e);
-                            window.location.reload();
+                            // window.location.reload();
                           }
                         );
 
                       setIsEdit(false);
+                      console.log(data);
                     }}
                   >
-                    Save
+                    console.log(data)
                   </button>
                 )}
 

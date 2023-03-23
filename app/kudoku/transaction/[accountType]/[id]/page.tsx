@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { AddTransaction } from './client';
 import EmptyTransaction from './EmptyTransaction';
 import {
   getAllCashTransaction,
@@ -60,6 +61,12 @@ export default async function Page({
         transactions={transaction}
         token={token}
         accountType={params.accountType}
+      />
+
+      <AddTransaction
+        token={token}
+        accountType={params.accountType}
+        accountId={params.id}
       />
 
       {transaction.length === 0 && (

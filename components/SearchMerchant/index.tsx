@@ -3,8 +3,11 @@
 import { RenderActualMerchant } from '$components/OneTransaction/atomic/RenderMerchant';
 import { faCircleQuestion, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Dialog, Transition } from '@headlessui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChangeEventHandler, useEffect, useState } from 'react';
+import { ChangeEventHandler, Fragment, useEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+import { addMerchant } from './mutation';
 import { getAllMerchant } from './query';
 
 interface Props {
@@ -26,6 +29,7 @@ const variants = {
 
 const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
   const [query, setQuery] = useState('');
+  const [urlMerchant, setUrlMerchant] = useState('');
   const [results, setResults] = useState<Merchant[]>([]);
   const [merchants, setMerchants] = useState<Merchant[]>([]);
   const [showAddMerchant, setShowAddMerchant] = useState(false);
@@ -33,6 +37,8 @@ const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
   const [selectedMerchant, setSelectedMerchant] = useState<Merchant | null>(
     null
   );
+
+  let [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -76,95 +82,187 @@ const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
 
   const handleAddMerchant = () => {
     // Handle add merchant logic here
+    setIsOpen(true);
   };
 
   return (
-    <motion.div
-      className="relative w-full"
-      animate={{
-        rotate: [0, -10, 10, -10, 10, -5, 5, -5, 0],
-        y: [0, -10, 10, -10, 10, -5, 5, -5, 0],
-      }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="relative flex items-center">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <span className="text-gray-500 sm:text-sm">
-            {selectedMerchant ? (
-              <div className="w-[20px] h-[20px]">
-                <RenderActualMerchant
-                  merchantId={selectedMerchant.id}
-                  merchantName={selectedMerchant.name}
-                  size={20}
-                />
-              </div>
-            ) : (
-              <FontAwesomeIcon
-                icon={faCircleQuestion}
-                className="text-gray-500"
-                size={'xl'}
-              />
-            )}
-          </span>
-        </div>
-        <input
-          type="text"
-          className="block w-full pl-10 pr-3 py-2 border-gray-300 rounded-md leading-5 bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          placeholder="Search for a merchant"
-          value={query}
-          onChange={handleInputChange}
-        />
-      </div>
-      <AnimatePresence>
-        <motion.div
-          variants={variants}
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-        >
-          {results.length > 0 && !selectedMerchant && (
-            <motion.ul className="absolute z-10 mt-2 bg-white border border-gray-300 rounded-md w-full shadow-lg">
-              {loading && <LoadingSpinner />}
-              {results.map((merchant) => (
-                <li
-                  key={merchant.id}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex gap-4 flex-nowrap items-center"
-                  onClick={() => {
-                    handleSelectMerchant(merchant);
-                    onSelectMerchant(merchant);
-                  }}
-                >
-                  <div className="w-[20px] h-[20px]">
-                    <RenderActualMerchant
-                      merchantId={merchant.id}
-                      merchantName={merchant.name}
-                      size={20}
-                    />
-                  </div>
-                  <span>{merchant.name}</span>
-                </li>
-              ))}
-            </motion.ul>
-          )}
-
-          {showAddMerchant && (
-            <button
-              className="absolute z-10 mt-2 bg-white border border-gray-300 rounded-md w-full shadow-lg px-4 py-2 hover:bg-gray-100 cursor-pointer flex gap-4 flex-nowrap items-center"
-              onClick={handleAddMerchant}
-            >
-              <div className="w-[20px] h-[20px] border-2 border-primary rounded-sm flex items-center justify-center">
+    <>
+      <motion.div
+        className="relative w-full"
+        animate={{
+          rotate: [0, -10, 10, -10, 10, -5, 5, -5, 0],
+          y: [0, -10, 10, -10, 10, -5, 5, -5, 0],
+        }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="relative flex items-center">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <span className="text-gray-500 sm:text-sm">
+              {selectedMerchant ? (
+                <div className="w-[20px] h-[20px]">
+                  <RenderActualMerchant
+                    merchantId={selectedMerchant.id}
+                    merchantName={selectedMerchant.name}
+                    size={20}
+                  />
+                </div>
+              ) : (
                 <FontAwesomeIcon
-                  icon={faPlus}
-                  className="text-primary"
-                  size={'sm'}
+                  icon={faCircleQuestion}
+                  className="text-gray-500"
+                  size={'xl'}
                 />
-              </div>
-              <span>Add merchant &apos;{query}&apos;</span>
-            </button>
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </motion.div>
+              )}
+            </span>
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-10 pr-3 py-2 border-gray-300 rounded-md leading-5 bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Search for a merchant"
+            value={query}
+            onChange={handleInputChange}
+          />
+        </div>
+        <AnimatePresence>
+          <motion.div
+            variants={variants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            {results.length > 0 && !selectedMerchant && (
+              <motion.ul className="absolute z-10 mt-2 bg-white border border-gray-300 rounded-md w-full shadow-lg">
+                {loading && <LoadingSpinner />}
+                {results.map((merchant) => (
+                  <li
+                    key={merchant.id}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex gap-4 flex-nowrap items-center"
+                    onClick={() => {
+                      handleSelectMerchant(merchant);
+                      onSelectMerchant(merchant);
+                    }}
+                  >
+                    <div className="w-[20px] h-[20px]">
+                      <RenderActualMerchant
+                        merchantId={merchant.id}
+                        merchantName={merchant.name}
+                        size={20}
+                      />
+                    </div>
+                    <span>{merchant.name}</span>
+                  </li>
+                ))}
+              </motion.ul>
+            )}
+
+            {showAddMerchant && (
+              <button
+                className="absolute z-10 mt-2 bg-white border border-gray-300 rounded-md w-full shadow-lg px-4 py-2 hover:bg-gray-100 cursor-pointer flex gap-4 flex-nowrap items-center"
+                onClick={handleAddMerchant}
+              >
+                <div className="w-[20px] h-[20px] border-2 border-primary rounded-sm flex items-center justify-center">
+                  <FontAwesomeIcon
+                    icon={faPlus}
+                    className="text-primary"
+                    size={'sm'}
+                  />
+                </div>
+                <span>Add merchant &apos;{query}&apos;</span>
+              </button>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </motion.div>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={() => setIsOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    Tambah merchant
+                  </Dialog.Title>
+                  <div className="my-4 flex flex-col gap-4">
+                    <div className="flex flex-col gap-2">
+                      <p>Nama merchant</p>
+                      <input
+                        type="text"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <p>URL merchant</p>
+                      <input
+                        type="text"
+                        value={urlMerchant}
+                        onChange={(e) => setUrlMerchant(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={() => {
+                        toast
+                          .promise(
+                            addMerchant({
+                              token,
+                              name: query,
+                              url: urlMerchant,
+                            }),
+                            {
+                              loading: 'Tambah merchant...',
+                              success: 'Sukses',
+                              error: 'Gagal',
+                            }
+                          )
+                          .then(() => {
+                            setIsOpen(false);
+                          });
+                      }}
+                    >
+                      Tambah merchant
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+      <Toaster />
+    </>
   );
 };
 

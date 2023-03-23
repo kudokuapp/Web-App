@@ -29,7 +29,7 @@ export function InstallDiv({
 
   Change to false on prod!!
   */
-  const [hasInstall, setHasInstall] = useState(true);
+  const [hasInstall, setHasInstall] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {
