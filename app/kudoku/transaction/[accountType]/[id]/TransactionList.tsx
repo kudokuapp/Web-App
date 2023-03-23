@@ -1,6 +1,8 @@
 'use client';
 
-import ModalShowTransaction from '$components/ModalShowTransaction';
+import ModalShowTransaction, {
+  ModalShowTransactionMobile,
+} from '$components/ModalShowTransaction';
 import OneTransaction from '$components/OneTransaction';
 import { DeviceContext } from '$context/DeviceContext';
 import { motion } from 'framer-motion';
@@ -15,9 +17,14 @@ interface Props {
     | IGetAllPayLaterTransaction[];
 
   token: string;
+  accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney';
 }
 
-const TransactionList: React.FC<Props> = ({ transactions, token }) => {
+const TransactionList: React.FC<Props> = ({
+  transactions,
+  token,
+  accountType,
+}) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<
     | IGetAllCashTransaction
@@ -32,7 +39,7 @@ const TransactionList: React.FC<Props> = ({ transactions, token }) => {
   return (
     <motion.div
       className="w-full h-fit flex flex-col gap-4"
-      animate={modalIsOpen ? 'open' : 'closed'}
+      animate={modalIsOpen && isDesktop ? 'open' : 'closed'}
       variants={{
         open: { paddingRight: 500 },
         closed: { paddingRight: 0 },
@@ -74,6 +81,20 @@ const TransactionList: React.FC<Props> = ({ transactions, token }) => {
           }}
           isOpen={modalIsOpen}
           token={token}
+          accountType={accountType}
+        />
+      )}
+
+      {selectedTransaction && !isDesktop && (
+        <ModalShowTransactionMobile
+          transaction={selectedTransaction}
+          onCloseModal={() => {
+            setSelectedTransaction(null);
+            setModalIsOpen(false);
+          }}
+          isOpen={modalIsOpen}
+          token={token}
+          accountType={accountType}
         />
       )}
     </motion.div>

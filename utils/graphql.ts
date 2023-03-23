@@ -5,8 +5,8 @@ import { setContext } from '@apollo/client/link/context';
 const httpLink = createHttpLink({
   uri:
     process.env.NODE_ENV === 'production'
-      ? 'https://kudoku-server.et.r.appspot.com'
-      : 'http://localhost:8080',
+      ? 'https://kudoku-server.et.r.appspot.com/'
+      : 'http://localhost:8080/',
 });
 
 const authLink = setContext((_, { headers }) => {

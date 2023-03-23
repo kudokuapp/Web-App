@@ -86,7 +86,10 @@ const OneTransaction: React.FC<Props> = ({
         </div>
 
         <div className="flex sm:flex-row flex-col gap-2 items-center justify-center">
-          <RenderCategory category={renderCategoryName() as string} />
+          <RenderCategory
+            category={renderCategoryName() as string}
+            select={false}
+          />
           {transaction.category !== null && (
             <p className="text-xs">
               {transaction.category.length > 1

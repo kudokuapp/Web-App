@@ -10,9 +10,11 @@ import { getAllMerchant } from './query';
 interface Props {
   token: string;
   firstMerchant: Merchant;
+  // eslint-disable-next-line no-unused-vars
+  onSelectMerchant: (selectedMerchant: Merchant | null) => void;
 }
 
-type Merchant = {
+export type Merchant = {
   id: string;
   name: string;
 };
@@ -22,7 +24,7 @@ const variants = {
   visible: { opacity: 1, y: 0 },
 };
 
-const SearchMerchant = ({ token, firstMerchant }: Props) => {
+const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Merchant[]>([]);
   const [merchants, setMerchants] = useState<Merchant[]>([]);
@@ -54,7 +56,7 @@ const SearchMerchant = ({ token, firstMerchant }: Props) => {
     setSelectedMerchant(null);
     const query = event.target.value;
     setQuery(query);
-    if (query.length >= 2) {
+    if (query.length > 0) {
       const filteredMerchants = merchants.filter((merchant) =>
         merchant.name.toLowerCase().includes(query.toLowerCase())
       );
@@ -69,6 +71,7 @@ const SearchMerchant = ({ token, firstMerchant }: Props) => {
   const handleSelectMerchant = (merchant: Merchant) => {
     setQuery(merchant.name);
     setSelectedMerchant({ name: merchant.name, id: merchant.id });
+    onSelectMerchant(selectedMerchant);
   };
 
   const handleAddMerchant = () => {
@@ -126,7 +129,10 @@ const SearchMerchant = ({ token, firstMerchant }: Props) => {
                 <li
                   key={merchant.id}
                   className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex gap-4 flex-nowrap items-center"
-                  onClick={() => handleSelectMerchant(merchant)}
+                  onClick={() => {
+                    handleSelectMerchant(merchant);
+                    onSelectMerchant(merchant);
+                  }}
                 >
                   <div className="w-[20px] h-[20px]">
                     <RenderActualMerchant

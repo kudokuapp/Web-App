@@ -56,7 +56,11 @@ export default async function Page({
   }
   return (
     <>
-      <TransactionList transactions={transaction} token={token} />
+      <TransactionList
+        transactions={transaction}
+        token={token}
+        accountType={params.accountType}
+      />
 
       {transaction.length === 0 && (
         <EmptyTransaction type={params.accountType} />
