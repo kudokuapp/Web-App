@@ -37,17 +37,33 @@ export function InstallDiv({
     }
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js').then(
-        (registration) => {
+      navigator.serviceWorker
+        .register('/service-worker.js', { scope: '/login' })
+        .then((registration) => {
           console.log(
-            'Service Worker registration successful with scope: ',
-            registration.scope
+            `Service worker registered for ${registration.scope} scope`
           );
-        },
-        (err) => {
-          console.log('Service Worker registration failed: ', err);
-        }
-      );
+        })
+        .catch((error) => {
+          console.error(
+            'Error registering service worker for /login scope:',
+            error
+          );
+        });
+
+      navigator.serviceWorker
+        .register('/service-worker.js', { scope: '/register' })
+        .then((registration) => {
+          console.log(
+            `Service worker registered for ${registration.scope} scope`
+          );
+        })
+        .catch((error) => {
+          console.error(
+            'Error registering service worker for /register scope:',
+            error
+          );
+        });
     }
 
     window.addEventListener('offline', () => {
