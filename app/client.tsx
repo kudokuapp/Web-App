@@ -64,6 +64,20 @@ export function InstallDiv({
             error
           );
         });
+
+      navigator.serviceWorker
+        .register('/service-worker-all.js')
+        .then((registration) => {
+          console.log(
+            `Service worker registered for ${registration.scope} scope`
+          );
+        })
+        .catch((error) => {
+          console.error(
+            'Error registering service worker for /register scope:',
+            error
+          );
+        });
     }
 
     window.addEventListener('offline', () => {
