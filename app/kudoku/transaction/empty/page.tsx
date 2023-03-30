@@ -5,7 +5,7 @@ import {
   getAllDebitAccount,
   getAllEMoneyAccount,
   getAllEWalletAccount,
-} from '../query';
+} from '.././[accountType]/[id]/fetchAllAccountsQuery';
 import Client from './client';
 
 export default async function Page() {

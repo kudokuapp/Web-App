@@ -6,7 +6,7 @@ import {
   getAllEMoneyAccount,
   getAllEWalletAccount,
   getAllPayLaterAccount,
-} from './query';
+} from './[accountType]/[id]/fetchAllAccountsQuery';
 
 export default async function Page() {
   const nextCookies = cookies();
