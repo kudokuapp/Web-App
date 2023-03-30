@@ -30,6 +30,7 @@ export async function getAllMerchant(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllMerchant);

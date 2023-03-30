@@ -1388,10 +1388,10 @@ export const ModalShowTransactionMobile: React.FC<Props> = ({
       isOpen={isOpen}
       onClose={onCloseModal}
       snapPoints={[800, 400]}
-      initialSnap={1}
-      // onSnap={(snapIndex) =>
-      //   console.log('> Current snap point index:', snapIndex)
-      // }
+      initialSnap={0}
+      onSnap={(snapIndex) =>
+        console.log('> Current snap point index:', snapIndex)
+      }
       style={{ zIndex: 30 }}
     >
       <Sheet.Container>
@@ -1551,7 +1551,7 @@ export const ModalShowTransactionMobile: React.FC<Props> = ({
                       console.log(data);
                     }}
                   >
-                    console.log(data)
+                    Save
                   </button>
                 )}
 
@@ -1567,7 +1567,7 @@ export const ModalShowTransactionMobile: React.FC<Props> = ({
         <Sheet.Content style={{ paddingBottom: ref.current?.y }}>
           {/* Some content here that makes the sheet content scrollable */}
 
-          <div className={`flex-col px-4 gap-8 flex`}>
+          <div className={`flex-col px-4 gap-8 flex pb-10`}>
             <div className="flex gap-4 justify-between">
               <div className="flex flex-col items-start justify-center">
                 <p className="text-onPrimaryContainer">Currency</p>

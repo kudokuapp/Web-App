@@ -1,6 +1,7 @@
 'use client';
 
 import { RenderActualMerchant } from '$components/OneTransaction/atomic/RenderMerchant';
+import { gql, useSubscription } from '@apollo/client';
 import { faCircleQuestion, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dialog, Transition } from '@headlessui/react';
@@ -40,6 +41,16 @@ const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
 
   let [isOpen, setIsOpen] = useState(false);
 
+  const subscription = gql`
+    subscription NewMerchantLive {
+      newMerchantLive {
+        id
+        name
+      }
+    }
+  `;
+  const { data } = useSubscription(subscription);
+
   useEffect(() => {
     setLoading(true);
 
@@ -50,6 +61,19 @@ const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
 
     setLoading(false);
   }, [token]);
+
+  useEffect(() => {
+    if (data) {
+      const { newMerchantLive } = data;
+      newMerchantLive as Merchant;
+
+      const array = [newMerchantLive, ...merchants];
+
+      setMerchants(array);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   useEffect(() => {
     if (firstMerchant.id !== '63d8b775d3e050940af0caf1') {

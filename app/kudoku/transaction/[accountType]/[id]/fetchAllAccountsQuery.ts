@@ -35,6 +35,7 @@ export async function getAllCashAccount(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllCashAccount);
@@ -75,6 +76,7 @@ export async function getLatestCashTransaction(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllCashTransaction[0]);
@@ -92,6 +94,7 @@ interface IGetAllDebitAccount {
   accountNumber: string;
   balance: string;
   createdAt: string;
+  expired: boolean;
 }
 
 export async function getAllDebitAccount(
@@ -105,6 +108,7 @@ export async function getAllDebitAccount(
         accountNumber
         balance
         createdAt
+        expired
       }
     }
   `;
@@ -121,6 +125,7 @@ export async function getAllDebitAccount(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllDebitAccount);
@@ -161,6 +166,7 @@ export async function getLatestDebitTransaction(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllDebitTransaction[0]);
@@ -178,6 +184,7 @@ interface IGetAllEWalletAccount {
   accountNumber: string;
   balance: string;
   createdAt: string;
+  expired: boolean;
 }
 
 export async function getAllEWalletAccount(
@@ -191,6 +198,7 @@ export async function getAllEWalletAccount(
         accountNumber
         balance
         createdAt
+        expired
       }
     }
   `;
@@ -207,6 +215,7 @@ export async function getAllEWalletAccount(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllEWalletAccount);
@@ -247,6 +256,7 @@ export async function getLatestEWalletTransaction(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllEWalletTransaction[0]);
@@ -264,6 +274,7 @@ interface IGetAllPayLaterAccount {
   accountNumber: string;
   balance: string;
   createdAt: string;
+  expired: boolean;
 }
 
 export async function getAllPayLaterAccount(
@@ -277,6 +288,7 @@ export async function getAllPayLaterAccount(
         accountNumber
         balance
         createdAt
+        expired
       }
     }
   `;
@@ -293,6 +305,7 @@ export async function getAllPayLaterAccount(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllPayLaterAccount);
@@ -333,6 +346,7 @@ export async function getLatestPayLaterTransaction(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllPayLaterTransaction[0]);
@@ -379,6 +393,7 @@ export async function getAllEMoneyAccount(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllEMoneyAccount);
@@ -419,6 +434,7 @@ export async function getLatestEMoneyTransaction(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(getAllEMoneyTransaction[0]);

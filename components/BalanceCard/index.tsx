@@ -1,17 +1,16 @@
 'use client';
 
 import { ModalAddFinancialAccount } from '$components/ModalAddFinancialAccount';
-import isAutomaticAccount from '$utils/helper/isAutomaticAccount';
-import renderImageFromInstitutionId from '$utils/helper/renderImageFromInstitutionId';
-import {
-  faMoneyBill1Wave,
-  faPlusCircle,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
-import moment from 'moment';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import CashBalance from './accounts/CashBalance';
+import DebitBalance from './accounts/DebitBalance';
+import EMoneyBalance from './accounts/EMoneyBalance';
+import EWalletBalance from './accounts/EWalletBalance';
+import PayLaterBalance from './accounts/PayLaterBalance';
 
 interface IClientProps {
   accounts: IAccountsProps[];
@@ -19,17 +18,17 @@ interface IClientProps {
 }
 
 interface IAccountsProps {
-  type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney';
+  type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney' | 'PayLater';
   id: string;
   institutionId: 'Cash' | string;
   accountNumber: string;
   balance: string;
   createdAt: string;
   latestTransaction: string | null;
+  expired: boolean;
 }
 
-export default function BalanceCard({ accounts, token }: IClientProps) {
-  const router = useRouter();
+export default function BalanceCard({ token, accounts }: IClientProps) {
   const pathname = usePathname();
   const [modalAddIsOpen, setModalAddIsOpen] = useState(false);
 
@@ -55,17 +54,16 @@ export default function BalanceCard({ accounts, token }: IClientProps) {
 
   useEffect(() => {
     scrollToSelectedAccount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, selectedAccountRef]);
 
-  const handleClick = (type: string, id: string) => {
-    router.push(`kudoku/transaction/${type.toLowerCase()}/${id}`);
-
+  const handleClick = () => {
     scrollToSelectedAccount();
   };
 
   return (
     <>
-      <div className="flex gap-0 w-full h-fit overflow-x-auto items-start justify-start p-4">
+      <div className="flex gap-0 w-full h-fit overflow-x-auto items-start justify-start p-4 sm:pb-20 pb-10">
         {accounts.map((value, index) => {
           const {
             accountNumber,
@@ -75,82 +73,125 @@ export default function BalanceCard({ accounts, token }: IClientProps) {
             id,
             latestTransaction,
             createdAt,
+            expired,
           } = value;
 
           const isSelected = selectedAccountIndex === index;
 
-          return (
-            <motion.button
-              key={index}
-              ref={isSelected ? selectedAccountRef : null}
-              className={`flex flex-col gap-4 items-start justify-start rounded-lg shadow-2xl p-4 min-w-[300px] ${
-                isSelected
-                  ? 'dark:bg-yellow-400 bg-yellow-900'
-                  : 'dark:bg-onPrimary bg-onPrimaryDark'
-              } dark:text-onPrimaryContainer text-onPrimary`}
-              onClick={() => handleClick(type, id as string)}
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.05 }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.2}
-            >
-              <div className="flex justify-between w-full">
-                <div className="w-[20px] h-[20px]">
-                  {institutionId === 'Cash' && (
-                    <FontAwesomeIcon icon={faMoneyBill1Wave} size="sm" />
-                  )}
-                  {institutionId !== 'Cash' &&
-                    renderImageFromInstitutionId({
-                      institutionId: institutionId as string,
-                      height: 20,
-                    })}
-                </div>
-                <p className="">{accountNumber}</p>
-              </div>
-              <div className="flex flex-col gap-2 items-start justify-start">
-                <p className="text-2xl font-medium">
-                  {new Intl.NumberFormat('id-ID', {
-                    style: 'currency',
-                    currency: 'IDR',
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 2,
-                  }).format(Number(balance))}
-                </p>
-                <div className="flex flex-col gap-0 items-start justify-start">
-                  <p className="text-sm">
-                    Transaksi terkahir:{' '}
-                    {latestTransaction
-                      ? moment(latestTransaction).format('DD MMMM YYYY')
-                      : 'Belum ada transaksi'}
-                  </p>
-                  <p className="text-sm">
-                    Akun dibuat: {moment(createdAt).format('DD MMMM YYYY')}
-                  </p>
-                </div>
-              </div>
+          const link = `/kudoku/transaction/${type.toLowerCase()}/${id}`;
 
-              <div className="flex justify-between w-full">
-                <p>{type}</p>
-
-                <p
-                  className={`px-1 py-0.5 rounded-md shadow-sm text-xs flex items-center justify-center w-fit h-fit ${
-                    isAutomaticAccount(institutionId as string)
-                      ? 'bg-green-400 text-green-900'
-                      : 'bg-blue-400 text-blue-900'
-                  }`}
-                >
-                  {isAutomaticAccount(institutionId as string)
-                    ? 'otomatis'
-                    : 'manual'}
-                </p>
-              </div>
-            </motion.button>
-          );
+          if (type === 'Cash') {
+            return (
+              <CashBalance
+                link={link}
+                isSelected={isSelected}
+                selectedAccountRef={selectedAccountRef}
+                onClick={() => {
+                  handleClick();
+                }}
+                cashAccountId={id}
+                account={{
+                  institutionId,
+                  accountNumber,
+                  balance,
+                  latestTransaction,
+                  createdAt,
+                  type,
+                  expired,
+                }}
+              />
+            );
+          } else if (type === 'EMoney') {
+            return (
+              <EMoneyBalance
+                link={link}
+                isSelected={isSelected}
+                selectedAccountRef={selectedAccountRef}
+                onClick={() => {
+                  handleClick();
+                }}
+                eMoneyAccountId={id}
+                account={{
+                  institutionId,
+                  accountNumber,
+                  balance,
+                  latestTransaction,
+                  createdAt,
+                  type,
+                  expired,
+                }}
+              />
+            );
+          } else if (type === 'Debit') {
+            return (
+              <DebitBalance
+                link={link}
+                isSelected={isSelected}
+                selectedAccountRef={selectedAccountRef}
+                onClick={() => {
+                  handleClick();
+                }}
+                debitAccountId={id}
+                account={{
+                  institutionId,
+                  accountNumber,
+                  balance,
+                  latestTransaction,
+                  createdAt,
+                  type,
+                  expired,
+                }}
+              />
+            );
+          } else if (type === 'EWallet') {
+            return (
+              <EWalletBalance
+                link={link}
+                isSelected={isSelected}
+                selectedAccountRef={selectedAccountRef}
+                onClick={() => {
+                  handleClick();
+                }}
+                eWalletAccountId={id}
+                account={{
+                  institutionId,
+                  accountNumber,
+                  balance,
+                  latestTransaction,
+                  createdAt,
+                  type,
+                  expired,
+                }}
+              />
+            );
+          } else if (type === 'PayLater') {
+            return (
+              <PayLaterBalance
+                link={link}
+                isSelected={isSelected}
+                selectedAccountRef={selectedAccountRef}
+                onClick={() => {
+                  handleClick();
+                }}
+                payLaterAccountId={id}
+                account={{
+                  institutionId,
+                  accountNumber,
+                  balance,
+                  latestTransaction,
+                  createdAt,
+                  type,
+                  expired,
+                }}
+              />
+            );
+          } else {
+            return <></>;
+          }
         })}
 
         <motion.button
-          className={`flex flex-col gap-4 items-start justify-start rounded-lg shadow-2xl p-4 min-w-[300px] dark:bg-onPrimary bg-onPrimaryDark dark:text-onPrimaryContainer text-onPrimary max-h-[192px] py-14`}
+          className={`flex flex-col gap-4 items-start justify-start rounded-lg shadow-2xl p-4 min-w-[300px] dark:bg-onPrimary bg-onPrimaryDark dark:text-onPrimaryContainer text-onPrimary h-[204px] py-14`}
           onClick={() => {
             setModalAddIsOpen(true);
           }}

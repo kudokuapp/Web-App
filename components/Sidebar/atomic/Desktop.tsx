@@ -5,24 +5,19 @@ import LogoShortLight from '$public/logo/primary.svg';
 import LogoShortDark from '$public/logo/primaryDark.svg';
 import LogoWideLight from '$public/logo/secondary.svg';
 import LogoWideDark from '$public/logo/secondaryDark.svg';
-import { censorWordFixedChar } from '$utils/helper/censor';
-import renderImageFromInstitutionId from '$utils/helper/renderImageFromInstitutionId';
 import {
-  faArrowDown,
-  faArrowRight,
   faChevronLeft,
   faChevronRight,
-  faMoneyBill1Wave,
   faSignOut,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AnimatePresence, motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import Cookies from 'js-cookie';
-import _ from 'lodash';
+// import _ from 'lodash';
 import { ObjectId } from 'mongodb';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import menuItem from './menuItem';
 
 export interface IMyAccount {
@@ -34,13 +29,14 @@ export interface IMyAccount {
 
 export default function Desktop({
   kudosNo = 15,
+  // eslint-disable-next-line no-unused-vars
   accounts,
 }: {
   kudosNo: number;
   accounts: IMyAccount[] | null;
 }) {
   const pathname = usePathname();
-  const [isExpanded, setIsExpanded] = useState(true);
+  // const [isExpanded, setIsExpanded] = useState(true);
   const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
   const { isDarkTheme } = useContext(ThemeContext);
   const router = useRouter();
@@ -51,7 +47,7 @@ export default function Desktop({
 
   const controls = useAnimation();
 
-  const groupedAccounts = _.groupBy(accounts, 'type');
+  // const groupedAccounts = _.groupBy(accounts, 'type');
 
   const renderLogo = () => {
     if (isSidebarOpen) {
@@ -173,7 +169,7 @@ export default function Desktop({
         </motion.section>
       </motion.section>
 
-      {isSidebarOpen && (
+      {/* {isSidebarOpen && (
         <div className="w-full h-fit flex flex-col items-start text-start">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
@@ -340,7 +336,7 @@ export default function Desktop({
             )}
           </AnimatePresence>
         </div>
-      )}
+      )} */}
 
       <motion.section animate={{ opacity: 1 }} className="flex flex-col gap-8">
         <motion.button
