@@ -101,6 +101,7 @@ export default async function Page({
         accountType={params.accountType}
         token={token}
         allTransaction={transaction}
+        id={params.id}
       />
 
       <AddTransaction

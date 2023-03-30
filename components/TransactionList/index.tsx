@@ -15,19 +15,21 @@ interface Props {
     | IGetAllEMoneyTransaction[]
     | IGetAllEWalletTransaction[]
     | IGetAllPayLaterTransaction[];
+  id: string;
 }
 
 const TransactionList: React.FC<Props> = ({
   accountType,
   token,
   allTransaction,
+  id,
 }) => {
   if (accountType === 'cash') {
     const transaction = allTransaction as IGetAllCashTransaction[];
     return (
       <CashTransactionList
         cashTransactions={transaction}
-        cashAccountId={transaction[0].cashAccountId}
+        cashAccountId={id}
         token={token}
       />
     );
@@ -36,7 +38,7 @@ const TransactionList: React.FC<Props> = ({
     return (
       <DebitTransactionList
         debitTransactions={transaction}
-        debitAccountId={transaction[0].debitAccountId}
+        debitAccountId={id}
         token={token}
       />
     );
@@ -45,7 +47,7 @@ const TransactionList: React.FC<Props> = ({
     return (
       <EWalletTransactionList
         eWalletTransactions={transaction}
-        eWalletAccountId={transaction[0].eWalletAccountId}
+        eWalletAccountId={id}
         token={token}
       />
     );
@@ -54,7 +56,7 @@ const TransactionList: React.FC<Props> = ({
     return (
       <EMoneyTransactionList
         eMoneyTransactions={transaction}
-        eMoneyAccountId={transaction[0].eMoneyAccountId}
+        eMoneyAccountId={id}
         token={token}
       />
     );
@@ -63,7 +65,7 @@ const TransactionList: React.FC<Props> = ({
     return (
       <PayLaterTransactionList
         payLaterTransactions={transaction}
-        payLaterAccountId={transaction[0].payLaterAccountId}
+        payLaterAccountId={id}
         token={token}
       />
     );
