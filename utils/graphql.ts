@@ -20,9 +20,13 @@ const httpLink = createHttpLink({
 const wsLink = () => {
   return new GraphQLWsLink(
     createClient({
+      // url:
+      //   process.env.NODE_ENV === 'production'
+      //     ? 'wss://kudoku-server.et.r.appspot.com/graphql'
+      //     : 'ws://localhost:8080/graphql',
       url:
         process.env.NODE_ENV === 'production'
-          ? 'wss://kudoku-server.et.r.appspot.com/graphql'
+          ? 'wss://api.kudoku.id/graphql'
           : 'ws://localhost:8080/graphql',
       webSocketImpl: WebSocket,
     })
