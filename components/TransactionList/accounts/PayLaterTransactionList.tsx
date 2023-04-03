@@ -138,7 +138,7 @@ const PayLaterTransactionList: React.FC<IPayLaterTransactionList> = ({
           }}
           isOpen={modalIsOpen}
           token={token}
-          accountType={'cash'}
+          accountType={'paylater'}
         />
       )}
 
@@ -151,7 +151,7 @@ const PayLaterTransactionList: React.FC<IPayLaterTransactionList> = ({
           }}
           isOpen={modalIsOpen}
           token={token}
-          accountType={'cash'}
+          accountType={'paylater'}
         />
       )}
     </motion.div>

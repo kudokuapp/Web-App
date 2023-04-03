@@ -142,7 +142,7 @@ const EMoneyTransactionList: React.FC<IEMoneyTransactionList> = ({
           }}
           isOpen={modalIsOpen}
           token={token}
-          accountType={'cash'}
+          accountType={'emoney'}
         />
       )}
 
@@ -155,7 +155,7 @@ const EMoneyTransactionList: React.FC<IEMoneyTransactionList> = ({
           }}
           isOpen={modalIsOpen}
           token={token}
-          accountType={'cash'}
+          accountType={'emoney'}
         />
       )}
     </motion.div>

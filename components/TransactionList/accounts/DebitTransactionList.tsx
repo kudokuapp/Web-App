@@ -137,7 +137,7 @@ const DebitTransactionList: React.FC<IDebitTransactionList> = ({
           }}
           isOpen={modalIsOpen}
           token={token}
-          accountType={'cash'}
+          accountType={'debit'}
         />
       )}
 
@@ -150,7 +150,7 @@ const DebitTransactionList: React.FC<IDebitTransactionList> = ({
           }}
           isOpen={modalIsOpen}
           token={token}
-          accountType={'cash'}
+          accountType={'debit'}
         />
       )}
     </motion.div>

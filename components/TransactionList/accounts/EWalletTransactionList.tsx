@@ -138,7 +138,7 @@ const EWalletTransactionList: React.FC<IEWalletTransactionList> = ({
           }}
           isOpen={modalIsOpen}
           token={token}
-          accountType={'cash'}
+          accountType={'ewallet'}
         />
       )}
 
@@ -151,7 +151,7 @@ const EWalletTransactionList: React.FC<IEWalletTransactionList> = ({
           }}
           isOpen={modalIsOpen}
           token={token}
-          accountType={'cash'}
+          accountType={'ewallet'}
         />
       )}
     </motion.div>
