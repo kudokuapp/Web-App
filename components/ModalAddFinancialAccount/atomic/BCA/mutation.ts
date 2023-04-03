@@ -7,27 +7,20 @@ interface IAddBcaAccount {
 }
 
 export async function addBcaAccount({
-  brickInstitutionId,
-  username,
-  password,
   token,
+  account,
+  transaction,
 }: {
-  brickInstitutionId: number;
-  username: string;
-  password: string;
   token: string;
+  account: BrickAccountDetail;
+  transaction: BrickTransactionData[];
 }): Promise<IAddBcaAccount> {
   const mutation = gql`
-    mutation ConnectBcaViaBrick(
-      $brickInstitutionId: Int!
-      $username: String!
-      $password: String!
+    mutation AddBcaViaKudokuxBrick(
+      $account: KudokuxBrickAccount!
+      $transaction: [KudokuxBrickTransaction!]
     ) {
-      connectBcaViaBrick(
-        brickInstitutionId: $brickInstitutionId
-        username: $username
-        password: $password
-      ) {
+      addBcaViaKudokuxBrick(account: $account, transaction: $transaction) {
         id
       }
     }
@@ -37,7 +30,7 @@ export async function addBcaAccount({
     (async () => {
       try {
         const {
-          data: { connectBcaViaBrick },
+          data: { addBcaViaKudokuxBrick },
         } = await client.mutate({
           mutation,
           context: {
@@ -45,9 +38,9 @@ export async function addBcaAccount({
               Authorization: `Bearer ${token}`,
             },
           },
-          variables: { brickInstitutionId, username, password },
+          variables: { account, transaction },
         });
-        resolve(connectBcaViaBrick);
+        resolve(addBcaViaKudokuxBrick);
       } catch (e) {
         reject(e);
       }

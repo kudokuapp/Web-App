@@ -13,17 +13,13 @@ import WebSocket from 'isomorphic-ws';
 const httpLink = createHttpLink({
   uri:
     process.env.NODE_ENV === 'production'
-      ? 'https://kudoku-server.et.r.appspot.com/graphql'
+      ? 'https://api.kudoku.id/graphql'
       : 'http://localhost:8080/graphql',
 });
 
 const wsLink = () => {
   return new GraphQLWsLink(
     createClient({
-      // url:
-      //   process.env.NODE_ENV === 'production'
-      //     ? 'wss://kudoku-server.et.r.appspot.com/graphql'
-      //     : 'ws://localhost:8080/graphql',
       url:
         process.env.NODE_ENV === 'production'
           ? 'wss://api.kudoku.id/graphql'

@@ -1,48 +1,28 @@
 import client from '$utils/graphql';
 import { gql } from '@apollo/client';
 
-interface IConnectGopay {
+interface IAddEWallet {
   __typename: 'EWalletAccount';
   id: string;
 }
 
-export async function connectGopay({
-  username,
-  redirectRefId,
-  clientId,
-  sessionId,
-  uniqueId,
-  otpToken,
-  otp,
+export async function addEWallet({
   token,
+  account,
+  transaction,
 }: {
-  username: string;
-  redirectRefId: number;
-  clientId: number;
-  sessionId: string;
-  uniqueId: string;
-  otpToken: string;
-  otp: string;
   token: string;
-}): Promise<IConnectGopay> {
+  account: BrickAccountDetail;
+  transaction: BrickTransactionData[];
+}): Promise<IAddEWallet> {
   const mutation = gql`
-    mutation ConnectGopayViaBrick(
-      $username: String!
-      $redirectRefId: Int!
-      $clientId: Int!
-      $sessionId: String!
-      $uniqueId: String!
-      $otpToken: String!
-      $otp: String!
+    mutation ConnectGopayWalletViaKudokuxBrick(
+      $account: KudokuxBrickAccount!
+      $transaction: [KudokuxBrickTransaction!]
     ) {
-      connectGopayViaBrick(
-        username: $username
-        redirectRefId: $redirectRefId
-        clientId: $clientId
-        sessionId: $sessionId
-        uniqueId: $uniqueId
-        otpToken: $otpToken
-        otp: $otp
+      connectGopayWalletViaKudokuxBrick(
+        account: $account
+        transaction: $transaction
       ) {
         id
       }
@@ -53,7 +33,7 @@ export async function connectGopay({
     (async () => {
       try {
         const {
-          data: { connectGopayViaBrick },
+          data: { connectGopayWalletViaKudokuxBrick },
         } = await client.mutate({
           mutation,
           context: {
@@ -61,19 +41,63 @@ export async function connectGopay({
               Authorization: `Bearer ${token}`,
             },
           },
-          variables: {
-            username,
-            redirectRefId,
-            clientId,
-            sessionId,
-            uniqueId,
-            otpToken,
-            otp,
-          },
+          variables: { account, transaction },
         });
-        resolve(connectGopayViaBrick);
-      } catch (e) {
-        reject(e);
+        resolve(connectGopayWalletViaKudokuxBrick);
+      } catch (error) {
+        console.error(error);
+        reject(error);
+      }
+    })();
+  });
+}
+
+interface IAddPayLater {
+  __typename: 'PayLaterAccount';
+  id: string;
+}
+
+export async function addPayLater({
+  token,
+  account,
+  transaction,
+}: {
+  token: string;
+  account: BrickAccountDetail;
+  transaction: BrickTransactionData[];
+}): Promise<IAddPayLater> {
+  const mutation = gql`
+    mutation ConnectGopayPayLaterViaKudokuxBrick(
+      $account: KudokuxBrickAccount!
+      $transaction: [KudokuxBrickTransaction!]
+    ) {
+      connectGopayPayLaterViaKudokuxBrick(
+        account: $account
+        transaction: $transaction
+      ) {
+        id
+      }
+    }
+  `;
+
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const {
+          data: { connectGopayPayLaterViaKudokuxBrick },
+        } = await client.mutate({
+          mutation,
+          context: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+          variables: { account, transaction },
+        });
+        resolve(connectGopayPayLaterViaKudokuxBrick);
+      } catch (error) {
+        console.error(error);
+        reject(error);
       }
     })();
   });

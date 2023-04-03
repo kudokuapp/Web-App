@@ -62,6 +62,7 @@ declare global {
     };
     currency: string;
     type?: string;
+    accessToken?: string;
   }
 
   /**

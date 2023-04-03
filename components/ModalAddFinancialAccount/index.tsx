@@ -1,5 +1,6 @@
 'use client';
 import BCA from '$public/logo/bank/bca.png';
+import Flazz from '$public/logo/bank/flazz.png';
 import Gopay from '$public/logo/bank/gojek.png';
 import cleanNum from '$utils/helper/cleanNum';
 import {
@@ -18,13 +19,21 @@ import { KlikBCA } from './atomic/BCA/KlikBCA';
 import { addBcaAccount } from './atomic/BCA/mutation';
 import { MyBCAInternet } from './atomic/BCA/MyBCAInternet';
 import { MyBCAMobile } from './atomic/BCA/MyBCAMobile';
+import { connectBca, getBcaTransaction } from './atomic/BCA/post';
 import { Cash } from './atomic/Cash';
 import { addCashAccount } from './atomic/Cash/mutation';
+import { EMoney } from './atomic/EMoney';
+import { addEMoneyAccount } from './atomic/EMoney/mutation';
 import { FailedProgress } from './atomic/FailedProgress';
 import { GopayOtp } from './atomic/Gopay/GopayOtp';
 import { GopayPhoneNum } from './atomic/Gopay/GopayPhoneNum';
-import { connectGopay } from './atomic/Gopay/mutation';
-import { ISendOtpGopay, sendOtpGopay } from './atomic/Gopay/query';
+import { addEWallet, addPayLater } from './atomic/Gopay/mutation';
+import {
+  gopayAccount,
+  gopayTransaction,
+  ISendOtpGopay,
+  sendOtpGopay,
+} from './atomic/Gopay/post';
 import { Loading } from './atomic/Loading';
 import { Footer } from './atomic/other/Footer';
 import { Navbar } from './atomic/other/Navbar';
@@ -41,8 +50,9 @@ export function ModalAddFinancialAccount({
 }) {
   /**
    * Progress yang awalnya 2: Cash
-   * Progress yang awalnya 3: Debit
+   * Progress yang awalnya 3: Debit BCA
    * Progress yang awalnya 4: Gopay
+   * Progress yang awalnya 5: EMoney
    * Progress 888: success
    * Progress 999: failed
    */
@@ -53,6 +63,13 @@ export function ModalAddFinancialAccount({
    */
   const [cashAccountName, setCashAccountname] = useState('');
   const [cashInitialBalance, setCashInitialBalance] = useState('');
+
+  /**
+   * E-Money
+   */
+  const [eMoneyInstitutionId, setEMoneyInstitutionId] = useState('');
+  const [eMoneyCardNumber, setEMoneyCardNumber] = useState('');
+  const [eMoneyInitialBalance, setEMoneyInitialBalance] = useState('');
 
   /**
    * Klik BCA
@@ -107,6 +124,16 @@ export function ModalAddFinancialAccount({
       type: 'otomatis',
       id: 3,
       icon: Gopay,
+      iconType: 'Image',
+      disable: false,
+    },
+    {
+      title: 'E-Money',
+      description: 'Buat akun e-money kamu supaya track pengeluarannya.',
+      action: 'Create',
+      type: 'manual',
+      id: 4,
+      icon: Flazz,
       iconType: 'Image',
       disable: false,
     },
@@ -206,6 +233,10 @@ export function ModalAddFinancialAccount({
                           case 'Gopay':
                             setProgress(40);
                             break;
+
+                          case 'E-Money':
+                            setProgress(50);
+                            break;
                         }
                       }}
                     >
@@ -267,20 +298,49 @@ export function ModalAddFinancialAccount({
       case 31:
         return (
           <KlikBCA
-            onClick={() => {
-              setProgress(311);
-              addBcaAccount({
-                brickInstitutionId: 2,
-                username: klikBcaUserId,
-                password: klikBcaPassword,
-                token,
-              })
-                .then(() => {
-                  setProgress(888);
-                })
-                .catch(() => {
-                  setProgress(999);
+            onClick={async () => {
+              try {
+                setProgress(311);
+
+                console.log(`connectBca starts running`);
+
+                const accountResponse = await connectBca({
+                  token,
+                  brickInstitutionId: 2,
+                  username: klikBcaUserId,
+                  password: klikBcaPassword,
                 });
+
+                if (!accountResponse.accessToken) {
+                  setProgress(999);
+                  throw new Error('accessToken is null');
+                }
+
+                const transactionResponse = await getBcaTransaction({
+                  token,
+                  accessToken: accountResponse.accessToken,
+                });
+
+                if (!accountResponse || !transactionResponse) {
+                  setProgress(999);
+                  throw new Error('account and transaction is null');
+                }
+
+                addBcaAccount({
+                  token,
+                  account: accountResponse,
+                  transaction: transactionResponse,
+                })
+                  .then(() => {
+                    setProgress(888);
+                  })
+                  .catch(() => {
+                    setProgress(999);
+                  });
+              } catch (error) {
+                console.error(error);
+                setProgress(999);
+              }
             }}
             userId={klikBcaUserId}
             setUserId={setKlikBcaUserId}
@@ -298,14 +358,36 @@ export function ModalAddFinancialAccount({
       case 32:
         return (
           <MyBCAInternet
-            onClick={() => {
-              () => {
+            onClick={async () => {
+              try {
                 setProgress(322);
-                addBcaAccount({
+
+                const accountResponse = await connectBca({
+                  token,
                   brickInstitutionId: 37,
                   username: myBcaInternetUserId,
                   password: myBcaInternetPassword,
+                });
+
+                if (!accountResponse.accessToken) {
+                  setProgress(999);
+                  throw new Error('accessToken is null');
+                }
+
+                const transactionResponse = await getBcaTransaction({
                   token,
+                  accessToken: accountResponse.accessToken,
+                });
+
+                if (!accountResponse || !transactionResponse) {
+                  setProgress(999);
+                  throw new Error('account and transaction is null');
+                }
+
+                addBcaAccount({
+                  token,
+                  account: accountResponse,
+                  transaction: transactionResponse,
                 })
                   .then(() => {
                     setProgress(888);
@@ -313,7 +395,10 @@ export function ModalAddFinancialAccount({
                   .catch(() => {
                     setProgress(999);
                   });
-              };
+              } catch (error) {
+                console.error(error);
+                setProgress(999);
+              }
             }}
             userId={myBcaInternetUserId}
             setUserId={setMyBcaInternetUserId}
@@ -331,24 +416,47 @@ export function ModalAddFinancialAccount({
       case 33:
         return (
           <MyBCAMobile
-            onClick={() => {
-              () => {
-                () => {
-                  setProgress(322);
-                  addBcaAccount({
-                    brickInstitutionId: 38,
-                    username: myBcaMobileUserId,
-                    password: myBcaMobilePassword,
-                    token,
+            onClick={async () => {
+              try {
+                setProgress(322);
+
+                const accountResponse = await connectBca({
+                  token,
+                  brickInstitutionId: 38,
+                  username: myBcaMobileUserId,
+                  password: myBcaMobilePassword,
+                });
+
+                if (!accountResponse.accessToken) {
+                  setProgress(999);
+                  throw new Error('accessToken is null');
+                }
+
+                const transactionResponse = await getBcaTransaction({
+                  token,
+                  accessToken: accountResponse.accessToken,
+                });
+
+                if (!accountResponse || !transactionResponse) {
+                  setProgress(999);
+                  throw new Error('account and transaction is null');
+                }
+
+                addBcaAccount({
+                  token,
+                  account: accountResponse,
+                  transaction: transactionResponse,
+                })
+                  .then(() => {
+                    setProgress(888);
                   })
-                    .then(() => {
-                      setProgress(888);
-                    })
-                    .catch(() => {
-                      setProgress(999);
-                    });
-                };
-              };
+                  .catch(() => {
+                    setProgress(999);
+                  });
+              } catch (error) {
+                console.error(error);
+                setProgress(999);
+              }
             }}
             userId={myBcaMobileUserId}
             setUserId={setMyBcaMobileUserId}
@@ -367,7 +475,7 @@ export function ModalAddFinancialAccount({
               toast
                 .promise(
                   sendOtpGopay({
-                    nomorHp: `+62${cleanNum(gopayPhoneNum)}`,
+                    phoneNumber: `+62${cleanNum(gopayPhoneNum)}`,
                     token,
                   }),
                   {
@@ -392,26 +500,89 @@ export function ModalAddFinancialAccount({
           <GopayOtp
             otp={gopayOtp}
             setOtp={setGopayOtp}
-            onClick={() => {
-              connectGopay({
-                username: gopayOtpData.username,
-                redirectRefId: gopayOtpData.redirectRefId,
-                clientId: gopayOtpData.clientId,
-                sessionId: gopayOtpData.sessionId,
-                uniqueId: gopayOtpData.uniqueId,
-                otpToken: gopayOtpData.otpToken,
-                otp: gopayOtp,
-                token,
-              })
-                .then(() => {
-                  setProgress(888);
-                })
-                .catch(() => {
-                  setProgress(999);
+            onClick={async () => {
+              try {
+                const gopayAccountRes = await gopayAccount({
+                  sendOtpData: gopayOtpData,
+                  otp: gopayOtp,
+                  token,
                 });
+
+                const eWalletAccount = gopayAccountRes.eWallet;
+                const payLaterAccount = gopayAccountRes.payLater;
+
+                if (
+                  !eWalletAccount.accessToken ||
+                  !payLaterAccount.accessToken
+                ) {
+                  setProgress(999);
+                  throw new Error('accessToken is null');
+                }
+
+                const gopayTransactionRes = await gopayTransaction({
+                  accessToken: eWalletAccount.accessToken,
+                  token,
+                });
+
+                const eWalletTransaction = gopayTransactionRes.eWallet;
+                const payLaterTransaction = gopayTransactionRes.payLater;
+
+                await addEWallet({
+                  token,
+                  account: eWalletAccount,
+                  transaction: eWalletTransaction,
+                });
+                await addPayLater({
+                  token,
+                  account: payLaterAccount,
+                  transaction: payLaterTransaction,
+                });
+
+                setProgress(888);
+              } catch (error) {
+                console.error(error);
+                setProgress(999);
+              }
             }}
           />
         );
+
+      /**
+       *  E-Money
+       */
+
+      case 50:
+        return (
+          <EMoney
+            onClick={() => {
+              setProgress(51);
+              addEMoneyAccount({
+                institutionId: eMoneyInstitutionId,
+                cardNumber: eMoneyCardNumber,
+                initialBalance: eMoneyInitialBalance,
+                token,
+              })
+                .then(() => {
+                  setTimeout(() => {
+                    setProgress(888);
+                  }, 2500); // Wait for 2.5 second before setting progress to 888
+                })
+                .catch((e) => {
+                  console.error(e);
+                  setProgress(999);
+                });
+            }}
+            cardNumber={eMoneyCardNumber}
+            setCardNumber={setEMoneyCardNumber}
+            balanceForDb={eMoneyInitialBalance}
+            setBalanceForDb={setEMoneyInitialBalance}
+            institutionId={eMoneyInstitutionId}
+            setInstitutionId={setEMoneyInstitutionId}
+          />
+        );
+
+      case 51:
+        return <Loading text="Lagi buat akun e-money kamu..." />;
 
       case 888:
         return (

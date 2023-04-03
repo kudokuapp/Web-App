@@ -38,7 +38,7 @@ export function InstallDiv({
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
-        .register('/service-worker.js', { scope: '/login' })
+        .register('/service-worker.js')
         .then((registration) => {
           console.log(
             `Service worker registered for ${registration.scope} scope`
@@ -46,35 +46,7 @@ export function InstallDiv({
         })
         .catch((error) => {
           console.error(
-            'Error registering service worker for /login scope:',
-            error
-          );
-        });
-
-      navigator.serviceWorker
-        .register('/service-worker.js', { scope: '/register' })
-        .then((registration) => {
-          console.log(
-            `Service worker registered for ${registration.scope} scope`
-          );
-        })
-        .catch((error) => {
-          console.error(
-            'Error registering service worker for /register scope:',
-            error
-          );
-        });
-
-      navigator.serviceWorker
-        .register('/service-worker-all.js')
-        .then((registration) => {
-          console.log(
-            `Service worker registered for ${registration.scope} scope`
-          );
-        })
-        .catch((error) => {
-          console.error(
-            'Error registering service worker for /register scope:',
+            'Error registering service worker for this scope:',
             error
           );
         });
