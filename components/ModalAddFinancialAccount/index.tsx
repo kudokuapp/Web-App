@@ -15,25 +15,19 @@ import Image from 'next/image';
 import { Fragment, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import BCAMenu from './atomic/BCA/BCAMenu';
+import { connectBcaAll } from './atomic/BCA/connect';
 import { KlikBCA } from './atomic/BCA/KlikBCA';
-import { addBcaAccount } from './atomic/BCA/mutation';
 import { MyBCAInternet } from './atomic/BCA/MyBCAInternet';
 import { MyBCAMobile } from './atomic/BCA/MyBCAMobile';
-import { connectBca, getBcaTransaction } from './atomic/BCA/post';
 import { Cash } from './atomic/Cash';
 import { addCashAccount } from './atomic/Cash/mutation';
 import { EMoney } from './atomic/EMoney';
 import { addEMoneyAccount } from './atomic/EMoney/mutation';
 import { FailedProgress } from './atomic/FailedProgress';
+import { connectGopayAll } from './atomic/Gopay/connect';
 import { GopayOtp } from './atomic/Gopay/GopayOtp';
 import { GopayPhoneNum } from './atomic/Gopay/GopayPhoneNum';
-import { addEWallet, addPayLater } from './atomic/Gopay/mutation';
-import {
-  gopayAccount,
-  gopayTransaction,
-  ISendOtpGopay,
-  sendOtpGopay,
-} from './atomic/Gopay/post';
+import { ISendOtpGopay, sendOtpGopay } from './atomic/Gopay/post';
 import { Loading } from './atomic/Loading';
 import { Footer } from './atomic/other/Footer';
 import { Navbar } from './atomic/other/Navbar';
@@ -298,49 +292,29 @@ export function ModalAddFinancialAccount({
       case 31:
         return (
           <KlikBCA
-            onClick={async () => {
-              try {
-                setProgress(311);
-
-                console.log(`connectBca starts running`);
-
-                const accountResponse = await connectBca({
-                  token,
-                  brickInstitutionId: 2,
-                  username: klikBcaUserId,
-                  password: klikBcaPassword,
-                });
-
-                if (!accountResponse.accessToken) {
-                  setProgress(999);
-                  throw new Error('accessToken is null');
-                }
-
-                const transactionResponse = await getBcaTransaction({
-                  token,
-                  accessToken: accountResponse.accessToken,
-                });
-
-                if (!accountResponse || !transactionResponse) {
-                  setProgress(999);
-                  throw new Error('account and transaction is null');
-                }
-
-                addBcaAccount({
-                  token,
-                  account: accountResponse,
-                  transaction: transactionResponse,
-                })
-                  .then(() => {
+            onClick={() => {
+              toast
+                .promise(
+                  connectBcaAll({
+                    token,
+                    brickInstitutionId: 2,
+                    username: klikBcaUserId,
+                    password: klikBcaPassword,
+                  }),
+                  {
+                    loading: 'Connecting BCA... Jangan close browser ini!',
+                    success: 'Sukses connecting BCA!',
+                    error: 'Gagal connecting BCA!',
+                  }
+                )
+                .then(
+                  () => {
                     setProgress(888);
-                  })
-                  .catch(() => {
+                  },
+                  () => {
                     setProgress(999);
-                  });
-              } catch (error) {
-                console.error(error);
-                setProgress(999);
-              }
+                  }
+                );
             }}
             userId={klikBcaUserId}
             setUserId={setKlikBcaUserId}
@@ -358,47 +332,29 @@ export function ModalAddFinancialAccount({
       case 32:
         return (
           <MyBCAInternet
-            onClick={async () => {
-              try {
-                setProgress(322);
-
-                const accountResponse = await connectBca({
-                  token,
-                  brickInstitutionId: 37,
-                  username: myBcaInternetUserId,
-                  password: myBcaInternetPassword,
-                });
-
-                if (!accountResponse.accessToken) {
-                  setProgress(999);
-                  throw new Error('accessToken is null');
-                }
-
-                const transactionResponse = await getBcaTransaction({
-                  token,
-                  accessToken: accountResponse.accessToken,
-                });
-
-                if (!accountResponse || !transactionResponse) {
-                  setProgress(999);
-                  throw new Error('account and transaction is null');
-                }
-
-                addBcaAccount({
-                  token,
-                  account: accountResponse,
-                  transaction: transactionResponse,
-                })
-                  .then(() => {
+            onClick={() => {
+              toast
+                .promise(
+                  connectBcaAll({
+                    token,
+                    brickInstitutionId: 37,
+                    username: myBcaInternetUserId,
+                    password: myBcaInternetPassword,
+                  }),
+                  {
+                    loading: 'Connecting BCA... Jangan close browser ini!',
+                    success: 'Sukses connecting BCA!',
+                    error: 'Gagal connecting BCA!',
+                  }
+                )
+                .then(
+                  () => {
                     setProgress(888);
-                  })
-                  .catch(() => {
+                  },
+                  () => {
                     setProgress(999);
-                  });
-              } catch (error) {
-                console.error(error);
-                setProgress(999);
-              }
+                  }
+                );
             }}
             userId={myBcaInternetUserId}
             setUserId={setMyBcaInternetUserId}
@@ -416,47 +372,29 @@ export function ModalAddFinancialAccount({
       case 33:
         return (
           <MyBCAMobile
-            onClick={async () => {
-              try {
-                setProgress(322);
-
-                const accountResponse = await connectBca({
-                  token,
-                  brickInstitutionId: 38,
-                  username: myBcaMobileUserId,
-                  password: myBcaMobilePassword,
-                });
-
-                if (!accountResponse.accessToken) {
-                  setProgress(999);
-                  throw new Error('accessToken is null');
-                }
-
-                const transactionResponse = await getBcaTransaction({
-                  token,
-                  accessToken: accountResponse.accessToken,
-                });
-
-                if (!accountResponse || !transactionResponse) {
-                  setProgress(999);
-                  throw new Error('account and transaction is null');
-                }
-
-                addBcaAccount({
-                  token,
-                  account: accountResponse,
-                  transaction: transactionResponse,
-                })
-                  .then(() => {
+            onClick={() => {
+              toast
+                .promise(
+                  connectBcaAll({
+                    token,
+                    brickInstitutionId: 38,
+                    username: myBcaMobileUserId,
+                    password: myBcaMobilePassword,
+                  }),
+                  {
+                    loading: 'Connecting BCA... Jangan close browser ini!',
+                    success: 'Sukses connecting BCA!',
+                    error: 'Gagal connecting BCA!',
+                  }
+                )
+                .then(
+                  () => {
                     setProgress(888);
-                  })
-                  .catch(() => {
+                  },
+                  () => {
                     setProgress(999);
-                  });
-              } catch (error) {
-                console.error(error);
-                setProgress(999);
-              }
+                  }
+                );
             }}
             userId={myBcaMobileUserId}
             setUserId={setMyBcaMobileUserId}
@@ -500,49 +438,28 @@ export function ModalAddFinancialAccount({
           <GopayOtp
             otp={gopayOtp}
             setOtp={setGopayOtp}
-            onClick={async () => {
-              try {
-                const gopayAccountRes = await gopayAccount({
-                  sendOtpData: gopayOtpData,
-                  otp: gopayOtp,
-                  token,
-                });
-
-                const eWalletAccount = gopayAccountRes.eWallet;
-                const payLaterAccount = gopayAccountRes.payLater;
-
-                if (
-                  !eWalletAccount.accessToken ||
-                  !payLaterAccount.accessToken
-                ) {
-                  setProgress(999);
-                  throw new Error('accessToken is null');
-                }
-
-                const gopayTransactionRes = await gopayTransaction({
-                  accessToken: eWalletAccount.accessToken,
-                  token,
-                });
-
-                const eWalletTransaction = gopayTransactionRes.eWallet;
-                const payLaterTransaction = gopayTransactionRes.payLater;
-
-                await addEWallet({
-                  token,
-                  account: eWalletAccount,
-                  transaction: eWalletTransaction,
-                });
-                await addPayLater({
-                  token,
-                  account: payLaterAccount,
-                  transaction: payLaterTransaction,
-                });
-
-                setProgress(888);
-              } catch (error) {
-                console.error(error);
-                setProgress(999);
-              }
+            onClick={() => {
+              toast
+                .promise(
+                  connectGopayAll({
+                    sendOtpData: gopayOtpData,
+                    otp: gopayOtp,
+                    token,
+                  }),
+                  {
+                    loading: 'Connecting GoPay... Jangan close browser ini!',
+                    success: 'Sukses connecting GoPay!',
+                    error: 'Gagal connecting GoPay!',
+                  }
+                )
+                .then(
+                  () => {
+                    setProgress(888);
+                  },
+                  () => {
+                    setProgress(999);
+                  }
+                );
             }}
           />
         );
