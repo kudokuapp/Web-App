@@ -61,6 +61,7 @@ export const RenderTitle: React.FC<IRenderTitle> = ({
               className="px-2 py-1 rounded-md shadow-md border-2 border-primary dark:border-primaryDark text-onPrimary dark:text-onPrimaryDark hover:bg-primary dark:hover:bg-primaryDark hover:text-onPrimary dark:hover:text-onPrimaryDark bg-primary dark:bg-primaryDark"
               onClick={() => {
                 onSaveFunction(accountType);
+                setIsEdit(false);
               }}
             >
               Save

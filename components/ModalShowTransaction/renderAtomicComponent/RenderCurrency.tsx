@@ -1,7 +1,9 @@
 import { Popover } from '@mui/material';
-import { IAnchorEl } from './RenderCurrency';
+import Image from 'next/image';
+import { Dispatch, SetStateAction } from 'react';
+import Flag from 'react-flags/vendor/flags/flags-iso/flat/svg/ID.svg';
 
-interface IRenderType {
+interface IRenderCurrency {
   isEdit: boolean;
   AnchorEl: IAnchorEl;
   transaction:
@@ -12,43 +14,27 @@ interface IRenderType {
     | IGetAllEMoneyTransaction;
 }
 
-export const RenderType: React.FC<IRenderType> = ({
-  transaction,
+export type IAnchorEl = {
+  anchorEl: HTMLElement | null;
+  setAnchorEl: Dispatch<SetStateAction<HTMLElement | null>>;
+};
+
+export const RenderCurrency: React.FC<IRenderCurrency> = ({
   isEdit,
   AnchorEl,
+  transaction,
 }) => {
   const { anchorEl, setAnchorEl } = AnchorEl;
 
-  const renderType = () => {
-    const name = `${transaction.transactionType.charAt(
-      0
-    )}${transaction.transactionType.slice(1).toLowerCase()}`;
-    if (transaction.transactionType === 'INCOME') {
-      return (
-        <div className="flex w-fit h-fit gap-2 px-2 py-1.5 bg-green-500 rounded-lg">
-          <p className="text-green-100">{name}</p>
-        </div>
-      );
-    } else if (transaction.transactionType === 'EXPENSE') {
-      return (
-        <div className="flex w-fit h-fit gap-2 px-2 py-1.5 bg-red-500 rounded-lg">
-          <p className="text-red-100">{name}</p>
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex w-fit h-fit gap-2 px-2 py-1.5 bg-gray-500 rounded-lg">
-          <p className="text-gray-100">{name}</p>
-        </div>
-      );
-    }
-  };
-
   return (
     <div className="flex flex-col items-start justify-center">
-      <p className="text-onPrimaryContainer dark:text-surfaceVariant">Type</p>
+      <p className="text-onPrimaryContainer dark:text-surfaceVariant">
+        Currency
+      </p>
       <div
-        className={`w-fit h-fit ${isEdit ? 'hover:cursor-not-allowed' : ''}`}
+        className={`flex w-fit h-fit gap-2 px-2 py-1.5 bg-gray-500 rounded-lg ${
+          isEdit ? 'hover:cursor-not-allowed' : ''
+        }`}
         aria-owns={anchorEl ? 'mouse-over-popover' : undefined}
         aria-haspopup="true"
         onMouseEnter={(event) => {
@@ -60,10 +46,10 @@ export const RenderType: React.FC<IRenderType> = ({
           setAnchorEl(null);
         }}
       >
-        {renderType()}
-
+        <Image src={Flag} alt="Indonesian Flag" height={10} width={20} />
+        <p className="text-gray-100">{transaction.currency}</p>
         <Popover
-          id="type-over-popover"
+          id="currency-over-popover"
           sx={{
             pointerEvents: 'none',
           }}
@@ -83,7 +69,7 @@ export const RenderType: React.FC<IRenderType> = ({
           disableRestoreFocus
         >
           <p className="bg-onBackground/50 text-white px-4 py-0.5">
-            Tipe transaksi belum bisa diedit
+            Currency belum bisa diedit
           </p>
         </Popover>
       </div>
