@@ -1,3 +1,4 @@
+import { ISearchMerchant } from '$components/SearchMerchant';
 import type {
   IGetAllCashTransaction,
   IGetAllDebitTransaction,
@@ -5,6 +6,7 @@ import type {
   IGetAllEWalletTransaction,
   IGetAllPayLaterTransaction,
 } from '../../global.d';
+import { IRenderTitle } from './renderAtomicComponent';
 
 export interface IModalShowTransaction {
   transaction:
@@ -18,6 +20,10 @@ export interface IModalShowTransaction {
   onCloseModal: () => void;
   token: string;
   accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney';
+  onSaveEditFunction: IRenderTitle['onSaveFunction'];
+  onAddMerchant: ISearchMerchant['onAddMerchant'];
+  merchantSubscription: ISearchMerchant['merchantSubscription'];
+  getAllMerchant: ISearchMerchant['getAllMerchant'];
 }
 
 export type IEditableTransaction = {

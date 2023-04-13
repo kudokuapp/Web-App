@@ -1,6 +1,6 @@
 import ModalShowTransaction, {
   ModalShowTransactionMobile,
-} from '$components/ModalShowTransaction/ModalShowTransactionDesktop';
+} from '$components/ModalShowTransaction/ModalShowTransactionDesktopEE';
 import OneTransaction from '$components/OneTransaction';
 import { DeviceContext } from '$context/DeviceContext';
 import { gql, useSubscription } from '@apollo/client';

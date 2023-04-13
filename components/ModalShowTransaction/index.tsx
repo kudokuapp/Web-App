@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { DeviceContext } from '../../context/DeviceContext';
 import type { IModalShowTransaction } from './index.d';
-import ModalShowTransactionDesktop from './ModalShowTransactionDesktop';
+import ModalShowTransactionDesktop from './ModalShowTransactionDesktopEE';
 import ModalShowTransactionMobile from './ModalShowTransactionMobile';
 
 const ModalShowTransaction: React.FC<IModalShowTransaction> = ({
