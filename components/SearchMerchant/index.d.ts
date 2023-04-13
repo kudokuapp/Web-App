@@ -1,5 +1,5 @@
 import { DocumentNode } from 'graphql';
-import type { IModalAddMerchant } from '../ModalAddMerchant';
+import type { IModalAddMerchant } from '../ModalAddMerchant/index.d';
 
 export interface ISearchMerchant {
   token: string;
