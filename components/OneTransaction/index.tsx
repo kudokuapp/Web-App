@@ -2,29 +2,11 @@
 
 import { motion } from 'framer-motion';
 import moment from 'moment';
-import { RenderCategory } from './atomic/RenderCategory';
-import { RenderMerchant } from './atomic/RenderMerchant';
+import RenderCategory from '../RenderCategory';
+import RenderMerchantImage from '../RenderMerchantImage';
+import type { IOneTransaction } from './index.d';
 
-interface Props {
-  transaction:
-    | IGetAllCashTransaction
-    | IGetAllDebitTransaction
-    | IGetAllEWalletTransaction
-    | IGetAllPayLaterTransaction
-    | IGetAllEMoneyTransaction;
-
-  onClick: () => void;
-
-  selectedTransaction:
-    | IGetAllCashTransaction
-    | IGetAllDebitTransaction
-    | IGetAllEWalletTransaction
-    | IGetAllPayLaterTransaction
-    | IGetAllEMoneyTransaction
-    | null;
-}
-
-const OneTransaction: React.FC<Props> = ({
+const OneTransaction: React.FC<IOneTransaction> = ({
   transaction,
   onClick,
   selectedTransaction,
@@ -64,12 +46,12 @@ const OneTransaction: React.FC<Props> = ({
         )}
       <motion.button
         whileHover={{ scale: 1.01 }}
-        className={`w-full sm:grid sm:grid-cols-3 flex justify-between dark:text-surfaceVariant text-onPrimaryContainer sm:text-base text-sm`}
+        className={`w-full sm:grid sm:grid-cols-3 flex justify-between items-center dark:text-surfaceVariant text-onPrimaryContainer sm:text-base text-sm px-4`}
         onClick={onClick}
       >
         <div className="flex gap-4 items-center justify-start">
           <div className="flex items-center justify-center max-w-[30px] max-h-[30px] min-w-[30px] min-h-[30px]">
-            <RenderMerchant
+            <RenderMerchantImage
               merchantId={transaction.merchantId}
               direction={transaction.direction}
               merchantName={transaction.merchant.name}
@@ -99,20 +81,22 @@ const OneTransaction: React.FC<Props> = ({
           )}
         </div>
 
-        <p
-          className={`${
-            transaction.direction === 'IN'
-              ? 'dark:text-green-300 text-green-600'
-              : ''
-          }`}
-        >
-          {transaction.direction === 'IN' ? '+' : ''}
-          {new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0,
-          }).format(Number(transaction.amount))}
-        </p>
+        <div className="flex gap-4 items-center justify-end">
+          <p
+            className={`${
+              transaction.direction === 'IN'
+                ? 'dark:text-green-300 text-green-600'
+                : ''
+            }`}
+          >
+            {transaction.direction === 'IN' ? '+' : ''}
+            {new Intl.NumberFormat('id-ID', {
+              style: 'currency',
+              currency: 'IDR',
+              minimumFractionDigits: 0,
+            }).format(Number(transaction.amount))}
+          </p>
+        </div>
       </motion.button>
     </div>
   );

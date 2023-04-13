@@ -2,7 +2,7 @@
 
 import ModalShowTransaction, {
   ModalShowTransactionMobile,
-} from '$components/ModalShowTransaction';
+} from '$components/ModalShowTransaction/ModalShowTransactionDesktop';
 import OneTransaction from '$components/OneTransaction';
 import { DeviceContext } from '$context/DeviceContext';
 import { motion } from 'framer-motion';

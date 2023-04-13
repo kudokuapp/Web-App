@@ -1,4 +1,4 @@
-import { IMyAccount } from '$components/Sidebar/atomic/Desktop';
+import { IMyAccount } from '$lib/Sidebar/atomic/Desktop';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Client from './client';

@@ -1,5 +1,5 @@
-import BalanceCard from '$components/BalanceCard';
-import TransactionList from '$components/TransactionList';
+import BalanceCard from '$lib/BalanceCard';
+import TransactionList from '$lib/TransactionList';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { AddTransaction } from './client';

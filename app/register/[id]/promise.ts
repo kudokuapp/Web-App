@@ -1,4 +1,4 @@
-import unavailableUsername from '$utils/data/unavailableusername';
+import unavailableUsername from '$utils/kudoku/unavailableUsername';
 import { getAllUsername } from './query';
 
 export async function checkIfUsernameIsAvailable(username: string) {

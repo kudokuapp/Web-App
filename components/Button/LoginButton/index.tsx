@@ -1,11 +1,10 @@
 'use client';
+
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
+import type { ILoginButton } from './index.d';
 import styles from './index.module.css';
-
-export interface ILoginButton
-  extends React.ComponentPropsWithoutRef<'button'> {}
 
 const LoginButton: React.FC<ILoginButton> = ({
   disabled,

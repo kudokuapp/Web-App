@@ -1,12 +1,9 @@
 'use client';
+
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
+import type { ITextInput } from './index.d';
 import styles from './index.module.css';
-
-export interface ITextInput extends React.ComponentPropsWithoutRef<'input'> {
-  error?: boolean;
-  errorMessage?: string;
-}
 
 const TextInput: React.FC<ITextInput> = ({
   id = 'text',

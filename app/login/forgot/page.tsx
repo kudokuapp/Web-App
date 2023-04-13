@@ -2,8 +2,8 @@
 import LoginButton from '$components/Button/LoginButton';
 import PasswordInput from '$components/InputPlaceholder/PasswordInput';
 import TextInput from '$components/InputPlaceholder/TextInput';
-import LottieFC from '$components/Lottie';
-import Checked from '$components/Lottie/Checked';
+import LottieFC from '$components/LottieFC';
+import Checked from '$components/LottieFC/Checked';
 import { censorEmail, censorNumber } from '$utils/helper/censor';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

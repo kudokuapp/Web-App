@@ -1,9 +1,9 @@
 'use client';
 
-import Sidebar from '$components/Sidebar';
-import { IMyAccount } from '$components/Sidebar/atomic/Desktop';
 import { DeviceContext } from '$context/DeviceContext';
 import { SidebarContext } from '$context/SidebarContext';
+import Sidebar from '$lib/Sidebar';
+import { IMyAccount } from '$lib/Sidebar/atomic/Desktop';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
 

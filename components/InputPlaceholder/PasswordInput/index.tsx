@@ -1,15 +1,11 @@
 'use client';
+
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
+import type { IPasswordInput } from './index.d';
 import styles from './index.module.css';
-
-export interface IPasswordInput
-  extends React.ComponentPropsWithoutRef<'input'> {
-  error?: boolean;
-  errorMessage?: string;
-}
 
 const PasswordInput: React.FC<IPasswordInput> = ({
   id = 'password',
