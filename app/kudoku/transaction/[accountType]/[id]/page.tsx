@@ -1,9 +1,8 @@
 import BalanceCard from '$lib/BalanceCard';
-import EmptyTransaction from '$lib/EmptyAccount';
+import EmptyTransaction from '$lib/EmptyTransaction';
 import TransactionList from '$lib/TransactionList';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { AddTransaction } from './client';
 import { fetchAllAccounts } from './functions_';
 import {
   getAllCashTransaction,
@@ -71,13 +70,15 @@ export default async function Page({
         id={params.id}
       />
 
-      <AddTransaction
+      {/* <AddTransaction
         token={token}
         accountType={params.accountType}
         accountId={params.id}
-      />
+      /> */}
 
-      {transaction.length === 0 && <EmptyTransaction token={token} />}
+      {transaction.length === 0 && (
+        <EmptyTransaction type={params.accountType} />
+      )}
     </>
   );
 }
