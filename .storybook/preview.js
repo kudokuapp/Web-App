@@ -1,9 +1,12 @@
 // @ts-check
+import { ApolloProvider } from '@apollo/client';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
 import * as NextImage from 'next/image';
 import React from 'react';
+import { DeviceContextProvider } from '../context/DeviceContext';
+import { ThemeContextProvider } from '../context/ThemeContext';
 import '../styles/globals.css';
-// import { AuthProvider } from '../context/AuthContext';
+import client from '../utils/graphql';
 
 const BREAKPOINTS_INT = {
   xsm: '400px',
@@ -40,13 +43,22 @@ Object.defineProperty(NextImage, 'default', {
 /*
   The decorators is used for adding the AuthContext Provider
 */
-// export const decorators = [
-//   (Story) => (
-//     <AuthProvider>
-//       <Story />
-//     </AuthProvider>
-//   ),
-// ];
+export const decorators = [
+  (Story) => (
+    <ApolloProvider client={client}>
+      <ThemeContextProvider>
+        <DeviceContextProvider>
+          <div
+            id="root-kudoku"
+            className="w-[100vw] h-[100vh] flex flex-col justify-center items-center"
+          >
+            <Story />
+          </div>
+        </DeviceContextProvider>
+      </ThemeContextProvider>
+    </ApolloProvider>
+  ),
+];
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },

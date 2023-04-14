@@ -1,7 +1,29 @@
 /* eslint-disable no-unused-vars */
 import { ObjectId } from 'mongodb';
 
-export {};
+export {
+  IGetAllCashTransaction,
+  BrickTransactionData,
+  BrickGetClientIdandRedirectRefId,
+  BrickAccountDetail,
+  BrickTokenData,
+  BrickOTPData,
+  PostgresDataKudokuUser,
+  MongoDBUserData,
+  IGetAllCashTransaction,
+  IGetAllDebitTransaction,
+  IGetAllEMoneyTransaction,
+  IGetAllEWalletTransaction,
+  IGetAllPayLaterTransaction,
+  GraphqlError,
+  BrickCategory,
+  Merchant,
+  NameAmount,
+  Location,
+  Currency,
+  Direction,
+  TransactionType,
+};
 
 declare global {
   /**
@@ -27,7 +49,7 @@ declare global {
     status: 'CONFIRMED' | 'PENDING';
     direction: 'out' | 'in';
     reference_id: string;
-    category: BrickCategory;
+    category: BrickCategory | null;
     transaction_type: null | string;
   }
 

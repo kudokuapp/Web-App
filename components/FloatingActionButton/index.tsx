@@ -1,21 +1,12 @@
 'use client';
 
-import { faClose, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import type { IFloatingActionButton } from './index.d';
 
-interface Props {
-  actions: {
-    icon: IconDefinition;
-    onClick: () => void;
-    color: string | null;
-    textColor: string | null;
-    name: string;
-  }[];
-}
-
-const FloatingActionButton: React.FC<Props> = ({ actions }) => {
+const FloatingActionButton: React.FC<IFloatingActionButton> = ({ actions }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = () => {

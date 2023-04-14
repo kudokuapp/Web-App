@@ -1,28 +1,16 @@
-import BalanceCard from '$components/BalanceCard';
-import TransactionList from '$components/TransactionList';
+import BalanceCard from '$lib/BalanceCard';
+import EmptyTransaction from '$lib/EmptyTransaction';
+import TransactionList from '$lib/TransactionList';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { AddTransaction } from './client';
-import EmptyTransaction from './EmptyTransaction';
-import {
-  getAllCashAccount,
-  getAllDebitAccount,
-  getAllEMoneyAccount,
-  getAllEWalletAccount,
-  getAllPayLaterAccount,
-  getLatestCashTransaction,
-  getLatestDebitTransaction,
-  getLatestEMoneyTransaction,
-  getLatestEWalletTransaction,
-  getLatestPayLaterTransaction,
-} from './fetchAllAccountsQuery';
+import { fetchAllAccounts } from './functions_';
 import {
   getAllCashTransaction,
   getAllDebitTransaction,
   getAllEMoneyTransaction,
   getAllEWalletTransaction,
   getAllPayLaterTransaction,
-} from './pageQuery';
+} from './graphql_/query';
 
 export default async function Page({
   params,
@@ -71,31 +59,9 @@ export default async function Page({
 
   const accounts = await fetchAllAccounts(token);
 
-  // const renderTransactionList = () => {
-  //   if (params.accountType === 'cash') {
-  //     const trans = transaction as IGetAllCashTransaction[];
-  //     return (
-  //       <CashTransactionList
-  //         cashTransactions={trans}
-  //         cashAccountId={trans[0].cashAccountId}
-  //         token={token}
-  //       />
-  //     );
-  //   } else {
-  //     return <></>;
-  //   }
-  // };
-
   return (
     <>
       <BalanceCard accounts={accounts} token={token} />
-      {/* <TransactionList
-        transactions={transaction}
-        token={token}
-        accountType={params.accountType}
-      /> */}
-
-      {/* {renderTransactionList()} */}
 
       <TransactionList
         accountType={params.accountType}
@@ -104,167 +70,15 @@ export default async function Page({
         id={params.id}
       />
 
-      <AddTransaction
+      {/* <AddTransaction
         token={token}
         accountType={params.accountType}
         accountId={params.id}
-      />
+      /> */}
 
       {transaction.length === 0 && (
         <EmptyTransaction type={params.accountType} />
       )}
     </>
   );
-}
-
-interface IFetchAllAccounts {
-  type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney' | 'PayLater';
-  id: string;
-  institutionId: 'Cash' | string;
-  accountNumber: string;
-  balance: string;
-  createdAt: string;
-  latestTransaction: string | null;
-  expired: boolean;
-}
-
-async function fetchAllAccounts(token: string): Promise<IFetchAllAccounts[]> {
-  const allAccounts = [];
-
-  const cashAccount = await getAllCashAccount(token);
-  if (cashAccount.length > 0) {
-    for (let i = 0; i < cashAccount.length; i++) {
-      const element = cashAccount[i];
-
-      const latestTransaction = await getLatestCashTransaction(
-        token,
-        element.id
-      );
-
-      const obj = {
-        type: 'Cash',
-        id: element.id,
-        institutionId: 'Cash',
-        accountNumber: element.accountName,
-        balance: element.balance,
-        createdAt: element.createdAt,
-        latestTransaction: latestTransaction
-          ? latestTransaction.dateTimestamp
-          : null,
-        expired: false,
-      } as IFetchAllAccounts;
-
-      allAccounts.push(obj);
-    }
-  }
-
-  const debitAccount = await getAllDebitAccount(token);
-  if (debitAccount.length > 0) {
-    for (let i = 0; i < debitAccount.length; i++) {
-      const element = debitAccount[i];
-
-      const latestTransaction = await getLatestDebitTransaction(
-        token,
-        element.id
-      );
-
-      const obj = {
-        type: 'Debit',
-        id: element.id,
-        institutionId: element.institutionId,
-        accountNumber: element.accountNumber,
-        balance: element.balance,
-        createdAt: element.createdAt,
-        latestTransaction: latestTransaction
-          ? latestTransaction.dateTimestamp
-          : null,
-        expired: element.expired,
-      } as IFetchAllAccounts;
-
-      allAccounts.push(obj);
-    }
-  }
-
-  const eWalletAccount = await getAllEWalletAccount(token);
-  if (eWalletAccount.length > 0) {
-    for (let i = 0; i < eWalletAccount.length; i++) {
-      const element = eWalletAccount[i];
-
-      const latestTransaction = await getLatestEWalletTransaction(
-        token,
-        element.id
-      );
-
-      const obj = {
-        type: 'EWallet',
-        id: element.id,
-        institutionId: element.institutionId,
-        accountNumber: element.accountNumber,
-        balance: element.balance,
-        createdAt: element.createdAt,
-        latestTransaction: latestTransaction
-          ? latestTransaction.dateTimestamp
-          : null,
-        expired: element.expired,
-      } as IFetchAllAccounts;
-
-      allAccounts.push(obj);
-    }
-  }
-
-  const eMoneyAccount = await getAllEMoneyAccount(token);
-  if (eMoneyAccount.length > 0) {
-    for (let i = 0; i < eMoneyAccount.length; i++) {
-      const element = eMoneyAccount[i];
-
-      const latestTransaction = await getLatestEMoneyTransaction(
-        token,
-        element.id
-      );
-
-      const obj = {
-        type: 'EMoney',
-        id: element.id,
-        institutionId: element.institutionId,
-        accountNumber: element.cardNumber,
-        balance: element.balance,
-        createdAt: element.createdAt,
-        latestTransaction: latestTransaction
-          ? latestTransaction.dateTimestamp
-          : null,
-        expired: false,
-      } as IFetchAllAccounts;
-
-      allAccounts.push(obj);
-    }
-  }
-
-  const payLaterAccount = await getAllPayLaterAccount(token);
-  if (payLaterAccount.length > 0) {
-    for (let i = 0; i < payLaterAccount.length; i++) {
-      const element = payLaterAccount[i];
-
-      const latestTransaction = await getLatestPayLaterTransaction(
-        token,
-        element.id
-      );
-
-      const obj = {
-        type: 'PayLater',
-        id: element.id,
-        institutionId: element.institutionId,
-        accountNumber: element.accountNumber,
-        balance: element.balance,
-        createdAt: element.createdAt,
-        latestTransaction: latestTransaction
-          ? latestTransaction.dateTimestamp
-          : null,
-        expired: element.expired,
-      } as IFetchAllAccounts;
-
-      allAccounts.push(obj);
-    }
-  }
-
-  return allAccounts;
 }

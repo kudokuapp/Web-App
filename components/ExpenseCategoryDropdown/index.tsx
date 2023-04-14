@@ -1,22 +1,14 @@
-import { RenderCategory } from '$components/OneTransaction/atomic/RenderCategory';
-import expenseCategory from '$utils/category/expense';
-import { faSearch, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+'use client';
+
+import expenseCategory from '$utils/kudoku/category/expense';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
+import RenderCategory from '../RenderCategory';
+import type { IExpenseCategoryDropdown, IOption } from './index.d';
 
-type Option = {
-  name: string;
-  icon: IconDefinition;
-};
-
-type Props = {
-  initialOption: string;
-  // eslint-disable-next-line no-unused-vars
-  onCategorySelect: (category: string) => void;
-};
-
-const ExpenseCategoryDropdown: React.FC<Props> = ({
+const ExpenseCategoryDropdown: React.FC<IExpenseCategoryDropdown> = ({
   initialOption,
   onCategorySelect,
 }) => {
@@ -24,7 +16,7 @@ const ExpenseCategoryDropdown: React.FC<Props> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredOptions: { category: string; options: Option[] }[] =
+  const filteredOptions: { category: string; options: IOption[] }[] =
     Object.entries(expenseCategory)
       .map(([category, options]) => ({
         category,

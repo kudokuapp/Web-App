@@ -1,9 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-import type { ILoginButton } from './index';
 import LoginButton from './index';
+import type { ILoginButton } from './index.d';
 
 export default {
-  title: 'Button/Login Button',
+  title: 'Components/Button/Login Button',
   component: LoginButton,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {},

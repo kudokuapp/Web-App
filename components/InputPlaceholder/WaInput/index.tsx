@@ -1,9 +1,9 @@
 'use client';
+
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
+import type { IWaInput } from './index.d';
 import styles from './index.module.css';
-
-export interface IWaInput extends React.ComponentPropsWithoutRef<'input'> {}
 
 const WaInput: React.FC<IWaInput> = ({
   id = 'whatsapp',

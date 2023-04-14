@@ -1,71 +1,58 @@
 'use client';
 
-import { RenderActualMerchant } from '$components/OneTransaction/atomic/RenderMerchant';
-import { gql, useSubscription } from '@apollo/client';
+import { useSubscription } from '@apollo/client';
 import { faCircleQuestion, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Dialog, Transition } from '@headlessui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChangeEventHandler, Fragment, useEffect, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-import { addMerchant } from './mutation';
-import { getAllMerchant } from './query';
+import { ChangeEventHandler, useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
+import ModalAddMerchant from '../ModalAddMerchant';
+import RenderMerchantImage from '../RenderMerchantImage';
+import type { IMerchant, ISearchMerchant } from './index.d';
 
-interface Props {
-  token: string;
-  firstMerchant: Merchant;
-  // eslint-disable-next-line no-unused-vars
-  onSelectMerchant: (selectedMerchant: Merchant | null) => void;
-}
-
-export type Merchant = {
-  id: string;
-  name: string;
-};
-
-const variants = {
-  hidden: { opacity: 0, y: -10 },
-  visible: { opacity: 1, y: 0 },
-};
-
-const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
+const SearchMerchant: React.FC<ISearchMerchant> = ({
+  token,
+  firstMerchant,
+  onSelectMerchant,
+  onAddMerchant,
+  merchantSubscription,
+  getAllMerchant,
+}) => {
   const [query, setQuery] = useState('');
   const [urlMerchant, setUrlMerchant] = useState('');
-  const [results, setResults] = useState<Merchant[]>([]);
-  const [merchants, setMerchants] = useState<Merchant[]>([]);
+  const [results, setResults] = useState<IMerchant[]>([]);
+  const [merchants, setMerchants] = useState<IMerchant[]>([]);
   const [showAddMerchant, setShowAddMerchant] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [selectedMerchant, setSelectedMerchant] = useState<Merchant | null>(
+  const [selectedMerchant, setSelectedMerchant] = useState<IMerchant | null>(
     null
   );
 
   let [isOpen, setIsOpen] = useState(false);
 
-  const subscription = gql`
-    subscription NewMerchantLive {
-      newMerchantLive {
-        id
-        name
-      }
-    }
-  `;
-  const { data } = useSubscription(subscription);
+  const variants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const { data } = useSubscription(merchantSubscription);
 
   useEffect(() => {
     setLoading(true);
 
     (async () => {
-      const merchants = await getAllMerchant(token);
+      const merchants = await getAllMerchant(token); // get all merchant  first render
       setMerchants(merchants);
     })();
 
     setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   useEffect(() => {
     if (data) {
       const { newMerchantLive } = data;
-      newMerchantLive as Merchant;
+      newMerchantLive as IMerchant;
 
       const array = [newMerchantLive, ...merchants];
 
@@ -77,6 +64,7 @@ const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
 
   useEffect(() => {
     if (firstMerchant.id !== '63d8b775d3e050940af0caf1') {
+      // undefined merchant
       setQuery(firstMerchant.name);
       setSelectedMerchant(firstMerchant);
     }
@@ -98,7 +86,7 @@ const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
     }
   };
 
-  const handleSelectMerchant = (merchant: Merchant) => {
+  const handleSelectMerchant = (merchant: IMerchant) => {
     setQuery(merchant.name);
     setSelectedMerchant({ name: merchant.name, id: merchant.id });
     onSelectMerchant(selectedMerchant);
@@ -124,7 +112,7 @@ const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
             <span className="text-gray-500 sm:text-sm">
               {selectedMerchant ? (
                 <div className="w-[20px] h-[20px]">
-                  <RenderActualMerchant
+                  <RenderMerchantImage
                     merchantId={selectedMerchant.id}
                     merchantName={selectedMerchant.name}
                     size={20}
@@ -167,7 +155,7 @@ const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
                     }}
                   >
                     <div className="w-[20px] h-[20px]">
-                      <RenderActualMerchant
+                      <RenderMerchantImage
                         merchantId={merchant.id}
                         merchantName={merchant.name}
                         size={20}
@@ -197,94 +185,16 @@ const SearchMerchant = ({ token, firstMerchant, onSelectMerchant }: Props) => {
           </motion.div>
         </AnimatePresence>
       </motion.div>
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-50"
-          onClose={() => setIsOpen(false)}
-        >
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
-                  >
-                    Tambah merchant
-                  </Dialog.Title>
-                  <div className="my-4 flex flex-col gap-4">
-                    <div className="flex flex-col gap-2">
-                      <p>Nama merchant</p>
-                      <input
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <p>URL merchant</p>
-                      <input
-                        type="text"
-                        value={urlMerchant}
-                        onChange={(e) => setUrlMerchant(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={() => {
-                        toast
-                          .promise(
-                            addMerchant({
-                              token,
-                              name: query,
-                              url: urlMerchant,
-                            }),
-                            {
-                              loading: 'Tambah merchant...',
-                              success: 'Sukses',
-                              error: 'Gagal',
-                            }
-                          )
-                          .then(() => {
-                            setIsOpen(false);
-                          });
-                      }}
-                    >
-                      Tambah merchant
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
+      <ModalAddMerchant
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        query={query}
+        setQuery={setQuery}
+        urlMerchant={urlMerchant}
+        setUrlMerchant={setUrlMerchant}
+        onAddMerchant={onAddMerchant}
+        token={token}
+      />
       <Toaster />
     </>
   );

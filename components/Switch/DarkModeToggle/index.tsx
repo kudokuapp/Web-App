@@ -1,10 +1,10 @@
 'use client';
+
 import ThemeContext from '$context/ThemeContext';
 import { styled } from '@mui/material/styles';
-import Switch, { SwitchProps } from '@mui/material/Switch';
+import Switch from '@mui/material/Switch';
 import { useContext } from 'react';
-
-export interface IDarkModeToggle extends SwitchProps {}
+import type { IDarkModeToggle } from './index.d';
 
 const DarkModeToggle: React.FC<IDarkModeToggle> = () => {
   const { isDarkTheme, toggleThemeHandler } = useContext(ThemeContext);
@@ -12,7 +12,7 @@ const DarkModeToggle: React.FC<IDarkModeToggle> = () => {
   return <MUISwitch checked={isDarkTheme} onChange={toggleThemeHandler} />;
 };
 
-const MUISwitch = styled(Switch)(() => ({
+export const MUISwitch = styled(Switch)(() => ({
   width: 62,
   height: 34,
   padding: 7,
