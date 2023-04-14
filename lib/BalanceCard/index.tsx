@@ -17,7 +17,7 @@ interface IClientProps {
   token: string;
 }
 
-interface IAccountsProps {
+export interface IAccountsProps {
   type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney' | 'PayLater';
   id: string;
   institutionId: 'Cash' | string;
@@ -40,7 +40,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
   const selectedAccountIndex = accounts.findIndex(({ id }) =>
     createIdRegex(id as string).test(pathname as string)
   );
-  const selectedAccountRef = useRef<HTMLButtonElement>(null);
+  const selectedAccountRef = useRef<HTMLDivElement>(null);
 
   const scrollToSelectedAccount = () => {
     if (selectedAccountRef.current) {

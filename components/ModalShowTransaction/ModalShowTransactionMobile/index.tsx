@@ -20,7 +20,6 @@ const ModalShowTransactionMobile: React.FC<IModalShowTransaction> = ({
   onCloseModal,
   onSaveEditFunction,
   token,
-  accountType,
   onAddMerchant,
   merchantSubscription,
   getAllMerchant,
@@ -159,10 +158,12 @@ const ModalShowTransactionMobile: React.FC<IModalShowTransaction> = ({
           <RenderTitle
             onCloseModal={onCloseModal}
             onSaveFunction={onSaveEditFunction}
-            accountType={accountType}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
             transaction={transaction}
+            data={data}
+            token={token}
+            transactionId={transaction.id}
           />
         </Sheet.Header>
         <Sheet.Content style={{ paddingBottom: ref.current?.y }}>

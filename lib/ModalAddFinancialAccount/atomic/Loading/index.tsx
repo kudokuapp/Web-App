@@ -1,4 +1,5 @@
 'use client';
+
 import LottieFC from '$components/LottieFC';
 import LoadingMoney from '$components/LottieFC/LoadingMoney';
 

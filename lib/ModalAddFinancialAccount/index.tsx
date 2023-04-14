@@ -1,4 +1,5 @@
 'use client';
+
 import BCA from '$public/logo/bank/bca.png';
 import Flazz from '$public/logo/bank/flazz.png';
 import Gopay from '$public/logo/bank/gojek.png';
@@ -33,7 +34,7 @@ import { Footer } from './atomic/other/Footer';
 import { Navbar } from './atomic/other/Navbar';
 import { Success } from './atomic/Success';
 
-export function ModalAddFinancialAccount({
+const ModalAddFinancialAccount = ({
   isOpen = true,
   closeModal = () => {},
   token,
@@ -41,7 +42,7 @@ export function ModalAddFinancialAccount({
   isOpen: boolean;
   closeModal: () => void;
   token: string;
-}) {
+}) => {
   /**
    * Progress yang awalnya 2: Cash
    * Progress yang awalnya 3: Debit BCA
@@ -776,7 +777,7 @@ export function ModalAddFinancialAccount({
       </Dialog>
     </Transition>
   );
-}
+};
 
 export function GoBackButon({ onClick }: { onClick: () => void }) {
   return (
@@ -789,3 +790,5 @@ export function GoBackButon({ onClick }: { onClick: () => void }) {
     </button>
   );
 }
+
+export default ModalAddFinancialAccount;

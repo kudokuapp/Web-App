@@ -1,4 +1,5 @@
 'use client';
+
 import { faLock, faShieldHalved, faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';

@@ -1,4 +1,5 @@
 'use client';
+
 import LottieFC from '$components/LottieFC';
 import Checked from '$components/LottieFC/Checked';
 

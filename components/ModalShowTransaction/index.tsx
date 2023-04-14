@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { DeviceContext } from '../../context/DeviceContext';
 import type { IModalShowTransaction } from './index.d';
-import ModalShowTransactionDesktop from './ModalShowTransactionDesktopEE';
+import ModalShowTransactionDesktop from './ModalShowTransactionDesktop';
 import ModalShowTransactionMobile from './ModalShowTransactionMobile';
 
 const ModalShowTransaction: React.FC<IModalShowTransaction> = ({
@@ -10,6 +10,10 @@ const ModalShowTransaction: React.FC<IModalShowTransaction> = ({
   onCloseModal,
   token,
   accountType,
+  onSaveEditFunction,
+  onAddMerchant,
+  merchantSubscription,
+  getAllMerchant,
 }) => {
   const { isDesktop } = useContext(DeviceContext);
 
@@ -21,6 +25,10 @@ const ModalShowTransaction: React.FC<IModalShowTransaction> = ({
         onCloseModal={onCloseModal}
         token={token}
         accountType={accountType}
+        onSaveEditFunction={onSaveEditFunction}
+        onAddMerchant={onAddMerchant}
+        merchantSubscription={merchantSubscription}
+        getAllMerchant={getAllMerchant}
       />
     );
   } else {
@@ -31,6 +39,10 @@ const ModalShowTransaction: React.FC<IModalShowTransaction> = ({
         onCloseModal={onCloseModal}
         token={token}
         accountType={accountType}
+        onSaveEditFunction={onSaveEditFunction}
+        onAddMerchant={onAddMerchant}
+        merchantSubscription={merchantSubscription}
+        getAllMerchant={getAllMerchant}
       />
     );
   }

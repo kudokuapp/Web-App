@@ -1,11 +1,15 @@
-import ModalShowTransaction, {
-  ModalShowTransactionMobile,
-} from '$components/ModalShowTransaction/ModalShowTransactionDesktopEE';
+import ModalShowTransaction from '$components/ModalShowTransaction';
 import OneTransaction from '$components/OneTransaction';
 import { DeviceContext } from '$context/DeviceContext';
-import { gql, useSubscription } from '@apollo/client';
+import { useSubscription } from '@apollo/client';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useState } from 'react';
+import { addMerchant, editEMoneyTransaction } from '../graphql/mutation';
+import { getAllMerchant } from '../graphql/query';
+import {
+  eMoneyTransactionLive,
+  merchantSubscription,
+} from '../graphql/subscription';
 
 interface IData {
   mutationType: 'ADD' | 'EDIT' | 'DELETE';
@@ -30,51 +34,7 @@ const EMoneyTransactionList: React.FC<IEMoneyTransactionList> = ({
     useState<IGetAllEMoneyTransaction | null>(null);
   const { isDesktop } = useContext(DeviceContext);
 
-  const subscription = gql`
-    subscription EMoneyTransactionLive($eMoneyAccountId: String!) {
-      eMoneyTransactionLive(eMoneyAccountId: $eMoneyAccountId) {
-        mutationType
-        transaction {
-          id
-          transactionName
-          eMoneyAccountId
-          dateTimestamp
-          institutionId
-          currency
-          amount
-          isReviewed
-          merchant {
-            id
-            name
-            picture
-            url
-          }
-          merchantId
-          category {
-            name
-            amount
-          }
-          transactionType
-          internalTransferTransactionId
-          description
-          direction
-          notes
-          location {
-            latitude
-            longitude
-          }
-          tags {
-            name
-            amount
-          }
-          isHideFromBudget
-          isHideFromInsight
-        }
-      }
-    }
-  `;
-
-  const { data } = useSubscription(subscription, {
+  const { data } = useSubscription(eMoneyTransactionLive, {
     variables: { eMoneyAccountId },
   });
 
@@ -133,7 +93,7 @@ const EMoneyTransactionList: React.FC<IEMoneyTransactionList> = ({
         );
       })}
 
-      {selectedTransaction && isDesktop && (
+      {selectedTransaction && (
         <ModalShowTransaction
           transaction={selectedTransaction}
           onCloseModal={() => {
@@ -143,19 +103,10 @@ const EMoneyTransactionList: React.FC<IEMoneyTransactionList> = ({
           isOpen={modalIsOpen}
           token={token}
           accountType={'emoney'}
-        />
-      )}
-
-      {selectedTransaction && !isDesktop && (
-        <ModalShowTransactionMobile
-          transaction={selectedTransaction}
-          onCloseModal={() => {
-            setSelectedTransaction(null);
-            setModalIsOpen(false);
-          }}
-          isOpen={modalIsOpen}
-          token={token}
-          accountType={'emoney'}
+          onSaveEditFunction={editEMoneyTransaction}
+          onAddMerchant={addMerchant}
+          merchantSubscription={merchantSubscription}
+          getAllMerchant={getAllMerchant}
         />
       )}
     </motion.div>

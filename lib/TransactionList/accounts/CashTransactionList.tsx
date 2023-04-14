@@ -1,11 +1,15 @@
-import ModalShowTransaction, {
-  ModalShowTransactionMobile,
-} from '$components/ModalShowTransaction/ModalShowTransactionDesktopEE';
+import ModalShowTransaction from '$components/ModalShowTransaction';
 import OneTransaction from '$components/OneTransaction';
 import { DeviceContext } from '$context/DeviceContext';
-import { gql, useSubscription } from '@apollo/client';
+import { useSubscription } from '@apollo/client';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useState } from 'react';
+import { addMerchant, editCashTransaction } from '../graphql/mutation';
+import { getAllMerchant } from '../graphql/query';
+import {
+  cashTransactionLive,
+  merchantSubscription,
+} from '../graphql/subscription';
 
 interface IData {
   mutationType: 'ADD' | 'EDIT' | 'DELETE';
@@ -29,48 +33,7 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
     useState<IGetAllCashTransaction | null>(null);
   const { isDesktop } = useContext(DeviceContext);
 
-  const subscription = gql`
-    subscription CashTransactionLive($cashAccountId: String!) {
-      cashTransactionLive(cashAccountId: $cashAccountId) {
-        mutationType
-        transaction {
-          amount
-          cashAccountId
-          category {
-            amount
-            name
-          }
-          currency
-          dateTimestamp
-          direction
-          id
-          internalTransferTransactionId
-          isHideFromBudget
-          isHideFromInsight
-          location {
-            latitude
-            longitude
-          }
-          merchant {
-            id
-            name
-            picture
-            url
-          }
-          merchantId
-          notes
-          tags {
-            amount
-            name
-          }
-          transactionName
-          transactionType
-        }
-      }
-    }
-  `;
-
-  const { data } = useSubscription(subscription, {
+  const { data } = useSubscription(cashTransactionLive, {
     variables: { cashAccountId },
   });
 
@@ -129,7 +92,7 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
         );
       })}
 
-      {selectedTransaction && isDesktop && (
+      {selectedTransaction && (
         <ModalShowTransaction
           transaction={selectedTransaction}
           onCloseModal={() => {
@@ -139,19 +102,10 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
           isOpen={modalIsOpen}
           token={token}
           accountType={'cash'}
-        />
-      )}
-
-      {selectedTransaction && !isDesktop && (
-        <ModalShowTransactionMobile
-          transaction={selectedTransaction}
-          onCloseModal={() => {
-            setSelectedTransaction(null);
-            setModalIsOpen(false);
-          }}
-          isOpen={modalIsOpen}
-          token={token}
-          accountType={'cash'}
+          onSaveEditFunction={editCashTransaction}
+          onAddMerchant={addMerchant}
+          merchantSubscription={merchantSubscription}
+          getAllMerchant={getAllMerchant}
         />
       )}
     </motion.div>

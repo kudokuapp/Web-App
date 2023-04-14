@@ -18,6 +18,7 @@ export default function renderImageFromInstitutionId({
       return (
         <Image
           src={BCALogo}
+          width={height}
           height={height}
           alt="Logo BCA"
           layout="fixed"
@@ -31,6 +32,7 @@ export default function renderImageFromInstitutionId({
     case '63d94170d3e050940af0caf2':
       return (
         <Image
+          width={height}
           src={GojekLogo}
           height={height}
           alt="Logo Gojek"
@@ -46,6 +48,7 @@ export default function renderImageFromInstitutionId({
     case '6408f95f1ff428549fc7cbe4':
       return (
         <Image
+          width={height}
           src={FlazzLogo}
           height={height}
           alt="Logo Flazz"

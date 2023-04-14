@@ -1,4 +1,5 @@
 'use client';
+
 import ThemeContext from '$context/ThemeContext';
 import LogoPrimaryLight from '$public/logo/primary.svg';
 import LogoPrimaryDark from '$public/logo/primaryDark.svg';
@@ -20,6 +21,7 @@ export function Navbar() {
         {isDarkTheme ? (
           <Image
             height={18}
+            width={18}
             src={LogoPrimaryDark}
             quality={100}
             alt="Kudoku Logo"
@@ -28,6 +30,7 @@ export function Navbar() {
         ) : (
           <Image
             height={18}
+            width={18}
             src={LogoPrimaryLight}
             quality={100}
             alt="Kudoku Logo"

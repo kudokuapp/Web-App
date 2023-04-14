@@ -1,4 +1,5 @@
 'use client';
+
 import LottieFC from '$components/LottieFC';
 import Failed from '$components/LottieFC/Failed';
 

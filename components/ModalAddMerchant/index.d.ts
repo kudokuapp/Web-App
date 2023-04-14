@@ -7,6 +7,5 @@ export interface IModalAddMerchant {
   setQuery: Dispatch<SetStateAction<string>>;
   urlMerchant: string;
   setUrlMerchant: Dispatch<SetStateAction<string>>;
-  // eslint-disable-next-line no-unused-vars
-  onAddMerchant: (name: string, url: string) => void;
+  onAddMerchant: (_token: string, _name: string, _url: string) => void;
 }

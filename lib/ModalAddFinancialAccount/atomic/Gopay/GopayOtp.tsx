@@ -1,5 +1,7 @@
 'use client';
-import ProgressButton, { Percentage } from '$components/Button/ProgressButton';
+
+import ProgressButton from '$components/Button/ProgressButton';
+import { IPercentage } from '$components/Button/ProgressButton/index.d';
 import GojekImage from '$public/logo/bank/gojek.png';
 import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -80,7 +82,7 @@ export function GopayOtp({
         onClick={onClick}
         text="Lanjut"
         from="10%"
-        to={((): Percentage => {
+        to={((): IPercentage => {
           if (otp.length === 4) {
             return '80%';
           } else if (otp !== '') {

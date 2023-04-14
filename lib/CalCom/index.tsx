@@ -45,6 +45,7 @@ const CalCom: React.FC<ICalCom> = ({ founders, user }) => {
         <Image
           src={founders.avatar}
           height={40}
+          width={40}
           quality={100}
           alt={`${founders.name} Avatar`}
           draggable={false}

@@ -48,7 +48,10 @@ export const decorators = [
     <ApolloProvider client={client}>
       <ThemeContextProvider>
         <DeviceContextProvider>
-          <div id="root-kudoku" className="w-[100vw] h-[100vh]">
+          <div
+            id="root-kudoku"
+            className="w-[100vw] h-[100vh] flex flex-col justify-center items-center"
+          >
             <Story />
           </div>
         </DeviceContextProvider>

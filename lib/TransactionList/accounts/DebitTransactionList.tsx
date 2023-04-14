@@ -1,11 +1,15 @@
-import ModalShowTransaction, {
-  ModalShowTransactionMobile,
-} from '$components/ModalShowTransaction/ModalShowTransactionDesktopEE';
+import ModalShowTransaction from '$components/ModalShowTransaction';
 import OneTransaction from '$components/OneTransaction';
 import { DeviceContext } from '$context/DeviceContext';
-import { gql, useSubscription } from '@apollo/client';
+import { useSubscription } from '@apollo/client';
 import { motion } from 'framer-motion';
 import { useContext, useEffect, useState } from 'react';
+import { addMerchant, editDebitTransaction } from '../graphql/mutation';
+import { getAllMerchant } from '../graphql/query';
+import {
+  debitTransactionLive,
+  merchantSubscription,
+} from '../graphql/subscription';
 
 interface IData {
   mutationType: 'ADD' | 'EDIT';
@@ -29,55 +33,7 @@ const DebitTransactionList: React.FC<IDebitTransactionList> = ({
     useState<IGetAllDebitTransaction | null>(null);
   const { isDesktop } = useContext(DeviceContext);
 
-  const subscription = gql`
-    subscription DebitTransactionLive($debitAccountId: String!) {
-      debitTransactionLive(debitAccountId: $debitAccountId) {
-        mutationType
-        transaction {
-          id
-          transactionName
-          debitAccountId
-          dateTimestamp
-          referenceId
-          institutionId
-          currency
-          amount
-          onlineTransaction
-          isReviewed
-          merchant {
-            id
-            name
-            picture
-            url
-          }
-          merchantId
-          category {
-            name
-            amount
-          }
-          transactionType
-          description
-          internalTransferTransactionId
-          direction
-          isSubscription
-          notes
-          location {
-            latitude
-            longitude
-          }
-          tags {
-            name
-            amount
-          }
-          isHideFromBudget
-          isHideFromInsight
-          transactionMethod
-        }
-      }
-    }
-  `;
-
-  const { data } = useSubscription(subscription, {
+  const { data } = useSubscription(debitTransactionLive, {
     variables: { debitAccountId },
   });
 
@@ -128,7 +84,7 @@ const DebitTransactionList: React.FC<IDebitTransactionList> = ({
         );
       })}
 
-      {selectedTransaction && isDesktop && (
+      {selectedTransaction && (
         <ModalShowTransaction
           transaction={selectedTransaction}
           onCloseModal={() => {
@@ -138,19 +94,10 @@ const DebitTransactionList: React.FC<IDebitTransactionList> = ({
           isOpen={modalIsOpen}
           token={token}
           accountType={'debit'}
-        />
-      )}
-
-      {selectedTransaction && !isDesktop && (
-        <ModalShowTransactionMobile
-          transaction={selectedTransaction}
-          onCloseModal={() => {
-            setSelectedTransaction(null);
-            setModalIsOpen(false);
-          }}
-          isOpen={modalIsOpen}
-          token={token}
-          accountType={'debit'}
+          onSaveEditFunction={editDebitTransaction}
+          onAddMerchant={addMerchant}
+          merchantSubscription={merchantSubscription}
+          getAllMerchant={getAllMerchant}
         />
       )}
     </motion.div>

@@ -1,5 +1,7 @@
 'use client';
-import ProgressButton, { Percentage } from '$components/Button/ProgressButton';
+
+import ProgressButton from '$components/Button/ProgressButton';
+import { IPercentage } from '$components/Button/ProgressButton/index.d';
 import PasswordInput from '$components/InputPlaceholder/PasswordInput';
 import TextInput from '$components/InputPlaceholder/TextInput';
 import KlikBCAImage from '$public/logo/bank/klikbca.png';
@@ -83,7 +85,7 @@ export function KlikBCA({
         onClick={onClick}
         text="Lanjut"
         from="10%"
-        to={((): Percentage => {
+        to={((): IPercentage => {
           if (userId !== '' && password !== '') {
             return '80%';
           } else if (password !== '' || userId !== '') {

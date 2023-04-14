@@ -1,5 +1,7 @@
 'use client';
-import ProgressButton, { Percentage } from '$components/Button/ProgressButton';
+
+import ProgressButton from '$components/Button/ProgressButton';
+import { IPercentage } from '$components/Button/ProgressButton/index.d';
 import TextInput from '$components/InputPlaceholder/TextInput';
 import {
   faLightbulb,
@@ -128,7 +130,7 @@ export function Cash({
         onClick={onClick}
         text="Lanjut"
         from="10%"
-        to={((): Percentage => {
+        to={((): IPercentage => {
           if (initialBalance !== '' && accountName !== '') {
             return '80%';
           } else if (accountName !== '' || initialBalance !== '') {

@@ -1,16 +1,16 @@
 import { faClose, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dispatch, MouseEventHandler, SetStateAction } from 'react';
-import { IModalShowTransaction } from '../index.d';
+import { IEditableTransaction } from '../index.d';
 
 export interface IRenderTitle {
   onCloseModal: MouseEventHandler<HTMLButtonElement>;
 
   onSaveFunction: (
-    // eslint-disable-next-line no-unused-vars
-    transaction: IModalShowTransaction['accountType']
+    _token: string,
+    _transactionId: string,
+    _data: IEditableTransaction
   ) => Promise<any>;
-  accountType: IModalShowTransaction['accountType'];
   isEdit: boolean;
   setIsEdit: Dispatch<SetStateAction<boolean>>;
   transaction:
@@ -19,6 +19,9 @@ export interface IRenderTitle {
     | IGetAllEWalletTransaction
     | IGetAllPayLaterTransaction
     | IGetAllEMoneyTransaction;
+  data: IEditableTransaction;
+  token: string;
+  transactionId: string;
 }
 
 export const RenderTitle: React.FC<IRenderTitle> = ({
@@ -27,7 +30,9 @@ export const RenderTitle: React.FC<IRenderTitle> = ({
   isEdit,
   transaction,
   setIsEdit,
-  accountType,
+  data,
+  token,
+  transactionId,
 }) => {
   return (
     <div className="flex justify-between border-b-2 border-gray-500 px-4 py-3">
@@ -60,7 +65,7 @@ export const RenderTitle: React.FC<IRenderTitle> = ({
             <button
               className="px-2 py-1 rounded-md shadow-md border-2 border-primary dark:border-primaryDark text-onPrimary dark:text-onPrimaryDark hover:bg-primary dark:hover:bg-primaryDark hover:text-onPrimary dark:hover:text-onPrimaryDark bg-primary dark:bg-primaryDark"
               onClick={() => {
-                onSaveFunction(accountType);
+                onSaveFunction(token, transactionId, data);
                 setIsEdit(false);
               }}
             >

@@ -1,4 +1,5 @@
 'use client';
+
 import BCA from '$public/logo/bank/bca.png';
 import KlikBCA from '$public/logo/bank/klikbca.png';
 import MyBCA from '$public/logo/bank/mybca.png';

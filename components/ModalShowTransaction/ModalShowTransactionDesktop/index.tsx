@@ -20,7 +20,6 @@ const ModalShowTransactionDesktop: React.FC<IModalShowTransaction> = ({
   onCloseModal,
   onSaveEditFunction,
   token,
-  accountType,
   onAddMerchant,
   merchantSubscription,
   getAllMerchant,
@@ -147,7 +146,9 @@ const ModalShowTransactionDesktop: React.FC<IModalShowTransaction> = ({
         isEdit={isEdit}
         setIsEdit={setIsEdit}
         transaction={transaction}
-        accountType={accountType}
+        data={data}
+        token={token}
+        transactionId={transaction.id}
       />
 
       <div className={`flex-col px-4 gap-8 flex`}>

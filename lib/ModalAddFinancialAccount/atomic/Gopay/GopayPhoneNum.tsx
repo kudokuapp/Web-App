@@ -1,5 +1,7 @@
 'use client';
-import ProgressButton, { Percentage } from '$components/Button/ProgressButton';
+
+import ProgressButton from '$components/Button/ProgressButton';
+import { IPercentage } from '$components/Button/ProgressButton/index.d';
 import WaInput from '$components/InputPlaceholder/WaInput';
 import GojekImage from '$public/logo/bank/gojek.png';
 import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
@@ -72,7 +74,7 @@ export function GopayPhoneNum({
         onClick={onClick}
         text="Lanjut"
         from="10%"
-        to={((): Percentage => {
+        to={((): IPercentage => {
           if (phoneNumber.length >= 9) {
             return '80%';
           } else if (phoneNumber !== '') {

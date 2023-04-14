@@ -1,7 +1,7 @@
+import OneBalanceCard from '$components/OneBalanceCard';
+import type { IOneBalanceCard } from '$components/OneBalanceCard/index.d';
 import { gql, useSubscription } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import type { IOneBalanceCard } from '../../../components/OneBalanceCard';
-import OneBalanceCard from '../../../components/OneBalanceCard';
 
 interface ICashBalance {
   isSelected: IOneBalanceCard['isSelected'];
