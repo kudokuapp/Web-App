@@ -1,6 +1,6 @@
 'use client';
 
-import { ModalAddFinancialAccount } from '$lib/ModalAddFinancialAccount';
+import ModalAddFinancialAccount from '$lib/ModalAddFinancialAccount';
 import TheImage from '$public/decor/web-exploring.svg';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,14 +8,14 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
 
-export default function Client({ token }: { token: string }) {
+const EmptyTransaction = ({ token }: { token: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <motion.section
       className="w-full h-[100vh] flex flex-col justify-center items-center gap-4 sm:p-0 p-4"
       animate={{ opacity: 1 }}
     >
-      <Image src={TheImage} alt="" quality={100} />
+      <Image src={TheImage} alt="" quality={100} height={500} width={500} />
 
       <section className="flex flex-col gap-8">
         <section className="flex flex-col justify-center items-center text-onPrimaryContainer dark:text-surfaceVariant gap-2 text-center">
@@ -44,4 +44,6 @@ export default function Client({ token }: { token: string }) {
       </section>
     </motion.section>
   );
-}
+};
+
+export default EmptyTransaction;

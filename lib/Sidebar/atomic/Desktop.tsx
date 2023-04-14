@@ -21,7 +21,7 @@ import { useContext, useEffect } from 'react';
 import menuItem from './menuItem';
 
 export interface IMyAccount {
-  type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney';
+  type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney' | 'PayLater';
   institutionId: 'Cash' | ObjectId | string;
   accountNumber: string;
   balance: string;

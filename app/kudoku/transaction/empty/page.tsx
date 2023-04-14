@@ -1,3 +1,4 @@
+import EmptyTransaction from '$lib/EmptyTransaction';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import {
@@ -5,8 +6,8 @@ import {
   getAllDebitAccount,
   getAllEMoneyAccount,
   getAllEWalletAccount,
-} from '.././[accountType]/[id]/fetchAllAccountsQuery';
-import Client from './client';
+  getAllPayLaterAccount,
+} from './_graphql/query';
 
 export default async function Page() {
   const nextCookies = cookies();
@@ -21,6 +22,7 @@ export default async function Page() {
   const debitAccount = await getAllDebitAccount(token);
   const eWalletAccount = await getAllEWalletAccount(token);
   const eMoneyAccount = await getAllEMoneyAccount(token);
+  const payLaterAccount = await getAllPayLaterAccount(token);
 
   if (cashAccount.length > 0) {
     return redirect(`/kudoku/transaction/cash/${cashAccount[0].id}`);
@@ -30,7 +32,9 @@ export default async function Page() {
     return redirect(`/kudoku/transaction/ewallet/${eWalletAccount[0].id}`);
   } else if (eMoneyAccount.length > 0) {
     return redirect(`/kudoku/transaction/emoney/${eMoneyAccount[0].id}`);
+  } else if (payLaterAccount.length > 0) {
+    return redirect(`/kudoku/transaction/emoney/${eMoneyAccount[0].id}`);
   } else {
-    return <Client token={token} />;
+    return <EmptyTransaction token={token} />;
   }
 }

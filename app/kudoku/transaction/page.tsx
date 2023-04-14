@@ -6,7 +6,7 @@ import {
   getAllEMoneyAccount,
   getAllEWalletAccount,
   getAllPayLaterAccount,
-} from './[accountType]/[id]/fetchAllAccountsQuery';
+} from './_graphql/query';
 
 export default async function Page() {
   const nextCookies = cookies();
