@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
 
-const EmptyTransaction = ({ token }: { token: string }) => {
+const EmptyAccount = ({ token }: { token: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <motion.section
@@ -46,4 +46,4 @@ const EmptyTransaction = ({ token }: { token: string }) => {
   );
 };
 
-export default EmptyTransaction;
+export default EmptyAccount;

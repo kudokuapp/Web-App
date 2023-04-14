@@ -5,7 +5,7 @@ import {
   getAllEMoneyAccount,
   getAllEWalletAccount,
   getAllPayLaterAccount,
-} from '../_graphql/query';
+} from '../graphql_/query';
 
 export async function fetchAllAccounts(token: string): Promise<IMyAccount[]> {
   const allAccounts = [];

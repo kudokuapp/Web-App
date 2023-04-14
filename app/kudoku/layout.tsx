@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Client from './client';
-import { getKudosInfo } from './_functions/getKudosInfo';
+import { getKudosInfo } from './functions_/getKudosInfo';
 
 export default async function Layout({
   children,

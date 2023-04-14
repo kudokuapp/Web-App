@@ -1,4 +1,4 @@
-import EmptyTransaction from '$lib/EmptyTransaction';
+import EmptyAccount from '$lib/EmptyAccount';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import {
@@ -7,7 +7,7 @@ import {
   getAllEMoneyAccount,
   getAllEWalletAccount,
   getAllPayLaterAccount,
-} from './_graphql/query';
+} from './graphql_/query';
 
 export default async function Page() {
   const nextCookies = cookies();
@@ -35,6 +35,6 @@ export default async function Page() {
   } else if (payLaterAccount.length > 0) {
     return redirect(`/kudoku/transaction/emoney/${eMoneyAccount[0].id}`);
   } else {
-    return <EmptyTransaction token={token} />;
+    return <EmptyAccount token={token} />;
   }
 }
