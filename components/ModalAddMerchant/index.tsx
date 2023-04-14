@@ -10,6 +10,7 @@ const ModalAddMerchant: React.FC<IModalAddMerchant> = ({
   urlMerchant,
   setUrlMerchant,
   onAddMerchant,
+  token,
 }) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -76,7 +77,7 @@ const ModalAddMerchant: React.FC<IModalAddMerchant> = ({
                     type="button"
                     className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                     onClick={() => {
-                      onAddMerchant(query, urlMerchant);
+                      onAddMerchant(token, query, urlMerchant);
                     }}
                   >
                     Tambah merchant

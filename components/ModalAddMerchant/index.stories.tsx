@@ -22,6 +22,9 @@ const Template: ComponentStory<typeof ModalAddMerchant> = () => {
   const [query, setQuery] = useState('Transmart');
   const [urlMerchant, setUrlMerchant] = useState('');
 
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDA0ODIxZGMzNjM1OGNhZDU5NDA2MzEiLCJpYXQiOjE2Nzk5MDc0MDV9.ESWTAk0dY_N4F1HwcW6LIhzzNi17XTyVGGXM-au0ank';
+
   return (
     <>
       <button
@@ -38,9 +41,10 @@ const Template: ComponentStory<typeof ModalAddMerchant> = () => {
         setQuery={setQuery}
         urlMerchant={urlMerchant}
         setUrlMerchant={setUrlMerchant}
-        onAddMerchant={(name, url) =>
+        onAddMerchant={(_, name, url) =>
           alert(`adding merchant with name: ${name} and url: ${url}`)
         }
+        token={token}
       />
     </>
   );

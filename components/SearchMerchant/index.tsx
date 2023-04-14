@@ -193,6 +193,7 @@ const SearchMerchant: React.FC<ISearchMerchant> = ({
         urlMerchant={urlMerchant}
         setUrlMerchant={setUrlMerchant}
         onAddMerchant={onAddMerchant}
+        token={token}
       />
       <Toaster />
     </>

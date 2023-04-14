@@ -1,6 +1,6 @@
 'use client';
 
-import { ModalAddFinancialAccount } from '$lib/ModalAddFinancialAccount';
+import ModalAddFinancialAccount from '$lib/ModalAddFinancialAccount';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';

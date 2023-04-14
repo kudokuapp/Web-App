@@ -8,4 +8,5 @@ export interface IModalAddMerchant {
   urlMerchant: string;
   setUrlMerchant: Dispatch<SetStateAction<string>>;
   onAddMerchant: (_token: string, _name: string, _url: string) => void;
+  token: string;
 }
