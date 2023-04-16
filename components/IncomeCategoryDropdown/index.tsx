@@ -1,14 +1,14 @@
 'use client';
 
-import expenseCategory from '$utils/kudoku/category/expense';
+import incomeCategory from '$utils/kudoku/category/income';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import RenderCategory from '../RenderCategory';
-import type { IExpenseCategoryDropdown, IOption } from './index.d';
+import type { IIncomeCategoryDropdown } from './index.d';
 
-const ExpenseCategoryDropdown: React.FC<IExpenseCategoryDropdown> = ({
+const IncomeCategoryDropdown: React.FC<IIncomeCategoryDropdown> = ({
   initialOption,
   onCategorySelect,
 }) => {
@@ -16,15 +16,9 @@ const ExpenseCategoryDropdown: React.FC<IExpenseCategoryDropdown> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredOptions: { category: string; options: IOption[] }[] =
-    Object.entries(expenseCategory)
-      .map(([category, options]) => ({
-        category,
-        options: options.filter(({ name }) =>
-          name.toLowerCase().includes(searchTerm.toLowerCase())
-        ),
-      }))
-      .filter(({ options }) => options.length > 0);
+  const filteredOptions = incomeCategory.filter(({ name }) =>
+    name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleSelectOption = (option: string) => {
     setSelectedOption(option);
@@ -34,25 +28,6 @@ const ExpenseCategoryDropdown: React.FC<IExpenseCategoryDropdown> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setSearchTerm(e.target.value);
-
-  const renderCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Good Life':
-        return 'text-yellow-500';
-
-      case 'Personal':
-        return 'text-orange-500';
-
-      case 'Home':
-        return 'text-purple-500';
-
-      case 'Transport':
-        return 'text-blue-500';
-
-      default:
-        return 'text-gray-500';
-    }
-  };
 
   return (
     <div className="relative">
@@ -81,19 +56,15 @@ const ExpenseCategoryDropdown: React.FC<IExpenseCategoryDropdown> = ({
                 />
               </div>
             </div>
-            {filteredOptions.map(({ category, options }) => (
-              <div key={category} className="p-4">
-                <h4
-                  className={`${renderCategoryColor(
-                    category
-                  )} uppercase font-bold`}
-                >
-                  {category}
-                </h4>
-                <ul className="mt-2">
-                  {options.map(({ name, icon }) => (
+
+            <div className="p-4">
+              <h4 className={`text-green-600 uppercase font-bold`}>Income</h4>
+
+              <ul className="mt-2">
+                {filteredOptions.map(({ name, icon }, index) => {
+                  return (
                     <li
-                      key={name}
+                      key={index}
                       className={`flex items-center gap-4 py-2 px-4 rounded-md cursor-pointer ${
                         selectedOption === name ? 'bg-primary' : ''
                       }`}
@@ -119,10 +90,10 @@ const ExpenseCategoryDropdown: React.FC<IExpenseCategoryDropdown> = ({
                         {name}
                       </span>
                     </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+                  );
+                })}
+              </ul>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -130,4 +101,4 @@ const ExpenseCategoryDropdown: React.FC<IExpenseCategoryDropdown> = ({
   );
 };
 
-export default ExpenseCategoryDropdown;
+export default IncomeCategoryDropdown;

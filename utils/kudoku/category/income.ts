@@ -1,21 +1,26 @@
-import { faCalendar } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBuilding,
+  faChartSimple,
+  faGift,
+  faSackDollar,
+} from '@fortawesome/free-solid-svg-icons';
 
 const incomeCategory = [
   {
     name: 'Gaji',
-    icon: faCalendar,
+    icon: faSackDollar,
   },
   {
     name: 'Gift',
-    icon: faCalendar,
+    icon: faGift,
   },
   {
     name: 'Interest / Divident',
-    icon: faCalendar,
+    icon: faChartSimple,
   },
   {
     name: 'Business',
-    icon: faCalendar,
+    icon: faBuilding,
   },
 ];
 

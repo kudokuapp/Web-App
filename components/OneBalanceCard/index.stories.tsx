@@ -34,7 +34,7 @@ Base.args = {
     balance: '1000000',
     latestTransaction: '2023-04-04T06:17:42.487Z',
     createdAt: '2023-04-03T13:14:59.093Z',
-    type: 'Cash',
+    type: 'cash',
     expired: false,
   },
   optionsButton: {

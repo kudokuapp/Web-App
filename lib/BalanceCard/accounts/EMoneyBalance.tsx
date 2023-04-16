@@ -57,7 +57,7 @@ const EMoneyBalance: React.FC<IEMoneyBalance> = ({
         balance: balance,
         latestTransaction: lastUpdate,
         createdAt: account.createdAt,
-        type: 'EMoney',
+        type: 'emoney',
         expired: false,
       }}
       optionsButton={{

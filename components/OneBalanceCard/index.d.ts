@@ -11,7 +11,7 @@ export interface IOneBalanceCard extends HTMLProps<HTMLDivElement> {
     balance: string;
     latestTransaction: string | null;
     createdAt: string;
-    type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney' | 'PayLater';
+    type: 'cash' | 'debit' | 'ewallet' | 'emoney' | 'paylater';
     expired: boolean;
   };
   optionsButton: IOptionsButton;

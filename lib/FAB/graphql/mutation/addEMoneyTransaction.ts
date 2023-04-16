@@ -1,27 +1,19 @@
+import { IMerchant } from '$components/SearchMerchant/index.d';
 import client from '$utils/graphql';
 import { gql } from '@apollo/client';
+import { NameAmount } from 'global';
 
-export async function addEMoneyTransaction({
-  token,
-  eMoneyAccountId,
-  transactionName,
-  amount,
-  merchantId,
-  category,
-  transactionType,
-  institutionId,
-  notes,
-}: {
-  token: string;
-  eMoneyAccountId: string;
-  transactionName: string;
-  amount: string;
-  merchantId: string;
-  category: { name: string; amount: string }[];
-  transactionType: 'INCOME' | 'EXPENSE';
-  institutionId: string;
-  notes: string | null;
-}): Promise<any> {
+export async function addEMoneyTransaction(
+  token: string,
+  accountId: string,
+  _accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney',
+  transactionType: string | undefined,
+  transactionName: string | undefined,
+  transactionAmount: string | undefined,
+  category: NameAmount[] | undefined,
+  merchant: IMerchant | undefined,
+  institutionId: string | undefined
+): Promise<{ __typename: string; id: string }> {
   const mutation = gql`
     mutation AddEMoneyTransaction(
       $eMoneyAccountId: String!
@@ -32,7 +24,7 @@ export async function addEMoneyTransaction({
       $transactionType: String!
       $direction: DirectionTypeEnum!
       $institutionId: String!
-      $notes: String
+      $description: String
     ) {
       addEMoneyTransaction(
         eMoneyAccountId: $eMoneyAccountId
@@ -43,32 +35,39 @@ export async function addEMoneyTransaction({
         transactionType: $transactionType
         direction: $direction
         institutionId: $institutionId
-        notes: $notes
+        description: $description
       ) {
         id
       }
     }
   `;
 
-  const direction = transactionType === 'INCOME' ? 'IN' : 'OUT';
-
   return new Promise((resolve, reject) => {
+    if (
+      !transactionAmount ||
+      !transactionName ||
+      !transactionType ||
+      !category ||
+      !merchant
+    )
+      throw new Error('Value is undefined');
+
     (async () => {
       try {
         const {
-          data: { addCashTransaction },
+          data: { addEMoneyTransaction },
         } = await client.mutate({
           mutation,
           variables: {
-            eMoneyAccountId,
+            eMoneyAccountId: accountId,
             transactionName,
-            amount,
-            merchantId,
-            category,
             transactionType,
+            amount: transactionAmount,
+            category,
+            merchantId: merchant.id,
+            direction: transactionType === 'INCOME' ? 'IN' : 'OUT',
             institutionId,
-            notes,
-            direction,
+            description: `${transactionName.toUpperCase()} ON ${accountId.toUpperCase()}`,
           },
           context: {
             headers: {
@@ -77,7 +76,7 @@ export async function addEMoneyTransaction({
           },
         });
 
-        resolve(addCashTransaction);
+        resolve(addEMoneyTransaction);
       } catch (e) {
         reject(e);
       }

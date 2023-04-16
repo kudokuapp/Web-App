@@ -2,23 +2,80 @@
 
 import FloatingActionButton from '$components/FloatingActionButton';
 import ModalAddTransaction from '$components/ModalAddTransaction';
+import { IMerchant } from '$components/SearchMerchant/index.d';
 import { faPlus, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { NameAmount } from 'global';
 import { useState } from 'react';
-import { addMerchant } from './graphql/mutation';
+import toast from 'react-hot-toast';
+import {
+  addCashTransaction,
+  addEMoneyTransaction,
+  addMerchant,
+} from './graphql/mutation';
 import { getAllMerchant } from './graphql/query';
 import { merchantSubscription } from './graphql/subscription';
 import { IFAB } from './index.d';
 
-export const FAB: React.FC<IFAB> = ({ token, accountType, accountId }) => {
+export const FAB: React.FC<IFAB> = ({
+  token,
+  accountType,
+  accountId,
+  institutionId,
+}) => {
   const [modalAddTransactionOpen, setModalAddTransactionOpen] = useState(false);
-  const [transactionName, setTransactionName] = useState('');
-  const [amount, setAmount] = useState('');
-  const [merchant, setMerchant] = useState<{ name: string; id: string } | null>(
-    null
-  );
-  const [transactionType, setTranssactionType] = useState<string>(
-    '' as 'INCOME' | 'EXPENSE'
-  );
+
+  const handleSubmitTransaction = (
+    _token: string,
+    _accountId: string,
+    accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney',
+    _transactionType: string | undefined,
+    _transactionName: string | undefined,
+    _transactionAmount: string | undefined,
+    _category: NameAmount[] | undefined,
+    _merchant: IMerchant | undefined,
+    _institutionId: string | undefined
+  ) => {
+    if (accountType === 'cash') {
+      toast.promise(
+        addCashTransaction(
+          _token,
+          _accountId,
+          accountType,
+          _transactionType,
+          _transactionName,
+          _transactionAmount,
+          _category,
+          _merchant,
+          'cash'
+        ),
+        {
+          loading: 'Lagi nambahin transaksimu...',
+          success: 'Sukses menambahkan transaksi!',
+          error: 'Error menambahkan transaksi!',
+        }
+      );
+    } else {
+      return toast.promise(
+        addEMoneyTransaction(
+          _token,
+          _accountId,
+          accountType,
+          _transactionType,
+          _transactionName,
+          _transactionAmount,
+          _category,
+          _merchant,
+          institutionId
+        ),
+        {
+          loading: 'Lagi nambahin transaksimu...',
+          success: 'Sukses menambahkan transaksi!',
+          error: 'Error menambahkan transaksi!',
+        }
+      );
+    }
+  };
+
   if (accountType === 'cash' || accountType === 'emoney') {
     return (
       <>
@@ -36,23 +93,15 @@ export const FAB: React.FC<IFAB> = ({ token, accountType, accountId }) => {
 
         <ModalAddTransaction
           token={token}
+          accountId={accountId}
           isOpen={modalAddTransactionOpen}
           setIsOpen={setModalAddTransactionOpen}
-          amount={amount}
-          setAmount={setAmount}
-          transactionName={transactionName}
-          setTransactionName={setTransactionName}
           onAddMerchant={addMerchant}
           merchantSubscription={merchantSubscription}
           getAllMerchant={getAllMerchant}
-          setMerchant={setMerchant}
-          setTransactionType={setTransactionType}
           accountType={'cash'}
-          onSubmit={function (
-            accountType: 'cash' | 'debit' | 'ewallet' | 'emoney' | 'paylater'
-          ): Promise<any> {
-            throw new Error('Function not implemented.');
-          }}
+          onSubmit={handleSubmitTransaction}
+          institutionId={accountType === 'cash' ? 'cash' : institutionId}
         />
       </>
     );

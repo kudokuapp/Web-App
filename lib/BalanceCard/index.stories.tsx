@@ -22,17 +22,17 @@ const Template: ComponentStory<typeof BalanceCard> = () => {
 
   const accounts = [
     {
-      type: 'Cash',
+      type: 'cash',
       id: '642ad15353fb4dd1ae2d4a5c',
       accountNumber: 'Cash',
       balance: '59000',
       createdAt: '2023-04-03T13:14:59.093Z',
       latestTransaction: '2023-04-04T06:17:42.487Z',
       expired: false,
-      institutionId: 'Cash',
+      institutionId: 'cash',
     },
     {
-      type: 'Debit',
+      type: 'debit',
       accountNumber: '4971037321',
       balance: '70850.83',
       createdAt: '2023-04-03T14:11:45.274Z',
@@ -42,7 +42,7 @@ const Template: ComponentStory<typeof BalanceCard> = () => {
       latestTransaction: '2023-04-03T14:11:45.274Z',
     },
     {
-      type: 'EWallet',
+      type: 'ewallet',
       institutionId: '63d94170d3e050940af0caf2',
       accountNumber: '+6285171232449',
       createdAt: '2023-04-03T14:24:00.849Z',

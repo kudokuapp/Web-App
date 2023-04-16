@@ -1,26 +1,19 @@
+import { IMerchant } from '$components/SearchMerchant/index.d';
 import client from '$utils/graphql';
 import { gql } from '@apollo/client';
+import { NameAmount } from 'global';
 
-export async function addCashTransaction({
-  token,
-  cashAccountId,
-  transactionName,
-  amount,
-  merchantId,
-  category,
-  transactionType,
-  notes,
-}: {
-  token: string;
-  cashAccountId: string;
-  transactionName: string;
-  amount: string;
-  merchantId: string;
-  category: { name: string; amount: string }[];
-  transactionType: 'INCOME' | 'EXPENSE';
-  notes: string | null;
-}): Promise<any> {
-  const direction = transactionType === 'INCOME' ? 'IN' : 'OUT';
+export async function addCashTransaction(
+  token: string,
+  accountId: string,
+  _accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney',
+  transactionType: string | undefined,
+  transactionName: string | undefined,
+  transactionAmount: string | undefined,
+  category: NameAmount[] | undefined,
+  merchant: IMerchant | undefined,
+  _institutionId: string | undefined
+): Promise<{ __typename: string; id: string }> {
   const mutation = gql`
     mutation AddCashTransaction(
       $cashAccountId: String!
@@ -30,7 +23,6 @@ export async function addCashTransaction({
       $category: [NameAmountJsonInput]!
       $transactionType: ExpenseTypeEnum!
       $direction: DirectionTypeEnum!
-      $notes: String
     ) {
       addCashTransaction(
         cashAccountId: $cashAccountId
@@ -40,7 +32,6 @@ export async function addCashTransaction({
         category: $category
         transactionType: $transactionType
         direction: $direction
-        notes: $notes
       ) {
         id
       }
@@ -48,6 +39,15 @@ export async function addCashTransaction({
   `;
 
   return new Promise((resolve, reject) => {
+    if (
+      !transactionAmount ||
+      !transactionName ||
+      !transactionType ||
+      !category ||
+      !merchant
+    )
+      throw new Error('Value is undefined');
+
     (async () => {
       try {
         const {
@@ -55,14 +55,13 @@ export async function addCashTransaction({
         } = await client.mutate({
           mutation,
           variables: {
-            cashAccountId,
+            cashAccountId: accountId,
             transactionName,
-            amount,
-            merchantId,
-            category,
             transactionType,
-            direction,
-            notes,
+            amount: transactionAmount,
+            category,
+            merchantId: merchant.id,
+            direction: transactionType === 'INCOME' ? 'IN' : 'OUT',
           },
           context: {
             headers: {
