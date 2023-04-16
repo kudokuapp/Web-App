@@ -1,3 +1,4 @@
+import ToastFC from '$components/ToastFC';
 import EmptyAccount from '$lib/EmptyAccount';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -6,7 +7,7 @@ import {
   getAllDebitAccount,
   getAllEMoneyAccount,
   getAllEWalletAccount,
-  getAllPayLaterAccount,
+  getAllPayLaterAccount
 } from './graphql_/query';
 
 export default async function Page() {
@@ -35,6 +36,11 @@ export default async function Page() {
   } else if (payLaterAccount.length > 0) {
     return redirect(`/kudoku/transaction/emoney/${eMoneyAccount[0].id}`);
   } else {
-    return <EmptyAccount token={token} />;
+    return (
+    <>
+    <ToastFC />
+    <EmptyAccount token={token} />
+    </>
+    );
   }
 }

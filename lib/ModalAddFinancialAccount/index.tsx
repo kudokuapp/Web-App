@@ -14,7 +14,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Fragment, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import BCAMenu from './atomic/BCA/BCAMenu';
 import { connectBcaAll } from './atomic/BCA/connect';
 import { KlikBCA } from './atomic/BCA/KlikBCA';
@@ -766,7 +766,6 @@ const ModalAddFinancialAccount = ({
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-onPrimary dark:bg-onSurfaceVariant p-6 text-left align-middle shadow-xl transition-all">
-                <Toaster position="top-right" />
                 {renderTitle()}
 
                 <section className="mt-10">{renderProgress()}</section>

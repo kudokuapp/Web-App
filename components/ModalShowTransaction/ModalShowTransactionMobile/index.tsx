@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
 import Sheet, { SheetRef } from 'react-modal-sheet';
 import { IEditableTransaction, IModalShowTransaction } from '../index.d';
 import {
@@ -153,7 +152,6 @@ const ModalShowTransactionMobile: React.FC<IModalShowTransaction> = ({
          * an offset that ensures that the sheet content can be scrolled all the
          * way to the bottom in every snap point.
          */}
-        <Toaster position="top-right" />
         <Sheet.Header>
           <RenderTitle
             onCloseModal={onCloseModal}

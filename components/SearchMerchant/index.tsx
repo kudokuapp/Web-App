@@ -5,7 +5,6 @@ import { faCircleQuestion, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChangeEventHandler, useEffect, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
 import ModalAddMerchant from '../ModalAddMerchant';
 import RenderMerchantImage from '../RenderMerchantImage';
 import type { IMerchant, ISearchMerchant } from './index.d';
@@ -195,7 +194,6 @@ const SearchMerchant: React.FC<ISearchMerchant> = ({
         onAddMerchant={onAddMerchant}
         token={token}
       />
-      <Toaster />
     </>
   );
 };
