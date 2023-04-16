@@ -6,7 +6,6 @@ import LogoPrimaryDark from '$public/logo/primaryDark.svg';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useContext } from 'react';
-import { Toaster } from 'react-hot-toast';
 
 export function Navbar() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -16,7 +15,6 @@ export function Navbar() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <Toaster />
       <div className="flex gap-2 items-center">
         {isDarkTheme ? (
           <Image

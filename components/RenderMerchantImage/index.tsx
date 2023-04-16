@@ -109,6 +109,7 @@ const RenderActualMerchant = ({
         setImageSrc(image.default);
       } catch (error) {
         // Handle the error here, e.g. by logging it or setting a default image
+        setImageSrc(null);
         console.error(
           `Failed to import image for merchant ${merchantName}: ${error}`
         );
@@ -117,25 +118,30 @@ const RenderActualMerchant = ({
     importImage();
   }, [merchantId, merchantName]);
 
-  if (imageSrc) {
-    return (
-      <Image
-        src={imageSrc}
-        alt={`${merchantName} logo`}
-        width={size}
-        height={size}
-        draggable={false}
-        quality={100}
-      />
-    );
-  } else {
-    // Logo is not yet available
-    return (
-      <FontAwesomeIcon
-        icon={faCircleQuestion}
-        className="text-gray-500"
-        size={'xl'}
-      />
-    );
+  try {
+    if (imageSrc) {
+      return (
+        <Image
+          src={imageSrc}
+          alt={`${merchantName} logo`}
+          width={size}
+          height={size}
+          draggable={false}
+          quality={100}
+        />
+      );
+    } else {
+      // Logo is not yet available
+      return (
+        <FontAwesomeIcon
+          icon={faCircleQuestion}
+          className="text-gray-500"
+          size={'xl'}
+        />
+      );
+    }
+  } catch (error) {
+    console.error(`Failed to render merchant image: ${error}`);
+    return null;
   }
 };
