@@ -18,11 +18,11 @@ export interface IModalAddTransaction {
     _token: string,
     _accountId: string,
     _accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney',
-    _transactionType: string | undefined,
-    _transactionName: string | undefined,
-    _transactionAmount: string | undefined,
-    _category: NameAmount[] | undefined,
-    _merchant: IMerchant | undefined,
-    _institutionId: string | undefined
+    _transactionType: string,
+    _transactionName: string,
+    _transactionAmount: string,
+    _category: NameAmount[],
+    _merchant: IMerchant,
+    _institutionId: string
   ) => Promise<any> | void;
 }

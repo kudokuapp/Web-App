@@ -28,12 +28,12 @@ export const FAB: React.FC<IFAB> = ({
     _token: string,
     _accountId: string,
     accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney',
-    _transactionType: string | undefined,
-    _transactionName: string | undefined,
-    _transactionAmount: string | undefined,
-    _category: NameAmount[] | undefined,
-    _merchant: IMerchant | undefined,
-    _institutionId: string | undefined
+    _transactionType: string,
+    _transactionName: string,
+    _transactionAmount: string,
+    _category: NameAmount[],
+    _merchant: IMerchant,
+    _institutionId: string
   ) => {
     if (accountType === 'cash') {
       toast.promise(
@@ -54,8 +54,8 @@ export const FAB: React.FC<IFAB> = ({
           error: 'Error menambahkan transaksi!',
         }
       );
-    } else {
-      return toast.promise(
+    } else if (accountType === 'emoney') {
+      toast.promise(
         addEMoneyTransaction(
           _token,
           _accountId,
@@ -76,7 +76,7 @@ export const FAB: React.FC<IFAB> = ({
     }
   };
 
-  if (accountType === 'cash' || accountType === 'emoney') {
+  if (accountType === 'cash') {
     return (
       <>
         <FloatingActionButton
@@ -101,7 +101,36 @@ export const FAB: React.FC<IFAB> = ({
           getAllMerchant={getAllMerchant}
           accountType={'cash'}
           onSubmit={handleSubmitTransaction}
-          institutionId={accountType === 'cash' ? 'cash' : institutionId}
+          institutionId={'cash'}
+        />
+      </>
+    );
+  } else if (accountType === 'emoney') {
+    return (
+      <>
+        <FloatingActionButton
+          actions={[
+            {
+              icon: faPlus,
+              name: 'Tambah Transaksi',
+              onClick: () => setModalAddTransactionOpen(true),
+              color: null,
+              textColor: null,
+            },
+          ]}
+        />
+
+        <ModalAddTransaction
+          token={token}
+          accountId={accountId}
+          isOpen={modalAddTransactionOpen}
+          setIsOpen={setModalAddTransactionOpen}
+          onAddMerchant={addMerchant}
+          merchantSubscription={merchantSubscription}
+          getAllMerchant={getAllMerchant}
+          accountType={'emoney'}
+          onSubmit={handleSubmitTransaction}
+          institutionId={institutionId}
         />
       </>
     );

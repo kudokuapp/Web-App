@@ -7,12 +7,12 @@ export async function addEMoneyTransaction(
   token: string,
   accountId: string,
   _accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney',
-  transactionType: string | undefined,
-  transactionName: string | undefined,
-  transactionAmount: string | undefined,
-  category: NameAmount[] | undefined,
-  merchant: IMerchant | undefined,
-  institutionId: string | undefined
+  transactionType: string,
+  transactionName: string,
+  transactionAmount: string,
+  category: NameAmount[],
+  merchant: IMerchant,
+  institutionId: string
 ): Promise<{ __typename: string; id: string }> {
   const mutation = gql`
     mutation AddEMoneyTransaction(

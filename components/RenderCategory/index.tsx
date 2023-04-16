@@ -540,10 +540,10 @@ const Category = ({
       className={`flex gap-2 ${renderColor()} sm:px-2.5 sm:py-0.5 sm:text-base sm:rounded-xl text-xs px-1 py-0 rounded-md items-center justify-start w-fit h-fit text-onPrimaryContainer sm:max-w-fit max-w-[80px] truncate`}
       whileHover={{ scale: select ? 1.05 : 1 }}
     >
-      <div className="flex gap-2 items-center justify-start">
+      <span className="flex gap-2 items-center justify-start">
         <FontAwesomeIcon icon={icon} />
         {category}
-      </div>
+      </span>
       {select && <FontAwesomeIcon icon={faChevronDown} />}
     </motion.p>
   );

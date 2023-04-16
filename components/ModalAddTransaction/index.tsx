@@ -25,11 +25,11 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
   accountType,
   onSubmit,
 }) => {
-  const [amount, setAmount] = useState<string>();
-  const [transactionName, setTransactionName] = useState<string>();
-  const [merchant, setMerchant] = useState<IMerchant>();
-  const [transactionType, setTransactionType] = useState<string>();
-  const [category, setCategory] = useState<NameAmount[]>();
+  const [amount, setAmount] = useState<string>('');
+  const [transactionName, setTransactionName] = useState<string>('');
+  const [merchant, setMerchant] = useState<IMerchant>({} as IMerchant);
+  const [transactionType, setTransactionType] = useState<string>('');
+  const [category, setCategory] = useState<NameAmount[]>([{} as NameAmount]);
 
   const [type, setType] = useState('EXPENSE');
   const [areYouSureModal, setAreYouSureModal] = useState(false);
@@ -193,9 +193,7 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
                                   currency: 'IDR',
                                   minimumFractionDigits: 0,
                                   maximumFractionDigits: 2,
-                                }).format(
-                                  Number(amount ? amount.replace(',', '.') : 0)
-                                )
+                                }).format(Number(amount.replace(',', '.')))
                           );
                         }}
                       />
@@ -233,9 +231,7 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
                               setCategory([
                                 {
                                   name: category,
-                                  amount: amount
-                                    ? amount.replace(',', '.')
-                                    : '0',
+                                  amount: amount.replace(',', '.'),
                                 },
                               ]);
                             }}
@@ -256,9 +252,7 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
                               setCategory([
                                 {
                                   name: category,
-                                  amount: amount
-                                    ? amount.replace(',', '.')
-                                    : '0',
+                                  amount: amount.replace(',', '.'),
                                 },
                               ]);
                             }}
@@ -307,11 +301,11 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
                           institutionId
                         );
                         setType('EXPENSE');
-                        setTransactionType(undefined);
-                        setTransactionName(undefined);
-                        setAmount(undefined);
-                        setCategory(undefined);
-                        setMerchant(undefined);
+                        setTransactionType('');
+                        setTransactionName('');
+                        setAmount('');
+                        setCategory([{} as NameAmount]);
+                        setMerchant({} as IMerchant);
                         setDisplayAmount('Rp 0');
                         setIsOpen(false);
                       }}
@@ -332,11 +326,11 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
         setIsOpen={setAreYouSureModal}
         handleConfirm={() => {
           setType('EXPENSE');
-          setTransactionType(undefined);
-          setTransactionName(undefined);
-          setAmount(undefined);
-          setCategory(undefined);
-          setMerchant(undefined);
+          setTransactionType('');
+          setTransactionName('');
+          setAmount('');
+          setCategory([{} as NameAmount]);
+          setMerchant({} as IMerchant);
           setDisplayAmount('Rp 0');
           setAreYouSureModal(false);
           setIsOpen(false);

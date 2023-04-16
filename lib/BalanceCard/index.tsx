@@ -83,6 +83,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
           if (type === 'cash') {
             return (
               <CashBalance
+                key={index}
                 link={link}
                 isSelected={isSelected}
                 selectedAccountRef={selectedAccountRef}
@@ -104,6 +105,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
           } else if (type === 'emoney') {
             return (
               <EMoneyBalance
+                key={index}
                 link={link}
                 isSelected={isSelected}
                 selectedAccountRef={selectedAccountRef}
@@ -125,6 +127,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
           } else if (type === 'debit') {
             return (
               <DebitBalance
+                key={index}
                 link={link}
                 isSelected={isSelected}
                 selectedAccountRef={selectedAccountRef}
@@ -146,6 +149,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
           } else if (type === 'ewallet') {
             return (
               <EWalletBalance
+                key={index}
                 link={link}
                 isSelected={isSelected}
                 selectedAccountRef={selectedAccountRef}
@@ -167,6 +171,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
           } else if (type === 'paylater') {
             return (
               <PayLaterBalance
+                key={index}
                 link={link}
                 isSelected={isSelected}
                 selectedAccountRef={selectedAccountRef}

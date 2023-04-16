@@ -29,7 +29,7 @@ export function InstallDiv({
 
   Change to false on prod!!
   */
-  const [hasInstall, setHasInstall] = useState(true);
+  const [hasInstall, setHasInstall] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -58,7 +58,7 @@ export function InstallDiv({
   }, []);
 
   return (
-    <body>
+    <>
       {hasInstall ? (
         <>{children}</>
       ) : (
@@ -77,7 +77,7 @@ export function InstallDiv({
           </p>
         </motion.div>
       )}
-    </body>
+    </>
   );
 }
 
