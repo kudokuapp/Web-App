@@ -60,7 +60,7 @@ const EWalletBalance: React.FC<IEWalletBalance> = ({
         balance: balance,
         latestTransaction: lastUpdate,
         createdAt: account.createdAt,
-        type: 'EWallet',
+        type: 'ewallet',
         expired: expired,
       }}
       optionsButton={{

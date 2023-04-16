@@ -1,17 +1,15 @@
 import client from '$utils/graphql';
 import { gql } from '@apollo/client';
 
-export async function refreshGopayWallet({
-  token,
-  eWalletAccountId,
-}: {
-  token: string;
-  eWalletAccountId: string;
-}) {
+export async function addMerchant(
+  token: string,
+  name: string,
+  url: string
+): Promise<any> {
   const mutation = gql`
-    mutation RefreshGopayTransactionViaBrick($eWalletAccountId: String) {
-      refreshGopayTransactionViaBrick(eWalletAccountId: $eWalletAccountId) {
-        response
+    mutation AddMerchant($name: String!, $url: String!, $picture: String!) {
+      addMerchant(name: $name, url: $url, picture: $picture) {
+        id
       }
     }
   `;
@@ -20,11 +18,13 @@ export async function refreshGopayWallet({
     (async () => {
       try {
         const {
-          data: { refreshGopayTransactionViaBrick },
+          data: { addMerchant },
         } = await client.mutate({
           mutation,
           variables: {
-            eWalletAccountId,
+            name,
+            url,
+            picture: 'NO',
           },
           context: {
             headers: {
@@ -33,7 +33,7 @@ export async function refreshGopayWallet({
           },
         });
 
-        resolve(refreshGopayTransactionViaBrick);
+        resolve(addMerchant);
       } catch (e) {
         reject(e);
       }

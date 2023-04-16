@@ -60,7 +60,7 @@ const DebitBalance: React.FC<IDebitBalance> = ({
         balance: balance,
         latestTransaction: lastUpdate,
         createdAt: account.createdAt,
-        type: 'Debit',
+        type: 'debit',
         expired: expired,
       }}
       optionsButton={{

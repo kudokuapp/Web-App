@@ -104,11 +104,18 @@ const RenderActualMerchant = ({
 
   useEffect(() => {
     const importImage = async () => {
-      const image = await import(`$public/merchant/${merchantId}.png`);
-      setImageSrc(image.default);
+      try {
+        const image = await import(`$public/merchant/${merchantId}.png`);
+        setImageSrc(image.default);
+      } catch (error) {
+        // Handle the error here, e.g. by logging it or setting a default image
+        console.error(
+          `Failed to import image for merchant ${merchantName}: ${error}`
+        );
+      }
     };
     importImage();
-  }, [merchantId]);
+  }, [merchantId, merchantName]);
 
   if (imageSrc) {
     return (

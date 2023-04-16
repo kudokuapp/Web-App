@@ -1,5 +1,7 @@
+import ToastFC from '$components/ToastFC';
 import BalanceCard from '$lib/BalanceCard';
 import EmptyTransaction from '$lib/EmptyTransaction';
+import { FAB } from '$lib/FAB';
 import TransactionList from '$lib/TransactionList';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -59,8 +61,14 @@ export default async function Page({
 
   const accounts = await fetchAllAccounts(token);
 
+  const institutionId = accounts.filter(
+    (v) => v.type === params.accountType && v.id === params.id
+  )[0].institutionId;
+
   return (
     <>
+      <ToastFC />
+
       <BalanceCard accounts={accounts} token={token} />
 
       <TransactionList
@@ -70,11 +78,12 @@ export default async function Page({
         id={params.id}
       />
 
-      {/* <AddTransaction
+      <FAB
         token={token}
         accountType={params.accountType}
         accountId={params.id}
-      /> */}
+        institutionId={institutionId}
+      />
 
       {transaction.length === 0 && (
         <EmptyTransaction type={params.accountType} />

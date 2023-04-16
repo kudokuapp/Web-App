@@ -61,7 +61,7 @@ const PayLaterBalance: React.FC<IPayLaterBalance> = ({
         latestTransaction: lastUpdate,
         createdAt: account.createdAt,
         expired: expired,
-        type: 'PayLater',
+        type: 'paylater',
       }}
       optionsButton={{
         editAccount: {

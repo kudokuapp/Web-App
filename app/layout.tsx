@@ -212,15 +212,17 @@ export default function RootLayout({
 
         <title>Kudoku</title>
       </head>
-      <ApolloNextClient>
-        <DeviceContextProvider>
-          <ThemeContextProvider>
-            <SidebarProvider>
-              <InstallDiv>{children}</InstallDiv>
-            </SidebarProvider>
-          </ThemeContextProvider>
-        </DeviceContextProvider>
-      </ApolloNextClient>
+      <body>
+        <ApolloNextClient>
+          <DeviceContextProvider>
+            <ThemeContextProvider>
+              <SidebarProvider>
+                <InstallDiv>{children}</InstallDiv>
+              </SidebarProvider>
+            </ThemeContextProvider>
+          </DeviceContextProvider>
+        </ApolloNextClient>
+      </body>
     </html>
   );
 }

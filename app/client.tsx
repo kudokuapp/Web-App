@@ -58,7 +58,7 @@ export function InstallDiv({
   }, []);
 
   return (
-    <body>
+    <>
       {hasInstall ? (
         <>{children}</>
       ) : (
@@ -77,7 +77,7 @@ export function InstallDiv({
           </p>
         </motion.div>
       )}
-    </body>
+    </>
   );
 }
 

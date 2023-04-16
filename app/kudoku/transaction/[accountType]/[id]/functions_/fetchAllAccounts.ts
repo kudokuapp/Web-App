@@ -12,9 +12,9 @@ import {
 } from '../graphql_/query';
 
 interface IFetchAllAccounts {
-  type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney' | 'PayLater';
+  type: 'cash' | 'debit' | 'ewallet' | 'emoney' | 'paylater';
   id: string;
-  institutionId: 'Cash' | string;
+  institutionId: 'cash' | string;
   accountNumber: string;
   balance: string;
   createdAt: string;
@@ -38,9 +38,9 @@ export async function fetchAllAccounts(
       );
 
       const obj = {
-        type: 'Cash',
+        type: 'cash',
         id: element.id,
-        institutionId: 'Cash',
+        institutionId: 'cash',
         accountNumber: element.accountName,
         balance: element.balance,
         createdAt: element.createdAt,
@@ -65,7 +65,7 @@ export async function fetchAllAccounts(
       );
 
       const obj = {
-        type: 'Debit',
+        type: 'debit',
         id: element.id,
         institutionId: element.institutionId,
         accountNumber: element.accountNumber,
@@ -92,7 +92,7 @@ export async function fetchAllAccounts(
       );
 
       const obj = {
-        type: 'EWallet',
+        type: 'ewallet',
         id: element.id,
         institutionId: element.institutionId,
         accountNumber: element.accountNumber,
@@ -119,7 +119,7 @@ export async function fetchAllAccounts(
       );
 
       const obj = {
-        type: 'EMoney',
+        type: 'emoney',
         id: element.id,
         institutionId: element.institutionId,
         accountNumber: element.cardNumber,
@@ -146,7 +146,7 @@ export async function fetchAllAccounts(
       );
 
       const obj = {
-        type: 'PayLater',
+        type: 'paylater',
         id: element.id,
         institutionId: element.institutionId,
         accountNumber: element.accountNumber,

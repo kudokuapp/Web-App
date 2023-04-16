@@ -4,9 +4,11 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {
   faBicycle,
   faBlender,
+  faBuilding,
   faCar,
   faCat,
   faChartLine,
+  faChartSimple,
   faCheckSquare,
   faChevronDown,
   faDice,
@@ -33,6 +35,7 @@ import {
   faPlayCircle,
   faQuestion,
   faRoad,
+  faSackDollar,
   faShoppingCart,
   faSmoking,
   faSnowboarding,
@@ -438,6 +441,49 @@ const RenderCategory: React.FC<IRenderCategory> = ({ category, select }) => {
       );
 
     /**
+     * Income
+     */
+    case 'Gaji':
+      return (
+        <Category
+          category={category}
+          icon={faSackDollar}
+          type="Income"
+          select={select}
+        />
+      );
+
+    case 'Gift':
+      return (
+        <Category
+          category={category}
+          icon={faGift}
+          type="Income"
+          select={select}
+        />
+      );
+
+    case 'Interest / Divident':
+      return (
+        <Category
+          category={category}
+          icon={faChartSimple}
+          type="Income"
+          select={select}
+        />
+      );
+
+    case 'Business':
+      return (
+        <Category
+          category={category}
+          icon={faBuilding}
+          type="Income"
+          select={select}
+        />
+      );
+
+    /**
      * Belum ada kategory
      */
 
@@ -481,6 +527,9 @@ const Category = ({
       case 'Home':
         return 'bg-purple-600 dark:bg-purple-300';
 
+      case 'Income':
+        return 'bg-green-600 dark:bg-green-300';
+
       default:
         return 'bg-gray-600 dark:bg-gray-300';
     }
@@ -491,10 +540,10 @@ const Category = ({
       className={`flex gap-2 ${renderColor()} sm:px-2.5 sm:py-0.5 sm:text-base sm:rounded-xl text-xs px-1 py-0 rounded-md items-center justify-start w-fit h-fit text-onPrimaryContainer sm:max-w-fit max-w-[80px] truncate`}
       whileHover={{ scale: select ? 1.05 : 1 }}
     >
-      <div className="flex gap-2 items-center justify-start">
+      <span className="flex gap-2 items-center justify-start">
         <FontAwesomeIcon icon={icon} />
         {category}
-      </div>
+      </span>
       {select && <FontAwesomeIcon icon={faChevronDown} />}
     </motion.p>
   );

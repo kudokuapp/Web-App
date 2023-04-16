@@ -17,7 +17,11 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof Dropdown> = (args) => {
-  return <Dropdown {...args} />;
+  return (
+    <>
+      <Dropdown {...args} />
+    </>
+  );
 };
 
 export const Base = Template.bind({});
@@ -30,7 +34,7 @@ Base.args = {
     { value: 'options3', label: 'Options 3' },
     { value: 'options4', label: 'Options 4' },
   ],
-  onSelect: (v) => alert(v),
+  onSelect: (v) => console.log(v),
 } as IDropdown;
 
 Base.parameters = {

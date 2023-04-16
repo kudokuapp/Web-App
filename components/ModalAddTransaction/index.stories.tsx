@@ -1,6 +1,7 @@
 import client from '$utils/graphql';
 import { gql } from '@apollo/client';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { NameAmount } from 'global';
 import { useState } from 'react';
 import { IMerchant } from '../SearchMerchant/index.d';
 import ModalAddTransaction from './index';
@@ -21,13 +22,13 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof ModalAddTransaction> = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const [amount, setAmount] = useState('');
-  const [transactionName, setTransactionName] = useState('');
-  const [merchant, setMerchant] = useState<IMerchant | null>(null);
-  const [transactionType, setTransactionType] = useState('');
 
   const token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDA0ODIxZGMzNjM1OGNhZDU5NDA2MzEiLCJpYXQiOjE2Nzk5MDc0MDV9.ESWTAk0dY_N4F1HwcW6LIhzzNi17XTyVGGXM-au0ank';
+
+  const accountId = '102938129084901284';
+
+  const institutionId = '129037812904578129084';
 
   const onAddMerchant = (name: string, url: string) => {
     alert(`Adding new merchant with ${name} and ${url}`);
@@ -42,29 +43,44 @@ const Template: ComponentStory<typeof ModalAddTransaction> = () => {
     }
   `;
 
+  const handleSubmit = (
+    token: string,
+    accountId: string,
+    accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney',
+    transactionType: string | undefined,
+    transactionName: string | undefined,
+    transactionAmount: string | undefined,
+    category: NameAmount[] | undefined,
+    merchant: IMerchant | undefined
+  ) => {
+    console.log({
+      token,
+      accountId,
+      accountType,
+      transactionType,
+      transactionName,
+      transactionAmount,
+      category,
+      merchant,
+    });
+  };
+
   return (
     <>
       <ModalAddTransaction
         token={token}
+        accountId={accountId}
+        institutionId={institutionId}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        amount={amount}
-        setAmount={setAmount}
-        transactionName={transactionName}
-        setTransactionName={setTransactionName}
         onAddMerchant={onAddMerchant}
         merchantSubscription={merchantSubScription}
         getAllMerchant={getAllMerchant}
-        setMerchant={setMerchant}
-        setTransactionType={setTransactionType}
         accountType={'cash'}
-        onSubmit={(_e) => new Promise(() => {})}
+        onSubmit={handleSubmit}
       />
 
       <button onClick={() => setIsOpen(true)}>Show modal</button>
-      <p>
-        Add transaction: ${merchant} {transactionType}
-      </p>
     </>
   );
 };

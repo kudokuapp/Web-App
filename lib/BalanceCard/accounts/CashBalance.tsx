@@ -52,12 +52,12 @@ const CashBalance: React.FC<ICashBalance> = ({
       selectedAccountRef={selectedAccountRef}
       onClick={onClick}
       account={{
-        institutionId: 'Cash',
+        institutionId: 'cash',
         accountNumber: account.accountNumber,
         balance: balance,
         latestTransaction: lastUpdate,
         createdAt: account.createdAt,
-        type: 'Cash',
+        type: 'cash',
         expired: false,
       }}
       optionsButton={{

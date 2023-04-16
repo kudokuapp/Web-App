@@ -18,9 +18,9 @@ interface IClientProps {
 }
 
 export interface IAccountsProps {
-  type: 'Cash' | 'Debit' | 'EWallet' | 'EMoney' | 'PayLater';
+  type: 'cash' | 'debit' | 'ewallet' | 'emoney' | 'paylater';
   id: string;
-  institutionId: 'Cash' | string;
+  institutionId: 'cash' | string;
   accountNumber: string;
   balance: string;
   createdAt: string;
@@ -80,9 +80,10 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
 
           const link = `/kudoku/transaction/${type.toLowerCase()}/${id}`;
 
-          if (type === 'Cash') {
+          if (type === 'cash') {
             return (
               <CashBalance
+                key={index}
                 link={link}
                 isSelected={isSelected}
                 selectedAccountRef={selectedAccountRef}
@@ -101,9 +102,10 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
                 }}
               />
             );
-          } else if (type === 'EMoney') {
+          } else if (type === 'emoney') {
             return (
               <EMoneyBalance
+                key={index}
                 link={link}
                 isSelected={isSelected}
                 selectedAccountRef={selectedAccountRef}
@@ -122,9 +124,10 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
                 }}
               />
             );
-          } else if (type === 'Debit') {
+          } else if (type === 'debit') {
             return (
               <DebitBalance
+                key={index}
                 link={link}
                 isSelected={isSelected}
                 selectedAccountRef={selectedAccountRef}
@@ -143,9 +146,10 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
                 }}
               />
             );
-          } else if (type === 'EWallet') {
+          } else if (type === 'ewallet') {
             return (
               <EWalletBalance
+                key={index}
                 link={link}
                 isSelected={isSelected}
                 selectedAccountRef={selectedAccountRef}
@@ -164,9 +168,10 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
                 }}
               />
             );
-          } else if (type === 'PayLater') {
+          } else if (type === 'paylater') {
             return (
               <PayLaterBalance
+                key={index}
                 link={link}
                 isSelected={isSelected}
                 selectedAccountRef={selectedAccountRef}
