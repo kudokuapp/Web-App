@@ -35,7 +35,7 @@ const Template: ComponentStory<typeof SearchMerchant> = () => {
     setSelectedMerchant(merchant);
   };
 
-  const onAddMerchant = (name: string, url: string) => {
+  const onAddMerchant = (token: string, name: string, url: string) => {
     alert(`Adding new merchant with ${name} and ${url}`);
   };
 

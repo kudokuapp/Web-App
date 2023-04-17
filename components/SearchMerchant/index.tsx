@@ -24,7 +24,7 @@ const SearchMerchant: React.FC<ISearchMerchant> = ({
   const [showAddMerchant, setShowAddMerchant] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedMerchant, setSelectedMerchant] = useState<IMerchant | null>(
-    null
+    firstMerchant
   );
 
   let [isOpen, setIsOpen] = useState(false);
@@ -41,7 +41,11 @@ const SearchMerchant: React.FC<ISearchMerchant> = ({
 
     (async () => {
       const merchants = await getAllMerchant(token); // get all merchant  first render
-      setMerchants(merchants);
+      setMerchants(
+        merchants.map((v) => {
+          return { id: v.id, name: v.name };
+        })
+      );
     })();
 
     setLoading(false);
@@ -53,7 +57,10 @@ const SearchMerchant: React.FC<ISearchMerchant> = ({
       const { newMerchantLive } = data;
       newMerchantLive as IMerchant;
 
-      const array = [newMerchantLive, ...merchants];
+      const array = [
+        { id: newMerchantLive.id, name: newMerchantLive.name },
+        ...merchants,
+      ];
 
       setMerchants(array);
     }
@@ -87,9 +94,17 @@ const SearchMerchant: React.FC<ISearchMerchant> = ({
 
   const handleSelectMerchant = (merchant: IMerchant) => {
     setQuery(merchant.name);
-    setSelectedMerchant({ name: merchant.name, id: merchant.id });
-    onSelectMerchant(selectedMerchant);
+    setSelectedMerchant(merchant);
+    onSelectMerchant(merchant);
   };
+
+  useEffect(() => {
+    if (firstMerchant.id !== selectedMerchant?.id) {
+      setSelectedMerchant(selectedMerchant);
+      setQuery(query);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMerchant]);
 
   const handleAddMerchant = () => {
     // Handle add merchant logic here
