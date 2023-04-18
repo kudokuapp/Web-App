@@ -52,7 +52,7 @@ const Template: ComponentStory<typeof SearchMerchant> = () => {
     <>
       <SearchMerchant
         token={token}
-        firstMerchant={firstMerchant}
+        firstMerchant={selectedMerchant ?? firstMerchant}
         onSelectMerchant={onSelectMerchant}
         onAddMerchant={onAddMerchant}
         merchantSubscription={merchantSubScription}

@@ -28,7 +28,7 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
   const [amount, setAmount] = useState<string>('');
   const [transactionName, setTransactionName] = useState<string>('');
   const [merchant, setMerchant] = useState<IMerchant>({} as IMerchant);
-  const [transactionType, setTransactionType] = useState<string>('');
+  const [transactionType, setTransactionType] = useState<string>('EXPENSE');
   const [category, setCategory] = useState<NameAmount[]>([{} as NameAmount]);
 
   const [type, setType] = useState('EXPENSE');
@@ -43,7 +43,8 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
         !amount ||
         amount === '' ||
         !category ||
-        category.length === 0;
+        category.length === 0 ||
+        Object.keys(category[0]).length === 0;
       return disabled;
     } else {
       const disabled =
@@ -53,6 +54,7 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
         amount === '' ||
         !category ||
         category.length === 0 ||
+        Object.keys(category[0]).length === 0 ||
         !merchant ||
         Object.keys(merchant).length === 0;
       return disabled;
@@ -208,10 +210,9 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
                           </p>
                           <SearchMerchant
                             token={token}
-                            firstMerchant={{
-                              id: '',
-                              name: '',
-                            }}
+                            firstMerchant={
+                              merchant.name ? merchant : { name: '', id: '' }
+                            }
                             onSelectMerchant={(e) => {
                               if (e !== null) setMerchant(e);
                             }}
@@ -300,6 +301,7 @@ const ModalAddTransaction: React.FC<IModalAddTransaction> = ({
                             : merchant,
                           institutionId
                         );
+
                         setType('EXPENSE');
                         setTransactionType('');
                         setTransactionName('');
