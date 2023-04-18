@@ -35,45 +35,51 @@ export const FAB: React.FC<IFAB> = ({
     _merchant: IMerchant,
     _institutionId: string
   ) => {
-    if (accountType === 'cash') {
-      toast.promise(
-        addCashTransaction(
-          _token,
-          _accountId,
-          accountType,
-          _transactionType,
-          _transactionName,
-          _transactionAmount,
-          _category,
-          _merchant,
-          'cash'
-        ),
-        {
-          loading: 'Lagi nambahin transaksimu...',
-          success: 'Sukses menambahkan transaksi!',
-          error: 'Error menambahkan transaksi!',
+    (async () => {
+      try {
+        if (accountType === 'cash') {
+          toast.promise(
+            addCashTransaction(
+              _token,
+              _accountId,
+              accountType,
+              _transactionType,
+              _transactionName,
+              _transactionAmount,
+              _category,
+              _merchant,
+              'cash'
+            ),
+            {
+              loading: 'Lagi nambahin transaksimu...',
+              success: 'Sukses menambahkan transaksi!',
+              error: 'Error menambahkan transaksi!',
+            }
+          );
+        } else if (accountType === 'emoney') {
+          toast.promise(
+            addEMoneyTransaction(
+              _token,
+              _accountId,
+              accountType,
+              _transactionType,
+              _transactionName,
+              _transactionAmount,
+              _category,
+              _merchant,
+              institutionId
+            ),
+            {
+              loading: 'Lagi nambahin transaksimu...',
+              success: 'Sukses menambahkan transaksi!',
+              error: 'Error menambahkan transaksi!',
+            }
+          );
         }
-      );
-    } else if (accountType === 'emoney') {
-      toast.promise(
-        addEMoneyTransaction(
-          _token,
-          _accountId,
-          accountType,
-          _transactionType,
-          _transactionName,
-          _transactionAmount,
-          _category,
-          _merchant,
-          institutionId
-        ),
-        {
-          loading: 'Lagi nambahin transaksimu...',
-          success: 'Sukses menambahkan transaksi!',
-          error: 'Error menambahkan transaksi!',
-        }
-      );
-    }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
   };
 
   if (accountType === 'cash') {
