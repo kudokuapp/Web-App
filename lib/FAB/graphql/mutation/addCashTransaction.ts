@@ -68,6 +68,7 @@ export async function addCashTransaction(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(addCashTransaction);

@@ -3,8 +3,14 @@
 import FloatingActionButton from '$components/FloatingActionButton';
 import ModalAddTransaction from '$components/ModalAddTransaction';
 import ModalQuickAddTransaction from '$components/ModalQuickAddTransaction';
+import ModalReconcileBalance from '$components/ModalReconcileBalance';
 import { IMerchant } from '$components/SearchMerchant/index.d';
-import { faBolt, faPlus, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBolt,
+  faFileInvoiceDollar,
+  faPlus,
+  faRefresh,
+} from '@fortawesome/free-solid-svg-icons';
 import { NameAmount } from 'global';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -12,6 +18,8 @@ import {
   addCashTransaction,
   addEMoneyTransaction,
   addMerchant,
+  reconcileCashBalance,
+  reconcileEMoneyBalance,
 } from './graphql/mutation';
 import { getAllMerchant } from './graphql/query';
 import { merchantSubscription } from './graphql/subscription';
@@ -29,6 +37,7 @@ export const FAB: React.FC<IFAB> = ({
   const [quickAddType, setQuickAddType] = useState<'INCOME' | 'EXPENSE'>(
     'INCOME'
   );
+  const [modalReconcile, setModalReconcile] = useState(false);
 
   const handleSubmitTransaction = (
     _token: string,
@@ -224,6 +233,28 @@ export const FAB: React.FC<IFAB> = ({
     })();
   };
 
+  const handleReconcile = (token: string, amount: string) => {
+    (async () => {
+      try {
+        if (accountType === 'cash') {
+          toast.promise(reconcileCashBalance(token, amount, accountId), {
+            loading: 'Lagi ganti balance kamu...',
+            success: 'Sukses ganti balance!',
+            error: 'Error ganti balance!',
+          });
+        } else if (accountType === 'emoney') {
+          toast.promise(reconcileEMoneyBalance(token, amount, accountId), {
+            loading: 'Lagi ganti balance kamu...',
+            success: 'Sukses ganti balance!',
+            error: 'Error ganti balance!',
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  };
+
   if (accountType === 'cash') {
     return (
       <>
@@ -256,6 +287,15 @@ export const FAB: React.FC<IFAB> = ({
               color: 'bg-green-800',
               textColor: 'bg-green-200',
             },
+            {
+              icon: faFileInvoiceDollar,
+              name: 'Reconcile Balance',
+              onClick: () => {
+                setModalReconcile(true);
+              },
+              color: null,
+              textColor: null,
+            },
           ]}
         />
 
@@ -282,6 +322,13 @@ export const FAB: React.FC<IFAB> = ({
               : handleQuickAddExpense
           }
           type={quickAddType}
+        />
+
+        <ModalReconcileBalance
+          token={token}
+          isOpen={modalReconcile}
+          setIsOpen={setModalReconcile}
+          onSubmit={handleReconcile}
         />
       </>
     );
@@ -317,6 +364,15 @@ export const FAB: React.FC<IFAB> = ({
               color: 'bg-green-800',
               textColor: 'bg-green-200',
             },
+            {
+              icon: faFileInvoiceDollar,
+              name: 'Reconcile Balance',
+              onClick: () => {
+                setModalReconcile(true);
+              },
+              color: null,
+              textColor: null,
+            },
           ]}
         />
 
@@ -343,6 +399,13 @@ export const FAB: React.FC<IFAB> = ({
               : handleQuickAddExpense
           }
           type={quickAddType}
+        />
+
+        <ModalReconcileBalance
+          token={token}
+          isOpen={modalReconcile}
+          setIsOpen={setModalReconcile}
+          onSubmit={handleReconcile}
         />
       </>
     );
