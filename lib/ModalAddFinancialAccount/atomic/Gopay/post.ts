@@ -48,6 +48,10 @@ export interface IGopayAccount {
   payLater: BrickAccountDetail;
 }
 
+interface Account extends BrickAccountDetail {
+  brickInstitutionId: number;
+}
+
 export async function gopayAccount({
   sendOtpData,
   otp,
@@ -56,7 +60,7 @@ export async function gopayAccount({
   sendOtpData: ISendOtpGopay;
   otp: string;
   token: string;
-}): Promise<IGopayAccount> {
+}): Promise<{ eWallet: Account; payLater: Account }> {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
@@ -76,9 +80,32 @@ export async function gopayAccount({
           },
         };
 
-        const { data } = await axios.request(options);
+        const { data }: { data: IGopayAccount } = await axios.request(options);
 
-        resolve(data as IGopayAccount);
+        const { eWallet, payLater } = data;
+
+        const obj = {
+          eWallet: {
+            accountId: eWallet.accountId,
+            accountHolder: eWallet.accountHolder,
+            accountNumber: eWallet.accountNumber,
+            balances: eWallet.balances,
+            currency: eWallet.currency,
+            type: eWallet.type,
+            brickInstitutionId: 11,
+          },
+          payLater: {
+            accountId: payLater.accountId,
+            accountHolder: payLater.accountHolder,
+            accountNumber: payLater.accountNumber,
+            balances: payLater.balances,
+            currency: payLater.currency,
+            type: payLater.type,
+            brickInstitutionId: 11,
+          },
+        };
+
+        resolve(obj);
       } catch (error) {
         console.error(error);
         reject(error);

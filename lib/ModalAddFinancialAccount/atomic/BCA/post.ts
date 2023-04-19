@@ -2,6 +2,10 @@ import { kudokuxbrickUrl } from '$utils/kudokuxbrick';
 import axios from 'axios';
 import moment from 'moment';
 
+interface Account extends BrickAccountDetail {
+  brickInstitutionId: number;
+}
+
 export async function connectBca({
   token,
   brickInstitutionId,
@@ -12,7 +16,7 @@ export async function connectBca({
   brickInstitutionId: number;
   username: string;
   password: string;
-}): Promise<BrickAccountDetail> {
+}): Promise<Account> {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
@@ -33,8 +37,10 @@ export async function connectBca({
           },
         };
 
-        const { data } = await axios.request(options);
-        resolve(data as BrickAccountDetail);
+        const { data }: { data: BrickAccountDetail } = await axios.request(
+          options
+        );
+        resolve({ ...data, brickInstitutionId });
       } catch (error) {
         console.error(error);
         reject(error);
