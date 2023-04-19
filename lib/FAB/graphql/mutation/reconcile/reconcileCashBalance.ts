@@ -1,14 +1,20 @@
 import client from '$utils/graphql';
 import { gql } from '@apollo/client';
 
-export async function addMerchant(
+export async function reconcileCashBalance(
   token: string,
-  name: string,
-  url: string
+  newBalance: string,
+  cashAccountId: string
 ): Promise<any> {
   const mutation = gql`
-    mutation AddMerchant($name: String!, $url: String!, $picture: String!) {
-      addMerchant(name: $name, url: $url, picture: $picture) {
+    mutation ReconcileCashBalance(
+      $newBalance: String!
+      $cashAccountId: String!
+    ) {
+      reconcileCashBalance(
+        newBalance: $newBalance
+        cashAccountId: $cashAccountId
+      ) {
         id
       }
     }
@@ -18,13 +24,12 @@ export async function addMerchant(
     (async () => {
       try {
         const {
-          data: { addMerchant },
+          data: { reconcileCashBalance },
         } = await client.mutate({
           mutation,
           variables: {
-            name,
-            url,
-            picture: 'NO',
+            newBalance,
+            cashAccountId,
           },
           context: {
             headers: {
@@ -34,7 +39,7 @@ export async function addMerchant(
           fetchPolicy: 'network-only',
         });
 
-        resolve(addMerchant);
+        resolve(reconcileCashBalance);
       } catch (e) {
         reject(e);
       }

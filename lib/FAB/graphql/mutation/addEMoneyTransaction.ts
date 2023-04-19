@@ -74,6 +74,7 @@ export async function addEMoneyTransaction(
               Authorization: `Bearer ${token}`,
             },
           },
+          fetchPolicy: 'network-only',
         });
 
         resolve(addEMoneyTransaction);
