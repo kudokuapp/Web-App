@@ -15,6 +15,7 @@ import {
 import { getAllMerchant } from './graphql/query';
 import { merchantSubscription } from './graphql/subscription';
 import { IFAB } from './index.d';
+import { refreshBca, refreshGopayPayLater, refreshGopayWallet } from './utils/';
 
 export const FAB: React.FC<IFAB> = ({
   token,
@@ -80,6 +81,38 @@ export const FAB: React.FC<IFAB> = ({
         console.error(error);
       }
     })();
+  };
+
+  const handleRefresh = () => {
+    if (institutionId === '63d8bb09a2b49c686d736525') {
+      toast.promise(refreshBca(token, accountId), {
+        loading: 'Refreshing transaksi BCA kamu...',
+        success: 'Sukses refresh transaksi kamu!',
+        error: 'Error refresh transaksi kamu!',
+      });
+    }
+
+    if (
+      institutionId === '63d94170d3e050940af0caf2' &&
+      accountType === 'ewallet'
+    ) {
+      toast.promise(refreshGopayWallet(token, accountId), {
+        loading: 'Refreshing transaksi Gopay kamu...',
+        success: 'Sukses refresh transaksi kamu!',
+        error: 'Error refresh transaksi kamu!',
+      });
+    }
+
+    if (
+      institutionId === '63d94170d3e050940af0caf2' &&
+      accountType === 'paylater'
+    ) {
+      toast.promise(refreshGopayPayLater(token, accountId), {
+        loading: 'Refreshing transaksi Gopay kamu...',
+        success: 'Sukses refresh transaksi kamu!',
+        error: 'Error refresh transaksi kamu!',
+      });
+    }
   };
 
   if (accountType === 'cash') {
@@ -149,13 +182,7 @@ export const FAB: React.FC<IFAB> = ({
               icon: faRefresh,
               name: 'Refresh Transaksi',
               onClick: () => {
-                // toast
-                //   .promise(refreshBca({ token, debitAccountId: accountId }), {
-                //     loading: 'Refresh transaksi...',
-                //     success: 'Sukses!',
-                //     error: 'Gagal!',
-                //   })
-                //   .then(() => window.location.reload());
+                handleRefresh();
               },
               color: null,
               textColor: null,
@@ -173,16 +200,7 @@ export const FAB: React.FC<IFAB> = ({
               icon: faRefresh,
               name: 'Refresh Transaksi',
               onClick: () => {
-                // toast
-                //   .promise(
-                //     refreshGopayWallet({ token, eWalletAccountId: accountId }),
-                //     {
-                //       loading: 'Refresh transaksi...',
-                //       success: 'Sukses!',
-                //       error: 'Gagal!',
-                //     }
-                //   )
-                //   .then(() => window.location.reload());
+                handleRefresh();
               },
               color: null,
               textColor: null,
@@ -200,19 +218,7 @@ export const FAB: React.FC<IFAB> = ({
               icon: faRefresh,
               name: 'Refresh Transaksi',
               onClick: () => {
-                // toast
-                //   .promise(
-                //     refreshGopayPaylater({
-                //       token,
-                //       payLaterAccountId: accountId,
-                //     }),
-                //     {
-                //       loading: 'Refresh transaksi...',
-                //       success: 'Sukses!',
-                //       error: 'Gagal!',
-                //     }
-                //   )
-                //   .then(() => window.location.reload());
+                handleRefresh();
               },
               color: null,
               textColor: null,
