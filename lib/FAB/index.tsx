@@ -2,8 +2,9 @@
 
 import FloatingActionButton from '$components/FloatingActionButton';
 import ModalAddTransaction from '$components/ModalAddTransaction';
+import ModalQuickAddTransaction from '$components/ModalQuickAddTransaction';
 import { IMerchant } from '$components/SearchMerchant/index.d';
-import { faPlus, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faPlus, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { NameAmount } from 'global';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -24,6 +25,10 @@ export const FAB: React.FC<IFAB> = ({
   institutionId,
 }) => {
   const [modalAddTransactionOpen, setModalAddTransactionOpen] = useState(false);
+  const [modalQuickAdd, setModalQuickAdd] = useState(false);
+  const [quickAddType, setQuickAddType] = useState<'INCOME' | 'EXPENSE'>(
+    'INCOME'
+  );
 
   const handleSubmitTransaction = (
     _token: string,
@@ -115,6 +120,110 @@ export const FAB: React.FC<IFAB> = ({
     }
   };
 
+  const handleQuickAddIncome = (
+    token: string,
+    transactionName: string,
+    amount: string
+  ) => {
+    (async () => {
+      try {
+        if (accountType === 'cash') {
+          toast.promise(
+            addCashTransaction(
+              token,
+              accountId,
+              'cash',
+              'INCOME',
+              transactionName,
+              amount,
+              [{ name: 'UNDEFINED', amount }],
+              { id: '6414a1e910657b29b4ffbaf9', name: 'INCOME' },
+              'cash'
+            ),
+            {
+              loading: 'Lagi nambahin transaksimu...',
+              success: 'Sukses menambahkan transaksi!',
+              error: 'Error menambahkan transaksi!',
+            }
+          );
+        } else if (accountType === 'emoney') {
+          toast.promise(
+            addEMoneyTransaction(
+              token,
+              accountId,
+              'emoney',
+              'INCOME',
+              transactionName,
+              amount,
+              [{ name: 'UNDEFINED', amount }],
+              { id: '6414a1e910657b29b4ffbaf9', name: 'INCOME' },
+              institutionId
+            ),
+            {
+              loading: 'Lagi nambahin transaksimu...',
+              success: 'Sukses menambahkan transaksi!',
+              error: 'Error menambahkan transaksi!',
+            }
+          );
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  };
+
+  const handleQuickAddExpense = (
+    token: string,
+    transactionName: string,
+    amount: string
+  ) => {
+    (async () => {
+      try {
+        if (accountType === 'cash') {
+          toast.promise(
+            addCashTransaction(
+              token,
+              accountId,
+              'cash',
+              'EXPENSE',
+              transactionName,
+              amount,
+              [{ name: 'UNDEFINED', amount }],
+              { id: '63d8b775d3e050940af0caf1', name: 'UNDEFINED' },
+              'cash'
+            ),
+            {
+              loading: 'Lagi nambahin transaksimu...',
+              success: 'Sukses menambahkan transaksi!',
+              error: 'Error menambahkan transaksi!',
+            }
+          );
+        } else if (accountType === 'emoney') {
+          toast.promise(
+            addEMoneyTransaction(
+              token,
+              accountId,
+              'emoney',
+              'EXPENSE',
+              transactionName,
+              amount,
+              [{ name: 'UNDEFINED', amount }],
+              { id: '63d8b775d3e050940af0caf1', name: 'UNDEFINED' },
+              institutionId
+            ),
+            {
+              loading: 'Lagi nambahin transaksimu...',
+              success: 'Sukses menambahkan transaksi!',
+              error: 'Error menambahkan transaksi!',
+            }
+          );
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  };
+
   if (accountType === 'cash') {
     return (
       <>
@@ -126,6 +235,26 @@ export const FAB: React.FC<IFAB> = ({
               onClick: () => setModalAddTransactionOpen(true),
               color: null,
               textColor: null,
+            },
+            {
+              icon: faBolt,
+              name: 'Quick Add Expense',
+              onClick: () => {
+                setQuickAddType('EXPENSE');
+                setModalQuickAdd(true);
+              },
+              color: 'bg-blue-800',
+              textColor: 'bg-blue-200',
+            },
+            {
+              icon: faBolt,
+              name: 'Quick Add Income',
+              onClick: () => {
+                setQuickAddType('INCOME');
+                setModalQuickAdd(true);
+              },
+              color: 'bg-green-800',
+              textColor: 'bg-green-200',
             },
           ]}
         />
@@ -142,6 +271,18 @@ export const FAB: React.FC<IFAB> = ({
           onSubmit={handleSubmitTransaction}
           institutionId={'cash'}
         />
+
+        <ModalQuickAddTransaction
+          token={token}
+          isOpen={modalQuickAdd}
+          setIsOpen={setModalQuickAdd}
+          onSubmit={
+            quickAddType === 'INCOME'
+              ? handleQuickAddIncome
+              : handleQuickAddExpense
+          }
+          type={quickAddType}
+        />
       </>
     );
   } else if (accountType === 'emoney') {
@@ -155,6 +296,26 @@ export const FAB: React.FC<IFAB> = ({
               onClick: () => setModalAddTransactionOpen(true),
               color: null,
               textColor: null,
+            },
+            {
+              icon: faBolt,
+              name: 'Quick Add Expense',
+              onClick: () => {
+                setQuickAddType('EXPENSE');
+                setModalQuickAdd(true);
+              },
+              color: 'bg-blue-800',
+              textColor: 'bg-blue-200',
+            },
+            {
+              icon: faBolt,
+              name: 'Quick Add Income',
+              onClick: () => {
+                setQuickAddType('INCOME');
+                setModalQuickAdd(true);
+              },
+              color: 'bg-green-800',
+              textColor: 'bg-green-200',
             },
           ]}
         />
@@ -170,6 +331,18 @@ export const FAB: React.FC<IFAB> = ({
           accountType={'emoney'}
           onSubmit={handleSubmitTransaction}
           institutionId={institutionId}
+        />
+
+        <ModalQuickAddTransaction
+          token={token}
+          isOpen={modalQuickAdd}
+          setIsOpen={setModalQuickAdd}
+          onSubmit={
+            quickAddType === 'INCOME'
+              ? handleQuickAddIncome
+              : handleQuickAddExpense
+          }
+          type={quickAddType}
         />
       </>
     );
