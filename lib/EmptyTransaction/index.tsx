@@ -34,7 +34,7 @@ const EmptyTransaction = ({
             onClick={() => setIsOpen(true)}
           >
             <FontAwesomeIcon icon={faPlusCircle} size="xl" />
-            Tambah Akun Finansial
+            Tambah Transaksi
           </button>
 
           {isOpen && <p>Pler</p>}
