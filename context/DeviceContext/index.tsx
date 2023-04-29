@@ -32,10 +32,10 @@ export const DeviceContextProvider: React.FC = ({ children }) => {
   const styles = hasChecked && !isDesktop ? {} : {};
   // const styles = hasChecked && !isDesktop ? { display: 'none' } : {};
 
-  if (!hasChecked) {
-    // Return null during SSR to avoid rendering the mobile button briefly
-    return null;
-  }
+  // if (!hasChecked) {
+  //   // Return null during SSR to avoid rendering the mobile button briefly
+  //   return null;
+  // }
 
   return (
     <DeviceContext.Provider value={{ isDesktop }}>
