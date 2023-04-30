@@ -38,9 +38,7 @@ export async function editCashTransaction(
             transactionId,
             transactionName: data.transactionName,
             merchantId: data.merchantId,
-            category: data.category!.forEach((object: any) => {
-              delete object['__typename'];
-            }),
+            category: data.category,
             notes: data.notes,
           },
           context: {
