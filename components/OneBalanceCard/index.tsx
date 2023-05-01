@@ -22,9 +22,9 @@ const OneBalanceCard: React.FC<IOneBalanceCard> = ({
       ref={isSelected ? selectedAccountRef : null}
       className={` ${
         isSelected
-          ? 'dark:bg-yellow-400 bg-yellow-900'
-          : 'dark:bg-onPrimary bg-onPrimaryDark'
-      } dark:text-onPrimaryContainer text-onPrimary rounded-lg shadow-2xl w-fit h-fit hover:cursor-pointer`}
+          ? 'dark:bg-onPrimary bg-onPrimary border-4 border-primary dark:border-primaryDark shadow-2xl'
+          : 'dark:bg-onPrimary bg-onPrimary shadow-md'
+      } dark:text-onPrimaryContainer text-onPrimaryContainer rounded-lg w-fit h-fit hover:cursor-pointer`}
       onClick={onClick}
       whileTap={{ scale: !isSelected ? 0.95 : 1 }}
       whileHover={{ scale: !isSelected ? 1.05 : 1 }}

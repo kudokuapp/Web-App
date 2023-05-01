@@ -3,6 +3,7 @@ import OneTransaction from '$components/OneTransaction';
 import { DeviceContext } from '$context/DeviceContext';
 import { useSubscription } from '@apollo/client';
 import { motion } from 'framer-motion';
+import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
 import { addMerchant, editCashTransaction } from '../graphql/mutation';
 import { getAllMerchant } from '../graphql/query';
@@ -28,6 +29,7 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
   token,
 }) => {
   const [cashTransaction, setCashTransaction] = useState(cashTransactions);
+  const [totalOutcome, setTotalOutcome] = useState(0);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<IGetAllCashTransaction | null>(null);
@@ -35,6 +37,43 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
 
   const { data } = useSubscription(cashTransactionLive, {
     variables: { cashAccountId },
+  });
+
+  const groups = cashTransaction.reduce((groups: any, transaction: any) => {
+    const date = moment(transaction.dateTimestamp).format('DD MMM YY');
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(transaction);
+    return groups;
+  }, {});
+
+  const groupsByMonth = cashTransaction.reduce(
+    (groups: any, transaction: any) => {
+      const date = moment(transaction.dateTimestamp).format('MMMM YYYY');
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(transaction);
+      return groups;
+    },
+    {}
+  );
+
+  // Edit: to add it in the array format instead
+  const groupArrays = Object.keys(groups).map((date) => {
+    return {
+      date,
+      transactions: groups[date],
+    };
+  });
+
+  // Edit: to add it in the array format instead
+  const groupArraysByMonth = Object.keys(groupsByMonth).map((date) => {
+    return {
+      date,
+      transactions: groupsByMonth[date],
+    };
   });
 
   useEffect(() => {
@@ -77,18 +116,60 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
         closed: { paddingRight: 0 },
       }}
     >
-      {cashTransaction.map((value, index) => {
+      {groupArraysByMonth.map((groupByMonth: any) => {
         return (
-          <OneTransaction
-            key={index}
-            transaction={value}
-            onClick={() => {
-              setSelectedTransaction(null);
-              setSelectedTransaction(value);
-              setModalIsOpen(true);
-            }}
-            selectedTransaction={selectedTransaction}
-          />
+          <>
+            <div className="flex flex-row justify-between items-center">
+              <div className="flex flex-col items-start">
+                <h3 className="text-2xl">{groupByMonth.date}</h3>
+                <h3 className="text-sm">
+                  {groupByMonth.transactions.length} Transaksi
+                </h3>
+              </div>
+              <div className="flex flex-col items-end">
+                <h3 className="text-sm">
+                  {new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0,
+                  }).format(
+                    Number(
+                      groupByMonth.transactions
+                        .filter((item: any) => item.direction === 'OUT')
+                        .reduce(
+                          (acc: any, o: any) => acc + parseInt(o.amount),
+                          0
+                        )
+                    )
+                  )}
+                </h3>
+                <h3 className="text-sm">Total pengeluaran</h3>
+              </div>
+            </div>
+            {groupArrays.map((item: any) => {
+              return (
+                <>
+                  <h3 className="dark:text-surfaceVariant text-onPrimaryContainer p-2 bg-onPrimary rounded">
+                    {item.date}
+                  </h3>
+                  {item.transactions.map((value: any, index: any) => {
+                    return (
+                      <OneTransaction
+                        key={index}
+                        transaction={value}
+                        onClick={() => {
+                          setSelectedTransaction(null);
+                          setSelectedTransaction(value);
+                          setModalIsOpen(true);
+                        }}
+                        selectedTransaction={selectedTransaction}
+                      />
+                    );
+                  })}
+                </>
+              );
+            })}
+          </>
         );
       })}
 

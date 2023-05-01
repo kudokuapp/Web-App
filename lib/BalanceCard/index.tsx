@@ -63,7 +63,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
 
   return (
     <>
-      <div className="flex gap-0 w-full h-fit overflow-x-auto items-start justify-start p-4 sm:pb-20 pb-10">
+      <div className="flex gap-2 w-full h-fit overflow-x-auto items-start justify-start p-4 sm:pb-10 pb-10 balance-card mb-10">
         {accounts.map((value, index) => {
           const {
             accountNumber,

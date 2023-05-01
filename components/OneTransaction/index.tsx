@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import moment from 'moment';
 import RenderCategory from '../RenderCategory';
 import RenderMerchantImage from '../RenderMerchantImage';
 import type { IOneTransaction } from './index.d';
@@ -60,9 +59,6 @@ const OneTransaction: React.FC<IOneTransaction> = ({
           <div className="flex flex-col gap-0 items-start justify-center">
             <p className="sm:max-w-full truncate max-w-[90px]">
               {transaction.transactionName}
-            </p>
-            <p className="text-xs">
-              {moment(transaction.dateTimestamp).format('DD MMM YY')}
             </p>
           </div>
         </div>

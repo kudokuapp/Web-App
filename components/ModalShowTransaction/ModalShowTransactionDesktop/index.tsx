@@ -133,7 +133,7 @@ const ModalShowTransactionDesktop: React.FC<IModalShowTransaction> = ({
 
   return (
     <motion.div
-      className="h-[100vh] max-h-[100vh] overflow-y-auto w-fit bg-background/50 dark:bg-onBackground/50 fixed right-0 top-0 flex flex-col gap-10 border-l-4 border-gray-500 pb-10"
+      className="h-[100vh] max-h-[100vh] overflow-y-auto w-fit bg-onPrimary dark:bg-onBackground/50 fixed right-0 top-0 flex flex-col gap-10 border-l-4 border-gray-500 pb-10"
       animate={isOpen ? 'open' : 'closed'}
       variants={{
         open: { width: 500 },

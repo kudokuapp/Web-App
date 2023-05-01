@@ -5,6 +5,22 @@
   );
 }
 
+.balance-card {
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #e4e4e4;
+    border-radius: 100px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #74777f;
+    border-radius: 100px;
+  }
+}
+
 @supports (-webkit-touch-callout: none) {
   .h_ios {
     /* for ios safari 15, safe-area-inset-bottom is 0, so a special fix apply here */
