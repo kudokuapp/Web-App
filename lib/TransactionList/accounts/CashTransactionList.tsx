@@ -119,7 +119,7 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
       {groupArraysByMonth.map((groupByMonth: any) => {
         return (
           <>
-            <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-row justify-between items-center dark:text-surfaceVariant text-onPrimaryContainer">
               <div className="flex flex-col items-start">
                 <h3 className="text-2xl">{groupByMonth.date}</h3>
                 <h3 className="text-sm">
@@ -149,7 +149,7 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
             {groupArrays.map((item: any) => {
               return (
                 <>
-                  <h3 className="dark:text-surfaceVariant text-onPrimaryContainer p-2 bg-onPrimary rounded">
+                  <h3 className="text-onPrimaryContainer p-2 bg-onPrimary rounded">
                     {item.date}
                   </h3>
                   {item.transactions.map((value: any, index: any) => {
