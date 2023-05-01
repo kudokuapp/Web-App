@@ -35,23 +35,25 @@ const OneBalanceCard: React.FC<IOneBalanceCard> = ({
       <Link href={link} passHref>
         <div className="flex flex-col gap-4 items-start justify-start p-4 min-w-[300px]">
           <div className="flex justify-between w-full">
-            <div className="w-[20px] h-[20px]">
-              {account.institutionId === 'Cash' && (
-                <FontAwesomeIcon icon={faMoneyBill1Wave} size="sm" />
-              )}
-              {account.institutionId !== 'Cash' &&
-                renderImageFromInstitutionId({
-                  institutionId: account.institutionId as string,
-                  height: 20,
-                })}
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="">{account.accountNumber}</p>
+            <div>
               {account.expired && (
-                <p className="dark:bg-error bg-errorDark dark:text-onError text-onErrorDark px-2 py-1 rounded-md">
+                <p className="dark:bg-error bg-errorDark dark:text-onError text-onErrorDark px-2 py-1 rounded-md text-xs">
                   Sudah expired
                 </p>
               )}
+            </div>
+            <div className="flex flex-row items-center gap-2">
+              <div className="w-[20px] h-[20px]">
+                {account.institutionId === 'Cash' && (
+                  <FontAwesomeIcon icon={faMoneyBill1Wave} size="sm" />
+                )}
+                {account.institutionId !== 'Cash' &&
+                  renderImageFromInstitutionId({
+                    institutionId: account.institutionId as string,
+                    height: 20,
+                  })}
+              </div>
+              <p className="text-sm">{account.accountNumber}</p>
             </div>
           </div>
           <div className="flex flex-col gap-2 items-start justify-start">
