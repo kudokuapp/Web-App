@@ -69,10 +69,8 @@ const PayLaterBalance: React.FC<IPayLaterBalance> = ({
           onClick: () => {},
         },
         deleteAccount: {
-          show: true,
-          onClick: () => {
-            console.log('delete');
-          },
+          show: false,
+          onClick: () => {},
         },
       }}
     />
