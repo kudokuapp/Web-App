@@ -100,6 +100,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
                   type,
                   expired,
                 }}
+                token={token}
               />
             );
           } else if (type === 'emoney') {
@@ -122,6 +123,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
                   type,
                   expired,
                 }}
+                token={token}
               />
             );
           } else if (type === 'debit') {
@@ -144,6 +146,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
                   type,
                   expired,
                 }}
+                token={token}
               />
             );
           } else if (type === 'ewallet') {
@@ -166,6 +169,7 @@ export default function BalanceCard({ token, accounts }: IClientProps) {
                   type,
                   expired,
                 }}
+                token={token}
               />
             );
           } else if (type === 'paylater') {

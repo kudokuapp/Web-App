@@ -47,8 +47,9 @@ const OptionsButton: React.FC<IOptionsButton> = ({
                       active ? 'bg-violet-500 text-white' : 'text-gray-900'
                     } group flex w-full items-center rounded-md px-4 py-2 text-sm gap-4`}
                     onClick={(e) => {
-                      e.stopPropagation();
                       editAccount.onClick(e);
+                      e.preventDefault();
+                      e.stopPropagation();
                     }}
                   >
                     <FontAwesomeIcon icon={faPencil} />
@@ -65,8 +66,9 @@ const OptionsButton: React.FC<IOptionsButton> = ({
                       active ? 'bg-violet-500 text-white' : 'text-gray-900'
                     } group flex w-full items-center rounded-md px-4 py-2 text-sm gap-4`}
                     onClick={(e) => {
-                      e.stopPropagation();
                       deleteAccount.onClick(e);
+                      e.preventDefault();
+                      e.stopPropagation();
                     }}
                   >
                     <FontAwesomeIcon icon={faTrash} />

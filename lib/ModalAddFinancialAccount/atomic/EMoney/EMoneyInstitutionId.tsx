@@ -8,7 +8,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import { Dispatch, Fragment, SetStateAction, useState } from 'react';
 
-const institutionId = [
+export const institutionIdList = [
   { name: 'Flazz BCA', picture: Flazz, mongoDbId: '6408f95f1ff428549fc7cbe4' },
   {
     name: 'Mandiri E-Money',
@@ -28,11 +28,17 @@ const institutionId = [
 ];
 
 export function EMoneyInstitutionId({
+  institutionIdIndex,
   setInstitutionId,
 }: {
+  institutionIdIndex?: number;
   setInstitutionId: Dispatch<SetStateAction<string>>;
 }) {
-  const [selected, setSelected] = useState(institutionId[0]);
+  const [selected, setSelected] = useState(
+    institutionIdIndex
+      ? institutionIdList[institutionIdIndex]
+      : institutionIdList[0]
+  );
 
   return (
     <div className="z-[999] w-full h-fit">
@@ -67,7 +73,7 @@ export function EMoneyInstitutionId({
             leaveTo="opacity-0"
           >
             <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              {institutionId.map((institution, index) => (
+              {institutionIdList.map((institution, index) => (
                 <Listbox.Option
                   key={index}
                   className={({ active }) =>
