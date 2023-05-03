@@ -23,7 +23,7 @@ const ManualComponent: ComponentStory<typeof EmptyTransaction> = () => {
 
   return (
     <>
-      <EmptyTransaction type={'cash'} />
+      <EmptyTransaction type={'cash'} token={'token'} id={'id'} />
     </>
   );
 };
@@ -35,7 +35,7 @@ const OtomatisComponent: ComponentStory<typeof EmptyTransaction> = () => {
 
   return (
     <>
-      <EmptyTransaction type={'debit'} />
+      <EmptyTransaction type={'debit'} token={'token'} id={'id'} />
     </>
   );
 };
