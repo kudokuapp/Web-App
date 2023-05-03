@@ -39,15 +39,6 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
     variables: { cashAccountId },
   });
 
-  const groups = cashTransaction.reduce((groups: any, transaction: any) => {
-    const date = moment(transaction.dateTimestamp).format('DD MMM YY');
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(transaction);
-    return groups;
-  }, {});
-
   const groupsByMonth = cashTransaction.reduce(
     (groups: any, transaction: any) => {
       const date = moment(transaction.dateTimestamp).format('MMMM YYYY');
@@ -59,14 +50,6 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
     },
     {}
   );
-
-  // Edit: to add it in the array format instead
-  const groupArrays = Object.keys(groups).map((date) => {
-    return {
-      date,
-      transactions: groups[date],
-    };
-  });
 
   // Edit: to add it in the array format instead
   const groupArraysByMonth = Object.keys(groupsByMonth).map((date) => {
@@ -119,7 +102,7 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
       {groupArraysByMonth.map((groupByMonth: any) => {
         return (
           <>
-            <div className="flex flex-row justify-between items-center dark:text-surfaceVariant text-onPrimaryContainer">
+            <div className="flex flex-row justify-between items-center text-onPrimaryContainer p-2 bg-onPrimary rounded">
               <div className="flex flex-col items-start">
                 <h3 className="text-2xl">{groupByMonth.date}</h3>
                 <h3 className="text-sm">
@@ -146,27 +129,18 @@ const CashTransactionList: React.FC<ICashTransactionList> = ({
                 <h3 className="text-sm">Total pengeluaran</h3>
               </div>
             </div>
-            {groupArrays.map((item: any) => {
+            {groupByMonth.transactions.map((value: any, index: any) => {
               return (
-                <>
-                  <h3 className="text-onPrimaryContainer p-2 bg-onPrimary rounded">
-                    {item.date}
-                  </h3>
-                  {item.transactions.map((value: any, index: any) => {
-                    return (
-                      <OneTransaction
-                        key={index}
-                        transaction={value}
-                        onClick={() => {
-                          setSelectedTransaction(null);
-                          setSelectedTransaction(value);
-                          setModalIsOpen(true);
-                        }}
-                        selectedTransaction={selectedTransaction}
-                      />
-                    );
-                  })}
-                </>
+                <OneTransaction
+                  key={index}
+                  transaction={value}
+                  onClick={() => {
+                    setSelectedTransaction(null);
+                    setSelectedTransaction(value);
+                    setModalIsOpen(true);
+                  }}
+                  selectedTransaction={selectedTransaction}
+                />
               );
             })}
           </>

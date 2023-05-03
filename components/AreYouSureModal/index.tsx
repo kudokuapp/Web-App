@@ -3,7 +3,7 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import { IAreYouSureModal } from './index.d';
 
 const AreYouSureModal: React.FC<IAreYouSureModal> = ({
@@ -11,6 +11,17 @@ const AreYouSureModal: React.FC<IAreYouSureModal> = ({
   setIsOpen,
   handleConfirm,
 }) => {
+  useEffect(() => {
+    // set overflow to auto when modal is closed
+    if (!isOpen) {
+      document.documentElement.removeAttribute('style');
+    }
+
+    // cleanup effect to reset overflow to default when component is unmounted
+    return () => {
+      document.documentElement.removeAttribute('style');
+    };
+  }, [isOpen]);
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={() => {}}>

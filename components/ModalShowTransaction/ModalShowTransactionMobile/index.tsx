@@ -187,7 +187,7 @@ const ModalShowTransactionMobile: React.FC<IModalShowTransaction> = ({
                 transaction={transaction}
               />
             </div>
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col justify-between items-start">
               <RenderDate
                 isEdit={isEdit}
                 AnchorEl={{

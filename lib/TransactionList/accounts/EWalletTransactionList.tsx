@@ -112,7 +112,7 @@ const EWalletTransactionList: React.FC<IEWalletTransactionList> = ({
       {groupArraysByMonth.map((groupByMonth: any) => {
         return (
           <>
-            <div className="flex flex-row justify-between items-center dark:text-surfaceVariant text-onPrimaryContainer">
+            <div className="flex flex-row justify-between items-center text-onPrimaryContainer p-2 bg-onPrimary rounded">
               <div className="flex flex-col items-start">
                 <h3 className="text-2xl">{groupByMonth.date}</h3>
                 <h3 className="text-sm">
@@ -139,27 +139,18 @@ const EWalletTransactionList: React.FC<IEWalletTransactionList> = ({
                 <h3 className="text-sm">Total pengeluaran</h3>
               </div>
             </div>
-            {groupArrays.map((item: any) => {
+            {groupByMonth.transactions.map((value: any, index: any) => {
               return (
-                <>
-                  <h3 className="text-onPrimaryContainer p-2 bg-onPrimary rounded">
-                    {item.date}
-                  </h3>
-                  {item.transactions.map((value: any, index: any) => {
-                    return (
-                      <OneTransaction
-                        key={index}
-                        transaction={value}
-                        onClick={() => {
-                          setSelectedTransaction(null);
-                          setSelectedTransaction(value);
-                          setModalIsOpen(true);
-                        }}
-                        selectedTransaction={selectedTransaction}
-                      />
-                    );
-                  })}
-                </>
+                <OneTransaction
+                  key={index}
+                  transaction={value}
+                  onClick={() => {
+                    setSelectedTransaction(null);
+                    setSelectedTransaction(value);
+                    setModalIsOpen(true);
+                  }}
+                  selectedTransaction={selectedTransaction}
+                />
               );
             })}
           </>

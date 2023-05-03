@@ -51,7 +51,11 @@ export const RenderTags: React.FC<IRenderTags> = ({ transaction }) => {
         </div>
       );
     } else {
-      return <p>Belum ada tags</p>;
+      return (
+        <p className="dark:text-onPrimary text-onPrimaryContainer">
+          Belum ada tags
+        </p>
+      );
     }
   }
 };

@@ -1,18 +1,68 @@
 'use client';
 
+import ModalAddTransaction from '$components/ModalAddTransaction';
+import { IMerchant } from '$components/SearchMerchant/index.d';
+import { addCashTransaction, addMerchant } from '$lib/FAB/graphql/mutation';
+import { getAllMerchant } from '$lib/FAB/graphql/query';
+import { merchantSubscription } from '$lib/FAB/graphql/subscription';
 import TheImage from '$public/decor/web-exploring.svg';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
+import { NameAmount } from 'global';
 import Image from 'next/image';
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 const EmptyTransaction = ({
   type,
+  token,
+  id,
 }: {
   type: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney';
+  token: any;
+  id: any;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleSubmitTransaction = (
+    _token: string,
+    _accountId: string,
+    accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney',
+    _transactionType: string,
+    _transactionName: string,
+    _transactionAmount: string,
+    _category: NameAmount[],
+    _merchant: IMerchant,
+    _institutionId: string
+  ) => {
+    (async () => {
+      try {
+        if (accountType === 'cash') {
+          toast.promise(
+            addCashTransaction(
+              _token,
+              _accountId,
+              accountType,
+              _transactionType,
+              _transactionName,
+              _transactionAmount,
+              _category,
+              _merchant,
+              'cash'
+            ),
+            {
+              loading: 'Lagi nambahin transaksimu...',
+              success: 'Sukses menambahkan transaksi!',
+              error: 'Error menambahkan transaksi!',
+            }
+          );
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  };
 
   if (type === 'cash' || type === 'emoney') {
     return (
@@ -37,7 +87,18 @@ const EmptyTransaction = ({
             Tambah Transaksi
           </button>
 
-          {isOpen && <p>Pler</p>}
+          <ModalAddTransaction
+            token={token}
+            accountId={id}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            onAddMerchant={addMerchant}
+            merchantSubscription={merchantSubscription}
+            getAllMerchant={getAllMerchant}
+            accountType={'cash'}
+            onSubmit={handleSubmitTransaction}
+            institutionId={'cash'}
+          />
         </section>
       </motion.section>
     );
@@ -66,7 +127,18 @@ const EmptyTransaction = ({
             Refresh Transaction
           </button>
 
-          {isOpen && <p>Pler</p>}
+          <ModalAddTransaction
+            token={token}
+            accountId={id}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            onAddMerchant={addMerchant}
+            merchantSubscription={merchantSubscription}
+            getAllMerchant={getAllMerchant}
+            accountType={'cash'}
+            onSubmit={handleSubmitTransaction}
+            institutionId={'cash'}
+          />
         </section>
       </motion.section>
     );

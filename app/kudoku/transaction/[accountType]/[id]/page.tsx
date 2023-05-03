@@ -86,7 +86,11 @@ export default async function Page({
       />
 
       {transaction.length === 0 && (
-        <EmptyTransaction type={params.accountType} />
+        <EmptyTransaction
+          type={params.accountType}
+          token={token}
+          id={params.id}
+        />
       )}
     </>
   );
