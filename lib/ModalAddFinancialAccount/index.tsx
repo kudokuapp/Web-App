@@ -16,23 +16,23 @@ import Image from 'next/image';
 import { Fragment, useState } from 'react';
 import toast from 'react-hot-toast';
 import BCAMenu from './atomic/BCA/BCAMenu';
-import { connectBcaAll } from './atomic/BCA/connect';
 import { KlikBCA } from './atomic/BCA/KlikBCA';
 import { MyBCAInternet } from './atomic/BCA/MyBCAInternet';
 import { MyBCAMobile } from './atomic/BCA/MyBCAMobile';
+import { connectBcaAll } from './atomic/BCA/connect';
 import { Cash } from './atomic/Cash';
 import { addCashAccount } from './atomic/Cash/mutation';
 import { EMoney } from './atomic/EMoney';
 import { addEMoneyAccount } from './atomic/EMoney/mutation';
 import { FailedProgress } from './atomic/FailedProgress';
-import { connectGopayAll } from './atomic/Gopay/connect';
 import { GopayOtp } from './atomic/Gopay/GopayOtp';
 import { GopayPhoneNum } from './atomic/Gopay/GopayPhoneNum';
+import { connectGopayAll } from './atomic/Gopay/connect';
 import { ISendOtpGopay, sendOtpGopay } from './atomic/Gopay/post';
 import { Loading } from './atomic/Loading';
+import { Success } from './atomic/Success';
 import { Footer } from './atomic/other/Footer';
 import { Navbar } from './atomic/other/Navbar';
-import { Success } from './atomic/Success';
 
 const ModalAddFinancialAccount = ({
   isOpen = true,
@@ -471,32 +471,55 @@ const ModalAddFinancialAccount = ({
 
       case 50:
         return (
-          <EMoney
-            onClick={() => {
-              setProgress(51);
-              addEMoneyAccount({
-                institutionId: eMoneyInstitutionId,
-                cardNumber: eMoneyCardNumber,
-                initialBalance: eMoneyInitialBalance,
-                token,
-              })
-                .then(() => {
-                  setTimeout(() => {
-                    setProgress(888);
-                  }, 2500); // Wait for 2.5 second before setting progress to 888
+          <>
+            <Dialog.Title
+              as="div"
+              className="w-full flex justify-between border-b-[1px] -mt-10 mb-2 border-gray-600 dark:border-gray-400 pb-2"
+            >
+              <GoBackButon
+                onClick={() => {
+                  setCashAccountname('');
+                  setCashInitialBalance('');
+                  setProgress(1);
+                }}
+              />
+              <button
+                onClick={() => {
+                  resetAll();
+                  closeModal();
+                }}
+                className="rounded-full dark:hover:bg-gray-500 hover:bg-gray-200 w-[30px] h-[30px] flex items-center justify-center text-2xl text-primary dark:text-primaryDark"
+              >
+                <FontAwesomeIcon icon={faClose} />
+              </button>
+            </Dialog.Title>
+            <EMoney
+              onClick={() => {
+                setProgress(51);
+                addEMoneyAccount({
+                  institutionId: eMoneyInstitutionId,
+                  cardNumber: eMoneyCardNumber,
+                  initialBalance: eMoneyInitialBalance,
+                  token,
                 })
-                .catch((e) => {
-                  console.error(e);
-                  setProgress(999);
-                });
-            }}
-            cardNumber={eMoneyCardNumber}
-            setCardNumber={setEMoneyCardNumber}
-            balanceForDb={eMoneyInitialBalance}
-            setBalanceForDb={setEMoneyInitialBalance}
-            institutionId={eMoneyInstitutionId}
-            setInstitutionId={setEMoneyInstitutionId}
-          />
+                  .then(() => {
+                    setTimeout(() => {
+                      setProgress(888);
+                    }, 2500); // Wait for 2.5 second before setting progress to 888
+                  })
+                  .catch((e) => {
+                    console.error(e);
+                    setProgress(999);
+                  });
+              }}
+              cardNumber={eMoneyCardNumber}
+              setCardNumber={setEMoneyCardNumber}
+              balanceForDb={eMoneyInitialBalance}
+              setBalanceForDb={setEMoneyInitialBalance}
+              institutionId={eMoneyInstitutionId}
+              setInstitutionId={setEMoneyInstitutionId}
+            />
+          </>
         );
 
       case 51:

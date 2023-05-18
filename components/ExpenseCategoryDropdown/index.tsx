@@ -55,14 +55,14 @@ const ExpenseCategoryDropdown: React.FC<IExpenseCategoryDropdown> = ({
   };
 
   return (
-    <div className="relative">
+    <div className="">
       <button onClick={() => setIsOpen(!isOpen)} className="w-fit h-fit">
         <RenderCategory category={selectedOption} select={true} />
       </button>
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="absolute top-full w-96 z-10 bg-white border rounded-md shadow-md overflow-y-auto max-h-60"
+            className="absolute top-50 w-96 z-50 bg-white border rounded-md shadow-md overflow-y-auto max-h-60"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}

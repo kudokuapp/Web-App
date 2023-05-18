@@ -1,4 +1,4 @@
-import DeleteModal from '$components/DeleteModal';
+import ModalDisconnect from '$components/ModalDisconnect';
 import OneBalanceCard from '$components/OneBalanceCard';
 import type { IOneBalanceCard } from '$components/OneBalanceCard/index.d';
 import { gql, useSubscription } from '@apollo/client';
@@ -83,9 +83,11 @@ const EWalletBalance: React.FC<IEWalletBalance> = ({
           },
         }}
       />
-      <DeleteModal
+      <ModalDisconnect
         isOpen={showDeleteModal}
         setIsOpen={setShowDeleteModal}
+        accountName={account.accountNumber}
+        type="ewallet"
         handleConfirm={() => {
           if (account.institutionId === '63d94170d3e050940af0caf2') {
             toast

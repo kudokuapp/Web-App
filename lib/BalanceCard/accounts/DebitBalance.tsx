@@ -1,4 +1,4 @@
-import DeleteModal from '$components/DeleteModal';
+import ModalDisconnect from '$components/ModalDisconnect';
 import OneBalanceCard from '$components/OneBalanceCard';
 import type { IOneBalanceCard } from '$components/OneBalanceCard/index.d';
 import { gql, useSubscription } from '@apollo/client';
@@ -84,9 +84,11 @@ const DebitBalance: React.FC<IDebitBalance> = ({
         }}
       />
 
-      <DeleteModal
+      <ModalDisconnect
         isOpen={showModalDelete}
         setIsOpen={setShowModalDelete}
+        accountName={account.accountNumber}
+        type="debit"
         handleConfirm={() => {
           toast
             .promise(deleteDebitAccount(token, debitAccountId), {

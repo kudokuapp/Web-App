@@ -1,4 +1,4 @@
-import DeleteModal from '$components/DeleteModal';
+import ModalDisconnect from '$components/ModalDisconnect';
 import ModalEditAccount from '$components/ModalEditAccount';
 import OneBalanceCard from '$components/OneBalanceCard';
 import type { IOneBalanceCard } from '$components/OneBalanceCard/index.d';
@@ -124,9 +124,11 @@ const EMoneyBalance: React.FC<IEMoneyBalance> = ({
         }}
       />
 
-      <DeleteModal
+      <ModalDisconnect
         isOpen={showModalDelete}
         setIsOpen={setShowModalDelete}
+        accountName={account.accountNumber}
+        type="emoney"
         handleConfirm={() => {
           toast
             .promise(deleteEMoneyAccount(token, eMoneyAccountId), {
