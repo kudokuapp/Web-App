@@ -20,7 +20,7 @@ export default async function Layout({
   const kudos = await getKudosInfo(user_id);
 
   return (
-    <Client accounts={[]} kudosNo={kudos.kudosNo}>
+    <Client accounts={[]} kudosNo={kudos.kudosNo} userName={kudos.username}>
       {children}
     </Client>
   );

@@ -11,10 +11,12 @@ export default function Client({
   children,
   accounts,
   kudosNo,
+  userName,
 }: {
   children: React.ReactNode;
   accounts: IMyAccount[];
   kudosNo: number;
+  userName: string;
 }) {
   const { isSidebarOpen } = useContext(SidebarContext);
   const { isDesktop } = useContext(DeviceContext);
@@ -34,8 +36,8 @@ export default function Client({
   } else {
     return (
       <>
-        <Sidebar kudosNo={kudosNo} accounts={accounts} />
-        <main className="pb-[73px]">{children}</main>
+        <Sidebar kudosNo={kudosNo} accounts={accounts} userName={userName} />
+        <main className="pb-[73px] mt-8">{children}</main>
       </>
     );
   }

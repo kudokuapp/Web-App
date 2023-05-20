@@ -20,7 +20,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(
     defaultValue.authenticated
   );
-  const login = () => setAuthenticated(true);
+  const login = () => setAuthenticated(false);
   const logOut = () => setAuthenticated(false);
 
   return (

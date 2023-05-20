@@ -202,6 +202,8 @@ const SearchMerchant: React.FC<ISearchMerchant> = ({
       <ModalAddMerchant
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        setShowAddMerchant={setShowAddMerchant}
+        onSelectMerchant={onSelectMerchant}
         query={query}
         setQuery={setQuery}
         urlMerchant={urlMerchant}
