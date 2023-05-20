@@ -6,7 +6,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
-import Cookies from 'js-cookie';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -102,8 +101,10 @@ export default function Mobile({
               animate={{ opacity: 1 }}
               whileHover={{ scale: 1.1 }}
               onClick={() => {
-                Cookies.remove('token');
-                Cookies.remove('user_id');
+                document.cookie =
+                  'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC';
+                document.cookie =
+                  'user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC';
                 router.push('/login');
               }}
               className={`text-error w-full gap-2 flex items-center text-start text-sm`}
