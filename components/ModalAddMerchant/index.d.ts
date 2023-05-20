@@ -1,3 +1,4 @@
+import { IMerchant } from '$components/SearchMerchant';
 import { Dispatch, SetStateAction } from 'react';
 
 export interface IModalAddMerchant {

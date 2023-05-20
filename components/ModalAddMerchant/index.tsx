@@ -13,7 +13,6 @@ const ModalAddMerchant: React.FC<IModalAddMerchant> = ({
   onAddMerchant,
   setShowAddMerchant,
   onSelectMerchant,
-  handleSelectMerchant,
   token,
 }) => {
   return (

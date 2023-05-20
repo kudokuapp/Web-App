@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import ModalAddMerchant from './index';
 
 // import Docs from './index.mdx';
@@ -41,10 +41,16 @@ const Template: ComponentStory<typeof ModalAddMerchant> = () => {
         setQuery={setQuery}
         urlMerchant={urlMerchant}
         setUrlMerchant={setUrlMerchant}
-        onAddMerchant={(_, name, url) =>
+        onAddMerchant={async (_, name, url): Promise<void> =>
           alert(`adding merchant with name: ${name} and url: ${url}`)
         }
         token={token}
+        setShowAddMerchant={function (value: SetStateAction<boolean>): void {
+          throw new Error('Function not implemented.');
+        }}
+        onSelectMerchant={function (_selectedMerchant: any): void {
+          throw new Error('Function not implemented.');
+        }}
       />
     </>
   );

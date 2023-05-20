@@ -30,10 +30,6 @@ const Template: ComponentStory<typeof ModalAddTransaction> = () => {
 
   const institutionId = '129037812904578129084';
 
-  const onAddMerchant = (name: string, url: string) => {
-    alert(`Adding new merchant with ${name} and ${url}`);
-  };
-
   const merchantSubScription = gql`
     subscription NewMerchantLive {
       newMerchantLive {
@@ -73,7 +69,9 @@ const Template: ComponentStory<typeof ModalAddTransaction> = () => {
         institutionId={institutionId}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        onAddMerchant={onAddMerchant}
+        onAddMerchant={async (_, name, url): Promise<void> =>
+          alert(`adding merchant with name: ${name} and url: ${url}`)
+        }
         merchantSubscription={merchantSubScription}
         getAllMerchant={getAllMerchant}
         accountType={'cash'}

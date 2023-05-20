@@ -35,10 +35,6 @@ const Template: ComponentStory<typeof SearchMerchant> = () => {
     setSelectedMerchant(merchant);
   };
 
-  const onAddMerchant = (token: string, name: string, url: string) => {
-    alert(`Adding new merchant with ${name} and ${url}`);
-  };
-
   const merchantSubScription = gql`
     subscription NewMerchantLive {
       newMerchantLive {
@@ -54,7 +50,9 @@ const Template: ComponentStory<typeof SearchMerchant> = () => {
         token={token}
         firstMerchant={selectedMerchant ?? firstMerchant}
         onSelectMerchant={onSelectMerchant}
-        onAddMerchant={onAddMerchant}
+        onAddMerchant={async (_, name, url): Promise<void> =>
+          alert(`adding merchant with name: ${name} and url: ${url}`)
+        }
         merchantSubscription={merchantSubScription}
         getAllMerchant={getAllMerchant}
       />

@@ -24,7 +24,7 @@ export default function Client({
   if (isDesktop) {
     return (
       <>
-        <Sidebar kudosNo={kudosNo} accounts={accounts} />
+        <Sidebar kudosNo={kudosNo} accounts={accounts} userName={userName} />
         <motion.main
           animate={isSidebarOpen && isDesktop ? 'open' : 'closed'}
           variants={{ open: { marginLeft: 300 }, closed: { marginLeft: 100 } }}
