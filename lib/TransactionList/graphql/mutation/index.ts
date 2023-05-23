@@ -1,4 +1,5 @@
 export * from './addMerchant';
+export * from './deleteCashTransaction';
 export * from './editCashTransaction';
 export * from './editDebitTransaction';
 export * from './editEMoneyTransaction';

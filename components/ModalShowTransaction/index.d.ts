@@ -21,6 +21,7 @@ export interface IModalShowTransaction {
   token: string;
   accountType: 'cash' | 'debit' | 'ewallet' | 'paylater' | 'emoney';
   onSaveEditFunction: IRenderTitle['onSaveFunction'];
+  onDeleteFunction: IRenderTitle['onDeleteFunction'];
   onAddMerchant: ISearchMerchant['onAddMerchant'];
   merchantSubscription: ISearchMerchant['merchantSubscription'];
   getAllMerchant: ISearchMerchant['getAllMerchant'];

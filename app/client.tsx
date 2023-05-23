@@ -29,7 +29,7 @@ export function InstallDiv({
 
   Change to false on prod!!
   */
-  const [hasInstall, setHasInstall] = useState(false);
+  const [hasInstall, setHasInstall] = useState(true);
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -109,7 +109,7 @@ const RenderedComp = () => {
         hasTouchScreen = true; // deprecated, but good fallback
       } else {
         // Only as a last resort, fall back to user agent sniffing
-        const UA = navigator.userAgent;
+        const UA = window.navigator.userAgent;
         hasTouchScreen =
           /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
           /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);

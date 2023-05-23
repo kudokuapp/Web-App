@@ -18,6 +18,7 @@ const ModalShowTransactionMobile: React.FC<IModalShowTransaction> = ({
   isOpen,
   onCloseModal,
   onSaveEditFunction,
+  onDeleteFunction,
   token,
   onAddMerchant,
   merchantSubscription,
@@ -79,7 +80,7 @@ const ModalShowTransactionMobile: React.FC<IModalShowTransaction> = ({
     });
 
     setUserTransactionCategory(
-      transaction.category ? [...transaction.category] : []
+      transaction.category ? [...userTransactionCategory] : []
     );
 
     if (transaction.transactionName === transaction.merchant.name) {
@@ -156,6 +157,7 @@ const ModalShowTransactionMobile: React.FC<IModalShowTransaction> = ({
           <RenderTitle
             onCloseModal={onCloseModal}
             onSaveFunction={onSaveEditFunction}
+            onDeleteFunction={onDeleteFunction}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
             transaction={transaction}

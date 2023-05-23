@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { DeviceContext } from '../../context/DeviceContext';
-import type { IModalShowTransaction } from './index.d';
 import ModalShowTransactionDesktop from './ModalShowTransactionDesktop';
 import ModalShowTransactionMobile from './ModalShowTransactionMobile';
+import type { IModalShowTransaction } from './index.d';
 
 const ModalShowTransaction: React.FC<IModalShowTransaction> = ({
   transaction,
@@ -11,6 +11,7 @@ const ModalShowTransaction: React.FC<IModalShowTransaction> = ({
   token,
   accountType,
   onSaveEditFunction,
+  onDeleteFunction,
   onAddMerchant,
   merchantSubscription,
   getAllMerchant,
@@ -26,6 +27,7 @@ const ModalShowTransaction: React.FC<IModalShowTransaction> = ({
         token={token}
         accountType={accountType}
         onSaveEditFunction={onSaveEditFunction}
+        onDeleteFunction={onDeleteFunction}
         onAddMerchant={onAddMerchant}
         merchantSubscription={merchantSubscription}
         getAllMerchant={getAllMerchant}
@@ -40,6 +42,7 @@ const ModalShowTransaction: React.FC<IModalShowTransaction> = ({
         token={token}
         accountType={accountType}
         onSaveEditFunction={onSaveEditFunction}
+        onDeleteFunction={onDeleteFunction}
         onAddMerchant={onAddMerchant}
         merchantSubscription={merchantSubscription}
         getAllMerchant={getAllMerchant}

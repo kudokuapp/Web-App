@@ -79,10 +79,11 @@ export const RenderCategoryModal: React.FC<IRenderCategoryModal> = ({
 
                 {isEdit ? (
                   <div className="flex flex-col gap-1">
-                    <div className="w-full flex justify-end border-l-[1px] border-gray-500 p-2">
+                    <div className="w-fit flex justify-end border-l-[1px] border-gray-500 p-2">
                       <input
                         type="text"
                         value={value.amount}
+                        className="bg-transparent outline-none"
                         onKeyDown={(
                           event: React.KeyboardEvent<HTMLInputElement>
                         ) => {
@@ -117,10 +118,6 @@ export const RenderCategoryModal: React.FC<IRenderCategoryModal> = ({
                           const data = [...userTransactionCategory];
 
                           data[index].amount = e.target.value;
-                          data[index].amountForDb = e.target.value.replace(
-                            ',',
-                            '.'
-                          );
 
                           setUserTransactionCategory(data);
                         }}
@@ -164,8 +161,6 @@ export const RenderCategoryModal: React.FC<IRenderCategoryModal> = ({
                 const category = [...oldCategory, newCategory];
                 const uniqueCategory = _.uniqBy(category, 'name');
                 setUserTransactionCategory(uniqueCategory);
-
-                console.log(userTransactionCategory);
               }}
             >
               Add new category

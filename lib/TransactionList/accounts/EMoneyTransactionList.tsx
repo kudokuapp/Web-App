@@ -5,7 +5,11 @@ import { useSubscription } from '@apollo/client';
 import { motion } from 'framer-motion';
 import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
-import { addMerchant, editEMoneyTransaction } from '../graphql/mutation';
+import {
+  addMerchant,
+  deleteCashTransaction,
+  editEMoneyTransaction,
+} from '../graphql/mutation';
 import { getAllMerchant } from '../graphql/query';
 import {
   eMoneyTransactionLive,
@@ -175,6 +179,7 @@ const EMoneyTransactionList: React.FC<IEMoneyTransactionList> = ({
           token={token}
           accountType={'emoney'}
           onSaveEditFunction={editEMoneyTransaction}
+          onDeleteFunction={deleteCashTransaction}
           onAddMerchant={addMerchant}
           merchantSubscription={merchantSubscription}
           getAllMerchant={getAllMerchant}

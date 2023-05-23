@@ -5,7 +5,11 @@ import { useSubscription } from '@apollo/client';
 import { motion } from 'framer-motion';
 import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
-import { addMerchant, editPayLaterTransaction } from '../graphql/mutation';
+import {
+  addMerchant,
+  deleteCashTransaction,
+  editPayLaterTransaction,
+} from '../graphql/mutation';
 import { getAllMerchant } from '../graphql/query';
 import {
   merchantSubscription,
@@ -168,6 +172,7 @@ const PayLaterTransactionList: React.FC<IPayLaterTransactionList> = ({
           token={token}
           accountType={'paylater'}
           onSaveEditFunction={editPayLaterTransaction}
+          onDeleteFunction={deleteCashTransaction}
           onAddMerchant={addMerchant}
           merchantSubscription={merchantSubscription}
           getAllMerchant={getAllMerchant}

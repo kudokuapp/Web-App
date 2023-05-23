@@ -79,6 +79,7 @@ const Template: ComponentStory<typeof ModalShowTransactionDesktop> = () => {
         onCloseModal={() => setIsOpen(false)}
         accountType={'cash'}
         onSaveEditFunction={(_e) => new Promise(() => {})}
+        onDeleteFunction={(_e) => new Promise(() => {})}
       />
 
       <button onClick={() => setIsOpen(true)}>Show modal</button>

@@ -80,6 +80,7 @@ const Template: ComponentStory<typeof ModalShowTransactionMobile> = () => {
           onCloseModal={() => setIsOpen(false)}
           accountType={'cash'}
           onSaveEditFunction={(_e) => new Promise(() => {})}
+          onDeleteFunction={(_e) => new Promise(() => {})}
         />
       </div>
 

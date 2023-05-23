@@ -19,6 +19,7 @@ const ModalShowTransactionDesktop: React.FC<IModalShowTransaction> = ({
   isOpen,
   onCloseModal,
   onSaveEditFunction,
+  onDeleteFunction,
   token,
   onAddMerchant,
   merchantSubscription,
@@ -127,6 +128,16 @@ const ModalShowTransactionDesktop: React.FC<IModalShowTransaction> = ({
       return isNaN(amount) ? acc : acc + amount;
     }, 0);
 
+    setData({
+      transactionName: transaction.transactionName,
+      merchantId: transaction.merchantId,
+      amount: transaction.amount,
+      merchantName: transaction.merchant.name,
+      category: userTransactionCategory,
+      tags: transaction.tags,
+      notes: transaction.notes,
+    });
+
     setRemainingCategory(Number(data.amount) - totalCategoryAmount);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userTransactionCategory]);
@@ -143,6 +154,7 @@ const ModalShowTransactionDesktop: React.FC<IModalShowTransaction> = ({
       <RenderTitle
         onCloseModal={onCloseModal}
         onSaveFunction={onSaveEditFunction}
+        onDeleteFunction={onDeleteFunction}
         isEdit={isEdit}
         setIsEdit={setIsEdit}
         transaction={transaction}
