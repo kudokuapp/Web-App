@@ -43,7 +43,7 @@ const DeleteModal: React.FC<IDeleteModal> = ({
                   className="flex justify-between items-center"
                 >
                   <h3 className="text-lg font-medium leading-6 text-gray-900">
-                    Yakin mau delete?
+                    Konfirmasi hapus transaksi
                   </h3>
 
                   <button
@@ -56,7 +56,7 @@ const DeleteModal: React.FC<IDeleteModal> = ({
 
                 <div className="mt-4 flex flex-col gap-8">
                   <p className="text-onPrimaryContainer text-base">
-                    Kalo kamu delete, transaksi kamu juga ke delete loh!
+                    Transaksi ini akan terhapus dari akun keuangan ini.
                   </p>
 
                   <div className="w-full h-fit flex items-center justify-end gap-4">
@@ -64,7 +64,7 @@ const DeleteModal: React.FC<IDeleteModal> = ({
                       className="border-2 border-gray-500 px-4 py-2 rounded-lg text-onPrimaryContainer"
                       onClick={() => setIsOpen(false)}
                     >
-                      Cancel
+                      Batalkan
                     </button>
                     <button
                       className="px-4 py-2 rounded-lg shadow-xl bg-error text-onError border-2 border-error"
@@ -73,7 +73,7 @@ const DeleteModal: React.FC<IDeleteModal> = ({
                         handleConfirm();
                       }}
                     >
-                      Delete
+                      Hapus
                     </button>
                   </div>
                 </div>
