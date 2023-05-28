@@ -49,7 +49,9 @@ const ModalDisconnect: React.FC<IModalDisconnect> = ({
                   className="flex justify-between items-center border-b-[1px] mb-2 border-gray-600 dark:border-gray-400"
                 >
                   <h3 className="text-lg font-medium leading-6 text-red-900">
-                    Disconnect account
+                    {type === 'cash'
+                      ? 'Hapus akun keuangan'
+                      : 'Disconnect account'}
                   </h3>
 
                   <button
